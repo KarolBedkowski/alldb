@@ -27,7 +27,7 @@ class Db(SchemaLessDatabase):
 		if isinstance(obj, objects.ObjectClass):
 			indexes_oid = obj.indexes_oid
 			if indexes_oid:
-				obj.indexes = self[indexes_oid]
+				obj.indexes = self.get(indexes_oid)
 			return obj
 
 		return SchemaLessDatabase._process_object_after_load(self, obj)
@@ -41,7 +41,7 @@ class Db(SchemaLessDatabase):
 
 	def _process_object_after_save(self, obj):
 		if isinstance(obj, objects.ObjectClass):
-			class_index = self[CLASS_IDX_OID]
+			class_index = self.get(CLASS_IDX_OID)
 			class_index.update(obj.oid, obj.name)
 			self.put(class_index)
 			return obj
@@ -63,33 +63,33 @@ class Db(SchemaLessDatabase):
 
 	@property
 	def classes(self):
-		class_index = self[CLASS_IDX_OID]
+		class_index = self.get(CLASS_IDX_OID)
 		if class_index is None:
 			return
-		return [self[oid] 
+		return [self.get(oid)
 				for item in class_index.data.itervalues() 
 				for oid in item ]
 
 	def get_class_by_name(self, name):
-		class_index = self[CLASS_IDX_OID]
+		class_index = self.get(CLASS_IDX_OID)
 		if class_index is None:
 			return
-		return [self[oid] 
+		return [self.get(oid)
 				for item in class_index.data[name]
 				for oid in item ]
 
 	def get_objects_by_class(self, class_oid):
-		cls = self[class_oid]
+		cls = self.get(class_oid)
 		objects_index = cls.objects_index
-		return self[list(objects_index.get_all())]
+		return self.get(list(objects_index.get_all()))
 
 	def get_objects_by_index(self, index_oid, match_function=None):
-		index = self[index_oid]
+		index = self.get(index_oid)
 		if match_function:
 			items = index.get_matching(match_function)
 		else:
 			items = index.get_all()
-		return self[list(items)]
+		return self.get(list(items))
 
 
 

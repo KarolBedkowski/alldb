@@ -109,6 +109,9 @@ class SchemaLessDatabase(object):
 	def __del__(self):
 		self.close()
 
+	def __contains__(self, oid):
+		return self._db.has_key(oid)
+
 	def open(self, filename):
 		if filename:
 			self._filename = filename
@@ -123,23 +126,15 @@ class SchemaLessDatabase(object):
 			self._before_close()
 			self._db.close()
 
-	def __getitem__(self, oid):
+	def get(self, oid):
 		if isinstance(oid, (list, tuple)):
 			return map(self._get_single_object, oid)
 		return self._get_single_object(oid)
 
-	def __setitem__(self, oid, obj):
-		obj = self._process_object_before_save(obj)
-		self._db[str(oid)] = encoder(obj.dump())
-		self._process_object_after_save(obj)
-
-	def __delitem__(self, oid):
+	def delitem(self, oid):
 		oid = str(oid)
 		if self._db.has_key(oid):
 			del self._db[oid]
-
-	def __contains__(self, oid):
-		return self._db.has_key(oid)
 
 	def put(self, obj):
 		if isinstance(obj, (list, tuple)):
@@ -187,7 +182,9 @@ class SchemaLessDatabase(object):
 	def _put_single_object(self, obj):
 		if not obj.oid:
 			obj.oid = self.next_oid
-		self[obj.oid] = obj
+		obj = self._process_object_before_save(obj)
+		self._db[str(obj.oid)] = encoder(obj.dump())
+		self._process_object_after_save(obj)
 
 	@property
 	def next_oid(self):
@@ -203,7 +200,7 @@ class SchemaLessDatabase(object):
 
 	def _print_all(self):
 		for k, v in self._db.iteritems():
-			print k, v
+			print k, decoder(v)
 
 
 
@@ -232,8 +229,8 @@ if __name__ == '__main__':
 
 	print storage._print_all()
 
-	print storage[2]
-	print storage[23]
+	print storage.get(2)
+	print storage.get(23)
 
 
 # vim: encoding=utf8: ff=unix:

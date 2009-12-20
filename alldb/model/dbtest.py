@@ -17,6 +17,6 @@ storage.sync()
 
 print storage._print_all()
 
-print storage[10001]
+print storage.get(10001)
 
 print storage.classes
