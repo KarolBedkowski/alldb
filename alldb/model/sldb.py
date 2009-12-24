@@ -11,10 +11,15 @@ __release__		= '2009-12-17'
 
 from UserList import UserList
 from UserDict import IterableUserDict
-import bsddb
-import cjson
-decoder = cjson.decode
-encoder = cjson.encode
+import anydbm
+try:
+	import cjson
+	decoder = cjson.decode
+	encoder = cjson.encode
+except ImportError:
+	import json
+	decoder = json.loads
+	encoder = json.dumps
 
 #import cPickle
 #encoder = cPickle.dumps
@@ -23,42 +28,48 @@ encoder = cjson.encode
 
 class BaseObject(object):
 	"""docstring for SimpleObject"""
-	def __init__(self, oid=None, cls=None, **kwarg):
+	def __init__(self, oid=None, cls=None, context=None, **kwarg):
 		self.oid = oid
 		self.cls = cls
+		self._context = context
 
 	def __repr__(self):
 		return '<%s: %r>' % (self.__class__.__name__, self.__dict__)
 
-	def dump(self):
+	def _dump(self):
 		return dict((
 			(key, val) 
 			for (key, val) in self.__dict__.iteritems()
 			if val and not key.startswith('_')))
 
-	def load(self, data):
+	def _load(self, data):
 		self.__dict__.update(data)
+
+	def save(self, context=None):
+		if context:
+			self._context = context
+		self._context.put(self)
 
 
 class SimpleObject(BaseObject):
 	"""docstring for SimpleObject"""
-	def __init__(self, oid=None, cls="_SIM", **kwarg):
-		BaseObject.__init__(self, oid, cls, **kwarg)
+	def __init__(self, oid=None, cls="_SIM", context=None, **kwarg):
+		BaseObject.__init__(self, oid, cls, context, **kwarg)
 		self.data = kwarg
 
 
 class ObjectsList(BaseObject, UserList):
 	"""docstring for ObjectsList"""
-	def __init__(self, oid=None, name=None):
-		BaseObject.__init__(self, oid, '_LST')
+	def __init__(self, oid=None, name=None, context=None):
+		BaseObject.__init__(self, oid, '_LST', context)
 		UserList.__init__(self)
 		self.name = name
 
 
 class Index(BaseObject, IterableUserDict):
 	"""docstring for Index"""
-	def __init__(self, oid=None, name=None):
-		BaseObject.__init__(self, oid, '_IDX')
+	def __init__(self, oid=None, name=None, context=None):
+		BaseObject.__init__(self, oid, '_IDX', context)
 		IterableUserDict.__init__(self)
 		self.name = name
 
@@ -116,7 +127,7 @@ class SchemaLessDatabase(object):
 		if filename:
 			self._filename = filename
 		if self._filename:
-			self._db = bsddb.hashopen(self._filename, 'c')
+			self._db = anydbm.open(self._filename, 'c')
 			self._after_open()
 		else:
 			raise Exception('No filename')
@@ -148,6 +159,18 @@ class SchemaLessDatabase(object):
 	def register_class(self, cls_name, cls):
 		self._registered_classess[cls_name] = cls
 
+	@property
+	def next_oid(self):
+		return self.next_seq('OID')
+
+	def next_seq(self, sequence, begin=10000, step=1):
+		seq_name = 'SEQ_' + sequence
+		seq = decoder(self._db[seq_name]) if self._db.has_key(seq_name) else begin
+		seq = int(seq) + step
+		self._db[seq_name] = encoder(str(seq))
+		self._db.sync()
+		return seq
+
 	def _get_class(self, cls_name):
 		return self._registered_classess.get(cls_name, SimpleObject)
 
@@ -159,10 +182,20 @@ class SchemaLessDatabase(object):
 			if 'cls' in data:
 				obj_cls = self._get_class(data['cls'])
 			obj = obj_cls()
-			obj.load(data)
+			obj._context = self
+			obj._load(data)
 			obj = self._process_object_after_load(obj)
 			return obj
 		return None
+
+	def _put_single_object(self, obj):
+		if not obj.oid:
+			obj.oid = self.next_oid
+		obj._context = self
+		obj = self._process_object_before_save(obj)
+		self._db[str(obj.oid)] = encoder(obj._dump())
+		self._process_object_after_save(obj)
+		print 'saved ', obj
 
 	def _process_object_after_load(self, obj):
 		return obj
@@ -178,25 +211,6 @@ class SchemaLessDatabase(object):
 
 	def _before_close(self):
 		pass
-
-	def _put_single_object(self, obj):
-		if not obj.oid:
-			obj.oid = self.next_oid
-		obj = self._process_object_before_save(obj)
-		self._db[str(obj.oid)] = encoder(obj.dump())
-		self._process_object_after_save(obj)
-
-	@property
-	def next_oid(self):
-		return self.next_seq('OID')
-
-	def next_seq(self, sequence, begin=10000, step=1):
-		seq_name = 'SEQ_' + sequence
-		seq = self._db[seq_name] if self._db.has_key(seq_name) else begin
-		seq = int(seq) + step
-		self._db[seq_name] = str(seq)
-		self._db.sync()
-		return seq
 
 	def _print_all(self):
 		for k, v in self._db.iteritems():

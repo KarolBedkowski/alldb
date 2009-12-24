@@ -21,18 +21,22 @@ class Db(SchemaLessDatabase):
 	"""docstring for Db"""
 	def __init__(self, *args, **kwargs):
 		SchemaLessDatabase.__init__(self, *args, **kwargs)
-		self._registered_classess['_OCL'] = objects.ObjectClass
+		self.register_class('_OCL', objects.ObjectClass)
+		self.register_class('_OBJ', objects.Object)
 
 	def _process_object_after_load(self, obj):
 		if isinstance(obj, objects.ObjectClass):
 			indexes_oid = obj.indexes_oid
 			if indexes_oid:
 				obj.indexes = self.get(indexes_oid)
+			if obj.objects_index:
+				obj._objects_index = self.get(obj.objects_index)
 			return obj
 
 		return SchemaLessDatabase._process_object_after_load(self, obj)
 
 	def _process_object_before_save(self, obj):
+		print obj, hasattr(obj, '_before_save')
 		if hasattr(obj, '_before_save'):
 			obj._before_save()
 			return obj
@@ -57,7 +61,10 @@ class Db(SchemaLessDatabase):
 	def _put_single_object(self, obj):
 		if hasattr(obj, 'obj2dump'):
 			for subobj in obj.obj2dump():
-				SchemaLessDatabase._put_single_object(self, subobj)
+				if subobj == obj:
+					SchemaLessDatabase._put_single_object(self, subobj)
+				else:
+					self._put_single_object(subobj)
 		else:
 			SchemaLessDatabase._put_single_object(self, obj)
 
@@ -81,7 +88,7 @@ class Db(SchemaLessDatabase):
 	def get_objects_by_class(self, class_oid):
 		cls = self.get(class_oid)
 		objects_index = cls.objects_index
-		return self.get(list(objects_index.get_all()))
+		return self.get_objects_by_index(objects_index)
 
 	def get_objects_by_index(self, index_oid, match_function=None):
 		index = self.get(index_oid)
