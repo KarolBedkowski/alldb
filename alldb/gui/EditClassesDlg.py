@@ -53,10 +53,9 @@ class EditClassesDlg(_EditClassesDlg):
 			self.tc_title.SetValue('%%%s' % self._cls.fields[0][0])
 
 	def _on_fields_activated(self, event): 
-		if self.lc_fields.GetSelectedItemCount() == 0:
+		item_idx = self._get_selected_field_idx()
+		if item_idx < 0:
 			return
-		item_idx = self.lc_fields.GetNextItem(-1, wx.LIST_NEXT_ALL, 
-				wx.LIST_STATE_SELECTED)
 		name = self._cls.fields[item_idx][0]
 		dlg = wx.TextEntryDialog(self, _('Field name:'), _('Class edit'), name)
 		if dlg.ShowModal() == wx.ID_OK:
@@ -85,6 +84,26 @@ class EditClassesDlg(_EditClassesDlg):
 		print "Event handler `_on_btn_del_field' not implemented!"
 		event.Skip()
 
+	def _on_button_up(self, event): # wxGlade: _EditClassesDlg.<event_handler>
+		item_idx = self._get_selected_field_idx()
+		if item_idx < 1:
+			return 
+		fields = self._cls.fields
+		fields[item_idx], fields[item_idx-1] = fields[item_idx-1], fields[item_idx]
+		self._refresh_list(self._cls)
+		self.lc_fields.SetItemState(item_idx-1, wx.LIST_STATE_SELECTED, 
+				wx.LIST_STATE_SELECTED)
+
+	def _on_button_down(self, event): # wxGlade: _EditClassesDlg.<event_handler>
+		item_idx = self._get_selected_field_idx()
+		if item_idx < 0 or item_idx == self.lc_fields.GetItemCount() - 1:
+			return 
+		fields = self._cls.fields
+		fields[item_idx], fields[item_idx+1] = fields[item_idx+1], fields[item_idx]
+		self._refresh_list(self._cls)
+		self.lc_fields.SetItemState(item_idx+1, wx.LIST_STATE_SELECTED, 
+				wx.LIST_STATE_SELECTED)
+
 	def _on_ok(self, evt):
 		name = self.tc_name.GetValue()
 		title_expr = self.tc_title.GetValue()
@@ -106,5 +125,12 @@ class EditClassesDlg(_EditClassesDlg):
 		self._cls.title_expr = title_expr
 
 		self.EndModal(wx.ID_OK)
+
+	def _get_selected_field_idx(self):
+		if self.lc_fields.GetSelectedItemCount() == 0:
+			return -1
+		return self.lc_fields.GetNextItem(-1, wx.LIST_NEXT_ALL, 
+				wx.LIST_STATE_SELECTED)
+
 
 # vim: encoding=utf8: ff=unix:
