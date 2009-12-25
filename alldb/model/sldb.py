@@ -50,6 +50,19 @@ class BaseObject(object):
 			self._context = context
 		self._context.put(self)
 
+	def delete(self, context=None):
+		if context:
+			self._context = context
+		self._context.delete(self)
+
+	def _before_save(self): 	pass
+	def _before_load(self):		pass
+	def _before_del(self):		pass
+	def _after_save(self):		pass
+	def _after_load(self):		pass
+	def _after_del(self):		pass
+
+
 
 class SimpleObject(BaseObject):
 	"""docstring for SimpleObject"""
@@ -147,6 +160,12 @@ class SchemaLessDatabase(object):
 		if self._db.has_key(oid):
 			del self._db[oid]
 
+	def delete(self, obj):
+		if obj.oid:
+			obj._before_del()
+			self.delitem(obj.oid)
+			obj._after_del()
+
 	def put(self, obj):
 		if isinstance(obj, (list, tuple)):
 			map(self._put_single_object, obj)
@@ -183,8 +202,9 @@ class SchemaLessDatabase(object):
 				obj_cls = self._get_class(data['cls'])
 			obj = obj_cls()
 			obj._context = self
+			obj._before_load()
 			obj._load(data)
-			obj = self._process_object_after_load(obj)
+			obj._after_load()
 			return obj
 		return None
 
@@ -192,25 +212,13 @@ class SchemaLessDatabase(object):
 		if not obj.oid:
 			obj.oid = self.next_oid
 		obj._context = self
-		obj = self._process_object_before_save(obj)
+		obj._before_save()
 		self._db[str(obj.oid)] = encoder(obj._dump())
-		self._process_object_after_save(obj)
+		obj._after_save()
 		print 'saved ', obj
 
-	def _process_object_after_load(self, obj):
-		return obj
-
-	def _process_object_before_save(self, obj):
-		return obj
-
-	def _process_object_after_save(self, obj):
-		return obj
-
-	def _after_open(self):
-		pass
-
-	def _before_close(self):
-		pass
+	def _after_open(self):		pass
+	def _before_close(self):	pass
 
 	def _print_all(self):
 		for k, v in self._db.iteritems():

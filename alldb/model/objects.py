@@ -46,13 +46,26 @@ class ObjectClass(BaseObject):
 	
 	indexes = property(_get_indexes, _set_indexes)
 
+	@property
+	def objects(self):
+		return self._context.get_objects_by_index(self.objects_index)
+
 	def _before_save(self):
 		self.objects_index = self._objects_index.oid
 		self.indexes_oid = [ idx.oid for idx in self._indexes ]
 
-	@property
-	def objects(self):
-		return self._context.get_objects_by_index(self.objects_index)
+	def _after_load(self):
+		indexes_oid = self.indexes_oid
+		if indexes_oid:
+			self.indexes = self._context.get(indexes_oid)
+		if self.objects_index:
+			self._objects_index = self._context.get(self.objects_index)
+
+	def _after_save(self):
+		class_index = self._context.classes_index
+		class_index.update(self.oid, self.name)
+		class_index.save()
+
 
 
 class Object(BaseObject):
@@ -63,6 +76,7 @@ class Object(BaseObject):
 		self.data = {}
 		self._cls_objects_index = None
 		self._cls_indexes = None
+		self.tags = ""
 
 	def obj2dump(self):
 		yield self

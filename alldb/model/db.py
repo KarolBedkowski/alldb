@@ -24,34 +24,6 @@ class Db(SchemaLessDatabase):
 		self.register_class('_OCL', objects.ObjectClass)
 		self.register_class('_OBJ', objects.Object)
 
-	def _process_object_after_load(self, obj):
-		if isinstance(obj, objects.ObjectClass):
-			indexes_oid = obj.indexes_oid
-			if indexes_oid:
-				obj.indexes = self.get(indexes_oid)
-			if obj.objects_index:
-				obj._objects_index = self.get(obj.objects_index)
-			return obj
-
-		return SchemaLessDatabase._process_object_after_load(self, obj)
-
-	def _process_object_before_save(self, obj):
-		print obj, hasattr(obj, '_before_save')
-		if hasattr(obj, '_before_save'):
-			obj._before_save()
-			return obj
-
-		return SchemaLessDatabase._process_object_before_save(self, obj)
-
-	def _process_object_after_save(self, obj):
-		if isinstance(obj, objects.ObjectClass):
-			class_index = self.get(CLASS_IDX_OID)
-			class_index.update(obj.oid, obj.name)
-			self.put(class_index)
-			return obj
-
-		return SchemaLessDatabase._process_object_after_save(self, obj)
-
 	def _after_open(self):
 		SchemaLessDatabase._after_open(self)
 		if CLASS_IDX_OID not in self:
@@ -76,6 +48,10 @@ class Db(SchemaLessDatabase):
 		return [self.get(oid)
 				for item in class_index.data.itervalues() 
 				for oid in item ]
+
+	@property
+	def classes_index(self):
+		return self.get(CLASS_IDX_OID)
 
 	def get_class_by_name(self, name):
 		class_index = self.get(CLASS_IDX_OID)
