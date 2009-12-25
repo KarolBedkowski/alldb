@@ -10,11 +10,12 @@ __release__		= '2009-12-20'
 
 
 import wx
+import  wx.lib.scrolledpanel as scrolled
 
 
-class PanelInfo(wx.Panel):
+class PanelInfo(scrolled.ScrolledPanel):
 	def __init__(self, parent, obj_class, *argv, **kwarg):
-		wx.Panel.__init__(self, parent, -1, *argv, **kwarg)
+		scrolled.ScrolledPanel.__init__(self, parent, -1, *argv, **kwarg)
 		self._obj = None
 		self._obj_cls = obj_class
 		self._fields = {}
@@ -24,7 +25,9 @@ class PanelInfo(wx.Panel):
 		grid = self._create_fields()
 		main_grid.Add(grid, 1, wx.EXPAND|wx.ALL, 6)
 
-		self.SetSizerAndFit(main_grid)
+		self.SetSizer(main_grid)
+		self.SetAutoLayout(1)
+		self.SetupScrolling()
 
 	def update(self, obj):
 		self._obj = obj

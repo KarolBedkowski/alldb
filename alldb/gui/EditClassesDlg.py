@@ -11,14 +11,14 @@ __release__		= '2009-12-20'
 
 import wx
 
-from alldb.model import objects
-
 from _EditClassesDlg import _EditClassesDlg
 
+
 class EditClassesDlg(_EditClassesDlg):
-	def __init__(self, parent, cls):
+	def __init__(self, parent, cls, cls_names):
 		_EditClassesDlg.__init__(self, None, -1)
 		self._cls = cls
+		self._cls_names = cls_names
 
 		self.GetSizer().Add(
 				self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 
@@ -38,8 +38,8 @@ class EditClassesDlg(_EditClassesDlg):
 		self.Centre(wx.BOTH)
 
 	def show_class(self, cls):
-		self.tc_name.SetValue(str(cls.name))
-		self.tc_title.SetValue(str(cls.title_expr))
+		self.tc_name.SetValue(str(cls.name or ''))
+		self.tc_title.SetValue(str(cls.title_expr or ''))
 		self._refresh_list(cls)
 
 	def _refresh_list(self, cls):
@@ -48,14 +48,15 @@ class EditClassesDlg(_EditClassesDlg):
 			self.lc_fields.InsertStringItem(no, str(no+1))
 			self.lc_fields.SetStringItem(no, 1, str(name))
 
-	def _on_btn_title_refresh(self, event): # wxGlade: _EditClassesDlg.<event_handler>
-		print "Event handler `_on_btn_title_refresh' not implemented!"
-		event.Skip()
+	def _on_btn_title_refresh(self, event):
+		if self._cls.fields:
+			self.tc_title.SetValue('%%%s' % self._cls.fields[0][0])
 
 	def _on_fields_activated(self, event): 
 		if self.lc_fields.GetSelectedItemCount() == 0:
 			return
-		item_idx = self.lc_fields.GetNextItem(-1, wx.LIST_NEXT_ALL, wx.LIST_STATE_SELECTED)
+		item_idx = self.lc_fields.GetNextItem(-1, wx.LIST_NEXT_ALL, 
+				wx.LIST_STATE_SELECTED)
 		name = self._cls.fields[item_idx][0]
 		dlg = wx.TextEntryDialog(self, _('Field name:'), _('Class edit'), name)
 		if dlg.ShowModal() == wx.ID_OK:
@@ -70,8 +71,14 @@ class EditClassesDlg(_EditClassesDlg):
 		if dlg.ShowModal() == wx.ID_OK:
 			name = dlg.GetValue()
 			if name:
-				self._cls.fields.append((name, 'str', '', None))
-				self._refresh_list(self._cls)
+				if any(( True for field in self._cls.fields if field[0] == name )):
+					dlge = wx.MessageDialog(self, _('Field already exists'), 
+								_('Add field'), wx.OK|wx.ICON_HAND)
+					dlge.ShowModal()
+					dlge.Destroy()
+				else:
+					self._cls.fields.append((name, 'str', '', None))
+					self._refresh_list(self._cls)
 		dlg.Destroy()
 
 	def _on_btn_del_field(self, event): # wxGlade: _EditClassesDlg.<event_handler>
@@ -82,8 +89,19 @@ class EditClassesDlg(_EditClassesDlg):
 		name = self.tc_name.GetValue()
 		title_expr = self.tc_title.GetValue()
 		if not (name and title_expr):
+			dlg = wx.MessageDialog(self, _('Enter name and title expresion'),
+					_('Class'), wx.OK|wx.ICON_ERROR)
+			dlg.ShowModal()
+			dlg.Destroy()
 			return
-		
+
+		if name in self._cls_names:
+			dlg = wx.MessageDialog(self, _('Class with this name alreaty exists'),
+					_('Class'), wx.OK|wx.ICON_ERROR)
+			dlg.ShowModal()
+			dlg.Destroy()
+			return
+
 		self._cls.name = name
 		self._cls.title_expr = title_expr
 

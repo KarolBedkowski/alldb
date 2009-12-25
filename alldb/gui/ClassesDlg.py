@@ -38,7 +38,8 @@ class ClassesDlg(_ClassesDlg):
 
 	def _edit_class(self, cls_oid):
 		cls = self._db.get(cls_oid) if cls_oid else objects.ObjectClass()
-		dlg = EditClassesDlg(self, cls)
+		cls_names = [ c.name for c in self._db.classes if c.oid != cls_oid ]
+		dlg = EditClassesDlg(self, cls, cls_names)
 		if dlg.ShowModal() == wx.ID_OK:
 			self._db.put(cls)
 			self.fill_classes()

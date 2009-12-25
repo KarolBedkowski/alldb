@@ -22,6 +22,7 @@ class MainFrame(_MainFrame):
 	def __init__(self):
 		_MainFrame.__init__(self, None, -1)
 		self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_ACTIVEBORDER))
+		self.window_1.SetSashPosition(200)
 
 		self._db = Db('test.db')
 		self._current_class = None
@@ -68,6 +69,9 @@ class MainFrame(_MainFrame):
 
 		self.list_items.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		self.list_items.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+
+		items_count = self.list_items.GetItemCount()
+		self.label_info.SetLabel(_('Items: %d') % items_count)
 
 	def _set_buttons_status(self):
 		record_showed = self._current_obj is not None
