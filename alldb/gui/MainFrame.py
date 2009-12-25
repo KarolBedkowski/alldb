@@ -76,7 +76,6 @@ class MainFrame(_MainFrame):
 	def _set_buttons_status(self):
 		record_showed = self._current_obj is not None
 		self.button_apply.Enable(record_showed)
-		self.button_cancel.Enable(record_showed)
 		self.button_new_item.Enable(self._current_class is not None)
 		if self._current_info_panel:
 			self._current_info_panel.Show(record_showed)
@@ -124,11 +123,6 @@ class MainFrame(_MainFrame):
 		self._current_obj.save()
 		self._db.sync()
 		self.fill_items(self._current_class)
-		event.Skip()
-
-	def _on_btn_cancel(self, event):
-		oid = self._current_obj.oid
-		self._show_object(oid)
 		event.Skip()
 
 	def _on_search(self, evt):
