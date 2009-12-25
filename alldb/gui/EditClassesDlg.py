@@ -81,8 +81,15 @@ class EditClassesDlg(_EditClassesDlg):
 		dlg.Destroy()
 
 	def _on_btn_del_field(self, event): # wxGlade: _EditClassesDlg.<event_handler>
-		print "Event handler `_on_btn_del_field' not implemented!"
-		event.Skip()
+		item_idx = self._get_selected_field_idx()
+		if item_idx < 1:
+			return 
+		dlg = wx.MessageDialog(self, _('Delete field?'), _('Class'), 
+				wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT)
+		if dlg.ShowModal() == wx.ID_YES:
+			self._cls.fields.pop(item_idx)
+			self._refresh_list(self._cls)
+		dlg.Destroy()
 
 	def _on_button_up(self, event): # wxGlade: _EditClassesDlg.<event_handler>
 		item_idx = self._get_selected_field_idx()
