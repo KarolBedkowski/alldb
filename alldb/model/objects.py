@@ -10,6 +10,7 @@ __release__		= '2009-12-17'
 
 
 import re
+import time
 
 from sldb import BaseObject, Index
 
@@ -77,6 +78,8 @@ class Object(BaseObject):
 		self._cls_objects_index = None
 		self._cls_indexes = None
 		self.tags = []
+		self.date_created = None
+		self.date_modified = None
 
 	def obj2dump(self):
 		yield self
@@ -84,6 +87,11 @@ class Object(BaseObject):
 			yield self._cls_objects_index
 
 	def _before_save(self):
+		if not self.date_created:
+			self.date_created = time.time()
+
+		self.date_modified = time.time()
+
 		cls = self._context.get(self.ocls)
 		title_expr = cls.title_expr
 		if title_expr:

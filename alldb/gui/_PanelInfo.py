@@ -9,6 +9,7 @@ __version__		= '0.1'
 __release__		= '2009-12-20'
 
 
+import time
 import wx
 import wx.lib.scrolledpanel as scrolled
 
@@ -31,7 +32,10 @@ class PanelInfo(scrolled.ScrolledPanel):
 
 	def update(self, obj):
 		self._obj = obj
-		self._fill_fields()
+		if obj:
+			self._fill_fields_from_obj()
+		else:
+			self._fill_fields_clear()
 
 	def get_values(self):
 		data = {}
@@ -71,33 +75,46 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self.tc_tags = wx.TextCtrl(self, -1)
 		grid.Add(self.tc_tags, 1, wx.EXPAND)
 
+		grid.Add(wx.StaticText(self, -1, _("C. / M.:")), 0, wx.ALIGN_CENTER_VERTICAL)
+		self.lb_created_modified = wx.StaticText(self, -1, '')
+		grid.Add(self.lb_created_modified, 1, wx.EXPAND)
+
 		return grid
 
-	def _fill_fields(self):
-		if self._obj:
-			for name, (field, ftype, _default, options) in self._fields.iteritems():
-				if not field:
-					continue
-				value = self._obj.data.get(name)
+	def _fill_fields_from_obj(self):
+		for name, (field, ftype, _default, options) in self._fields.iteritems():
+			if not field:
+				continue
+			value = self._obj.data.get(name)
+			if ftype == 'bool':
+				field.SetValue(bool(value))
+			elif ftype == 'date':
+				date = strdate2wxdate(value)
+				field.SetValue(date)
+			else:
+				field.SetValue(str(value or ''))
+		self.tc_tags.SetValue(self._obj.tags_str)
+		date_created, date_modified = '-', '-'
+		if self._obj.date_created:
+			date_created = time.strftime('%x %X',
+					time.localtime(self._obj.date_created))
+		if self._obj.date_modified:
+			date_modified = time.strftime('%x %X',
+					time.localtime(self._obj.date_modified))
+		self.lb_created_modified.SetLabel(date_created + ' / ' + date_modified)
+
+	def _fill_fields_clear():
+		for field, ftype, _default, options in self._fields.itervalues():
+			if field:
 				if ftype == 'bool':
-					field.SetValue(bool(value))
+					field.SetValue(bool(_default))
 				elif ftype == 'date':
-					date = strdate2wxdate(value)
+					date = strdate2wxdate(_default)
 					field.SetValue(date)
 				else:
-					field.SetValue(str(value or ''))
-			self.tc_tags.SetValue(self._obj.tags_str)
-		else:
-			for field, ftype, _default, options in self._fields.itervalues():
-				if field:
-					if ftype == 'bool':
-						field.SetValue(bool(_default))
-					elif ftype == 'date':
-						date = strdate2wxdate(_default)
-						field.SetValue(date)
-					else:
-						field.SetValue(str(_default))
-			self.tc_tags.SetValue('')
+					field.SetValue(str(_default))
+		self.tc_tags.SetValue('')
+		self.lb_created_modified.SetLabel('')
 
 
 def strdate2wxdate(strdate):

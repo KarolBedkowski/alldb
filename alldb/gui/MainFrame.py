@@ -60,8 +60,9 @@ class MainFrame(_MainFrame):
 
 		return classes[0].oid if classes else None
 
-	def fill_items(self, cls=None):
-		self.list_items.DeleteAllItems()
+	def fill_items(self, cls=None, select=None):
+		list_items = self.list_items
+		list_items.DeleteAllItems()
 
 		if cls:
 			self._current_items = cls.objects
@@ -69,7 +70,6 @@ class MainFrame(_MainFrame):
 			return
 
 		self._current_tags = tags = {}
-
 		search = self.searchbox.GetValue()
 		items = self._current_items
 		if search:
@@ -79,20 +79,28 @@ class MainFrame(_MainFrame):
 		if selected_tags:
 			items = [ item for item in items if item.has_tags(selected_tags) ]
 
+		item2select = None
 		for num, item in enumerate(sorted(items, key=operator.attrgetter('title'))):
-			self.list_items.InsertStringItem(num, str(num+1))
-			self.list_items.SetStringItem(num, 1, str(item.title))
-			self.list_items.SetItemData(num, item.oid)
+			list_items.InsertStringItem(num, str(num+1))
+			list_items.SetStringItem(num, 1, str(item.title))
+			list_items.SetItemData(num, item.oid)
 
 			for tag in item.tags:
 				tcounter = tags.get(tag, 0) + 1
 				tags[tag] = tcounter
 
-		self.list_items.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-		self.list_items.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+			if item.oid == select:
+				item2select = num
+
+		list_items.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+		list_items.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 
 		items_count = self.list_items.GetItemCount()
 		self.label_info.SetLabel(_('Items: %d') % items_count)
+
+		if item2select is not None:
+			list_items.SetItemState(item2select, wx.LIST_STATE_SELECTED, 
+				wx.LIST_STATE_SELECTED)
 
 	def fill_tags(self, clear_selection=False):
 		selected_tags = [] if clear_selection else self.selected_tags
@@ -165,8 +173,9 @@ class MainFrame(_MainFrame):
 		self._current_obj.data.update(data)
 		self._current_obj.set_tags(tags)
 		self._current_obj.save()
+		oid = self._current_obj.oid
 		self._db.sync()
-		self.fill_items(self._current_class)
+		self.fill_items(self._current_class, select=oid)
 		self.fill_tags()
 
 	def _on_clb_tags(self, evt):
