@@ -10,7 +10,7 @@ __release__		= '2009-12-20'
 
 
 import wx
-import  wx.lib.scrolledpanel as scrolled
+import wx.lib.scrolledpanel as scrolled
 
 
 class PanelInfo(scrolled.ScrolledPanel):
@@ -37,7 +37,10 @@ class PanelInfo(scrolled.ScrolledPanel):
 		data = {}
 		for name, (field, ftype, _default, options) in self._fields.iteritems():
 			if field:
-				data[name] = field.GetValue()
+				if ftype == 'date':
+					data[name] = wxdate2strdate(field.GetValue())
+				else:
+					data[name] = field.GetValue()
 		tags = self.tc_tags.GetValue()
 		return data, tags
 
@@ -50,7 +53,11 @@ class PanelInfo(scrolled.ScrolledPanel):
 			if ftype == 'bool':
 				ctrl = wx.CheckBox(self, -1)
 			elif ftype == 'multi':
-				ctrl = wx.TextCtrl(self, -1, style=wx.TE_MULTILINE)
+				ctrl = wx.TextCtrl(self, -1, 
+						style=wx.TE_MULTILINE|wx.TE_WORDWRAP|wx.HSCROLL)
+			elif ftype == 'date':
+				ctrl = wx.DatePickerCtrl(self, -1, 
+						style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.DP_ALLOWNONE)
 			else:
 				ctrl = wx.TextCtrl(self,  -1)
 			self._fields[name] = (ctrl, ftype, _default, options)
@@ -74,6 +81,9 @@ class PanelInfo(scrolled.ScrolledPanel):
 				value = self._obj.data.get(name)
 				if ftype == 'bool':
 					field.SetValue(bool(value))
+				elif ftype == 'date':
+					date = strdate2wxdate(value)
+					field.SetValue(date)
 				else:
 					field.SetValue(str(value or ''))
 			self.tc_tags.SetValue(self._obj.tags_str)
@@ -82,12 +92,25 @@ class PanelInfo(scrolled.ScrolledPanel):
 				if field:
 					if ftype == 'bool':
 						field.SetValue(bool(_default))
+					elif ftype == 'date':
+						date = strdate2wxdate(_default)
+						field.SetValue(date)
 					else:
 						field.SetValue(str(_default))
 			self.tc_tags.SetValue('')
 
 
+def strdate2wxdate(strdate):
+	date = wx.DateTime()
+	try:
+		date.ParseDate(strdate)
+	except Exception, err:
+		print err
+	return date
 
+
+def wxdate2strdate(wxdate):
+	return wxdate.Format()
 
 
 # vim: encoding=utf8: ff=unix:
