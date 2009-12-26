@@ -29,6 +29,7 @@ class MainFrame(_MainFrame):
 		self._current_obj = None
 		self._current_info_panel = None
 		self._current_items = []
+		self._current_tags = {}
 
 		self.fill_classes()
 		self.list_items.InsertColumn(0, _('No'), wx.LIST_FORMAT_RIGHT, 40)
@@ -39,6 +40,10 @@ class MainFrame(_MainFrame):
 		self.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self._on_search, self.searchbox)
 		self.Bind(wx.EVT_TEXT_ENTER, self._on_search, self.searchbox)
 		self.Bind(wx.EVT_TEXT, self._on_search, self.searchbox)
+#		self.Bind(wx.EVT_LISTBOX, self._on_clb_tags, self.clb_tags)
+		self.Bind(wx.EVT_CHECKLISTBOX, self._on_clb_tags, self.clb_tags)
+
+		self.choice_klasa.SetSelection(0)
 
 	def on_menu_exit(self, event):
 		self.Close()
@@ -57,21 +62,41 @@ class MainFrame(_MainFrame):
 		elif not self._current_items:
 			return
 
+		self._current_tags = tags = {}
+
 		search = self.searchbox.GetValue()
 		items = self._current_items
 		if search:
-			items = ( item for item in items if item.title.find(search) > -1 )
+			items = [ item for item in items if item.title.find(search) > -1 ]
+
+		selected_tags = self._get_selected_tags()
+		if selected_tags:
+			items = [ item for item in items if item.has_tags(selected_tags) ]
 
 		for num, item in enumerate(sorted(items, key=operator.attrgetter('title'))):
 			self.list_items.InsertStringItem(num, str(num+1))
 			self.list_items.SetStringItem(num, 1, str(item.title))
 			self.list_items.SetItemData(num, item.oid)
 
+			for tag in item.tags:
+				tcounter = tags.get(tag, 0) + 1
+				tags[tag] = tcounter
+
 		self.list_items.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		self.list_items.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 
 		items_count = self.list_items.GetItemCount()
 		self.label_info.SetLabel(_('Items: %d') % items_count)
+
+	def fill_tags(self, clear_selection=False):
+		selected_tags = [] if clear_selection else self._get_selected_tags()
+		self.clb_tags.Clear()
+		for tag, count in sorted(self._current_tags.iteritems()):
+			num = self.clb_tags.Append(
+					_('%(tag)s (%(items)d)') % dict(tag=tag, items=count))
+			self.clb_tags.SetClientData(num, tag)
+			if tag in selected_tags:
+				self.clb_tags.Check(num, True)
 
 	def _set_buttons_status(self):
 		record_showed = self._current_obj is not None
@@ -97,6 +122,7 @@ class MainFrame(_MainFrame):
 			self._current_obj = None
 		self._current_class = next_class
 		self.fill_items(next_class)
+		self.fill_tags(True)
 		self._set_buttons_status()
 		evt.Skip()
 
@@ -118,12 +144,17 @@ class MainFrame(_MainFrame):
 		event.Skip()
 
 	def _on_btn_apply(self, event):
-		data = self._current_info_panel.get_values()
+		data, tags = self._current_info_panel.get_values()
 		self._current_obj.data.update(data)
+		self._current_obj.set_tags(tags)
 		self._current_obj.save()
 		self._db.sync()
 		self.fill_items(self._current_class)
-		event.Skip()
+		self.fill_tags()
+
+	def _on_clb_tags(self, evt):
+		self.fill_items()
+		evt.Skip()
 
 	def _on_search(self, evt):
 		self.fill_items()
@@ -134,6 +165,15 @@ class MainFrame(_MainFrame):
 			pass
 		classes_dlg.Destroy()
 		self.fill_classes()
+
+	def _get_selected_tags(self):
+		cbl = self.clb_tags
+		checked =  [ cbl.GetClientData(num)
+				for num in xrange(cbl.GetCount())
+				if cbl.IsChecked(num) ]
+		return checked
+
+
 
 
 # vim: encoding=utf8: ff=unix:

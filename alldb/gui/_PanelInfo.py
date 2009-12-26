@@ -38,7 +38,8 @@ class PanelInfo(scrolled.ScrolledPanel):
 		for name, field in self._fields.iteritems():
 			if field:
 				data[name] = field.GetValue()
-		return data
+		tags = self.tc_tags.GetValue()
+		return data, tags
 
 	def _create_fields(self):
 		grid = wx.FlexGridSizer(len(self._obj_cls.fields), 2, 3, 6)
@@ -56,7 +57,11 @@ class PanelInfo(scrolled.ScrolledPanel):
 				grid.Add(ctrl, 1, wx.EXPAND)
 			else:
 				grid.Add((1, 1))
-		
+
+		grid.Add(wx.StaticText(self, -1, _("Tags:")), 0, wx.ALIGN_CENTER_VERTICAL)
+		self.tc_tags = wx.TextCtrl(self, -1)
+		grid.Add(self.tc_tags, 1, wx.EXPAND)
+
 		return grid
 
 	def _fill_fields(self):
@@ -66,10 +71,12 @@ class PanelInfo(scrolled.ScrolledPanel):
 					continue
 
 				field.SetValue(str(self._obj.data.get(name) or ''))
+			self.tc_tags.SetValue(self._obj.tags_str)
 		else:
 			for field in self._fields.itervalues():
 				if field:
 					field.SetValue('')
+			self.tc_tags.SetValue('')
 
 
 

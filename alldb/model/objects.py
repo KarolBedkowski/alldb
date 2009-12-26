@@ -76,7 +76,7 @@ class Object(BaseObject):
 		self.data = {}
 		self._cls_objects_index = None
 		self._cls_indexes = None
-		self.tags = ""
+		self.tags = []
 
 	def obj2dump(self):
 		yield self
@@ -98,6 +98,22 @@ class Object(BaseObject):
 
 		if self._cls_objects_index is not None:
 			self._cls_objects_index.update(self.oid, self.title)
+
+	def set_tags(self, tagstr):
+		if tagstr.strip():
+			self.tags = [ tag.strip() for tag in tagstr.split(',') ]
+		else:
+			self.tags = []
+
+	def has_tags(self, taglist):
+		for tag in taglist:
+			if tag in self.tags:
+				return True
+		return False
+
+	@property
+	def tags_str(self):
+		return ', '.join(self.tags)
 
 
 
