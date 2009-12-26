@@ -35,7 +35,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 
 	def get_values(self):
 		data = {}
-		for name, field in self._fields.iteritems():
+		for name, (field, ftype, _default, options) in self._fields.iteritems():
 			if field:
 				data[name] = field.GetValue()
 		tags = self.tc_tags.GetValue()
@@ -48,10 +48,12 @@ class PanelInfo(scrolled.ScrolledPanel):
 			grid.Add(wx.StaticText(self, -1, "%s:" % name), 0, wx.ALIGN_CENTER_VERTICAL)
 			ctrl = None
 			if ftype == 'bool':
-				pass
+				ctrl = wx.CheckBox(self, -1)
+			elif ftype == 'multi':
+				ctrl = wx.TextCtrl(self, -1, style=wx.TE_MULTILINE)
 			else:
 				ctrl = wx.TextCtrl(self,  -1)
-			self._fields[name] = ctrl
+			self._fields[name] = (ctrl, ftype, _default, options)
 
 			if ctrl:
 				grid.Add(ctrl, 1, wx.EXPAND)
@@ -66,16 +68,22 @@ class PanelInfo(scrolled.ScrolledPanel):
 
 	def _fill_fields(self):
 		if self._obj:
-			for name, field in self._fields.iteritems():
+			for name, (field, ftype, _default, options) in self._fields.iteritems():
 				if not field:
 					continue
-
-				field.SetValue(str(self._obj.data.get(name) or ''))
+				value = self._obj.data.get(name)
+				if ftype == 'bool':
+					field.SetValue(bool(value))
+				else:
+					field.SetValue(str(value or ''))
 			self.tc_tags.SetValue(self._obj.tags_str)
 		else:
-			for field in self._fields.itervalues():
+			for field, ftype, _default, options in self._fields.itervalues():
 				if field:
-					field.SetValue('')
+					if ftype == 'bool':
+						field.SetValue(bool(_default))
+					else:
+						field.SetValue(str(_default))
 			self.tc_tags.SetValue('')
 
 

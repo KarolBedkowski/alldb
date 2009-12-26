@@ -31,7 +31,7 @@ class MainFrame(_MainFrame):
 		self._current_items = []
 		self._current_tags = {}
 
-		self.fill_classes()
+		fclass_oid = self.fill_classes()
 		self.list_items.InsertColumn(0, _('No'), wx.LIST_FORMAT_RIGHT, 40)
 		self.list_items.InsertColumn(1, _('Title'))
 
@@ -44,6 +44,9 @@ class MainFrame(_MainFrame):
 		self.Bind(wx.EVT_CHECKLISTBOX, self._on_clb_tags, self.clb_tags)
 
 		self.choice_klasa.SetSelection(0)
+		if fclass_oid is not None:
+			self._show_panel(fclass_oid)
+			self.fill_items()
 
 	def on_menu_exit(self, event):
 		self.Close()
@@ -51,8 +54,11 @@ class MainFrame(_MainFrame):
 
 	def fill_classes(self):
 		self.choice_klasa.Clear()
-		for cls in self._db.classes:
+		classes = self._db.classes
+		for cls in classes:
 			self.choice_klasa.Append(cls.name, cls.oid)
+
+		return classes[0].oid if classes else None
 
 	def fill_items(self, cls=None):
 		self.list_items.DeleteAllItems()
@@ -69,7 +75,7 @@ class MainFrame(_MainFrame):
 		if search:
 			items = [ item for item in items if item.title.find(search) > -1 ]
 
-		selected_tags = self._get_selected_tags()
+		selected_tags = self.selected_tags
 		if selected_tags:
 			items = [ item for item in items if item.has_tags(selected_tags) ]
 
@@ -89,7 +95,7 @@ class MainFrame(_MainFrame):
 		self.label_info.SetLabel(_('Items: %d') % items_count)
 
 	def fill_tags(self, clear_selection=False):
-		selected_tags = [] if clear_selection else self._get_selected_tags()
+		selected_tags = [] if clear_selection else self.selected_tags
 		self.clb_tags.Clear()
 		for tag, count in sorted(self._current_tags.iteritems()):
 			num = self.clb_tags.Append(
@@ -105,12 +111,14 @@ class MainFrame(_MainFrame):
 		if self._current_info_panel:
 			self._current_info_panel.Show(record_showed)
 
-	def _show_object(self, oid):
-		self._current_obj = self._db.get(oid)
-		self._current_info_panel.update(self._current_obj)
+	def _show_panel(self, oid):
+		if oid is None:
+			if self._current_info_panel:
+				self._current_info_panel.Destroy()
+			self._current_info_panel = None
+			self._current_class = None
+			return
 
-	def _on_class_select(self, evt):
-		oid = evt.GetClientData()
 		next_class = self._db.get(oid)
 		if not self._current_class or self._current_class.oid != oid:
 			if self._current_info_panel:
@@ -124,6 +132,15 @@ class MainFrame(_MainFrame):
 		self.fill_items(next_class)
 		self.fill_tags(True)
 		self._set_buttons_status()
+
+
+	def _show_object(self, oid):
+		self._current_obj = self._db.get(oid)
+		self._current_info_panel.update(self._current_obj)
+
+	def _on_class_select(self, evt):
+		oid = evt.GetClientData()
+		self._show_panel(oid)
 		evt.Skip()
 
 	def _on_item_deselect(self, event):
@@ -162,11 +179,14 @@ class MainFrame(_MainFrame):
 	def _on_menu_categories(self, event):
 		classes_dlg = ClassesDlg(self, self._db)
 		if classes_dlg.ShowModal() == wx.ID_OK:
-			pass
-		classes_dlg.Destroy()
-		self.fill_classes()
+			self.fill_classes()
+			self._show_panel(None)
+			self.list_items.DeleteAllItems()
 
-	def _get_selected_tags(self):
+		classes_dlg.Destroy()
+
+	@property
+	def selected_tags(self):
 		cbl = self.clb_tags
 		checked =  [ cbl.GetClientData(num)
 				for num in xrange(cbl.GetCount())

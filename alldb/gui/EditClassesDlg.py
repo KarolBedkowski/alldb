@@ -12,6 +12,7 @@ __release__		= '2009-12-20'
 import wx
 
 from _EditClassesDlg import _EditClassesDlg
+from EditFieldDlg	import EditFieldDlg
 
 
 class EditClassesDlg(_EditClassesDlg):
@@ -47,6 +48,15 @@ class EditClassesDlg(_EditClassesDlg):
 		for no, (name, ftype, default, options) in enumerate(cls.fields):
 			self.lc_fields.InsertStringItem(no, str(no+1))
 			self.lc_fields.SetStringItem(no, 1, str(name))
+			self.lc_fields.SetStringItem(no, 2, str(ftype))
+			self.lc_fields.SetStringItem(no, 3, str(default))
+			self.lc_fields.SetStringItem(no, 4, str(options))
+		
+		self.lc_fields.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+		self.lc_fields.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+		self.lc_fields.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+		self.lc_fields.SetColumnWidth(3, wx.LIST_AUTOSIZE)
+		self.lc_fields.SetColumnWidth(4, wx.LIST_AUTOSIZE)
 
 	def _on_btn_title_refresh(self, event):
 		if self._cls.fields:
@@ -56,28 +66,27 @@ class EditClassesDlg(_EditClassesDlg):
 		item_idx = self._get_selected_field_idx()
 		if item_idx < 0:
 			return
-		name = self._cls.fields[item_idx][0]
-		dlg = wx.TextEntryDialog(self, _('Field name:'), _('Class edit'), name)
+
+		field = self._cls.fields[item_idx]
+		name = field[0]
+		data = dict(name=name, type=field[1], default=field[2])
+		data['_fields_names'] = [ field[0] for field in self._cls.fields 
+				if field[0] != name]
+		dlg = EditFieldDlg(self, data)
 		if dlg.ShowModal() == wx.ID_OK:
-			name = dlg.GetValue()
-			if name:
-				self._cls.fields[item_idx] = (name, 'str', '', None)
-				self._refresh_list(self._cls)
+			field = (data['name'], data['type'], data['default'], None)
+			self._cls.fields[item_idx] = field
+			self._refresh_list(self._cls)
 		dlg.Destroy()
 
 	def _on_btn_add_field(self, event):
-		dlg = wx.TextEntryDialog(self, _('Field name:'), _('Class edit'), '')
+		data = {}
+		data['_fields_names'] = [ field[0] for field in self._cls.fields ]
+		dlg = EditFieldDlg(self, data)
 		if dlg.ShowModal() == wx.ID_OK:
-			name = dlg.GetValue()
-			if name:
-				if any(( True for field in self._cls.fields if field[0] == name )):
-					dlge = wx.MessageDialog(self, _('Field already exists'), 
-								_('Add field'), wx.OK|wx.ICON_HAND)
-					dlge.ShowModal()
-					dlge.Destroy()
-				else:
-					self._cls.fields.append((name, 'str', '', None))
-					self._refresh_list(self._cls)
+			field = (data['name'], data['type'], data['default'], None)
+			self._cls.fields.append(field)
+			self._refresh_list(self._cls)
 		dlg.Destroy()
 
 	def _on_btn_del_field(self, event): # wxGlade: _EditClassesDlg.<event_handler>

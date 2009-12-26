@@ -91,7 +91,6 @@ class Object(BaseObject):
 			title_expr = re.sub('(%\([\w ]+\))', repl, title_expr)
 			repl = lambda x: ('%%(%s)s ' % x.group(0)[1:].strip())
 			title_expr = re.sub('(%[\w ]+)', repl, title_expr)
-			print title_expr
 			self.title = title_expr % (self.data)
 		if not self.title:
 			self.title = ':'.join(self.data.items()[0])
