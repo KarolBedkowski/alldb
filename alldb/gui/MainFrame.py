@@ -166,6 +166,7 @@ class MainFrame(_MainFrame):
 		self._current_obj = self._current_class.create_object()
 		self._current_info_panel.update(self._current_obj)
 		self._set_buttons_status()
+		self._current_info_panel.set_focus()
 		event.Skip()
 
 	def _on_btn_apply(self, event):

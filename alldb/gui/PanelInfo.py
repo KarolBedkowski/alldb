@@ -20,6 +20,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self._obj = None
 		self._obj_cls = obj_class
 		self._fields = {}
+		self._first_field = None
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 
@@ -48,7 +49,12 @@ class PanelInfo(scrolled.ScrolledPanel):
 		tags = self.tc_tags.GetValue()
 		return data, tags
 
+	def set_focus(self):
+		if self._first_field:
+			self._first_field.SetFocus()
+
 	def _create_fields(self):
+		self._first_field = None
 		grid = wx.FlexGridSizer(len(self._obj_cls.fields), 2, 3, 6)
 		grid.AddGrowableCol(1)
 		for name, ftype, _default, options in self._obj_cls.fields:
@@ -71,6 +77,9 @@ class PanelInfo(scrolled.ScrolledPanel):
 				grid.Add(ctrl, 1, wx.EXPAND)
 			else:
 				grid.Add((1, 1))
+
+			if not self._first_field:
+				self._first_field = ctrl
 
 		grid.Add(wx.StaticText(self, -1, _("Tags:")), 0, wx.ALIGN_CENTER_VERTICAL)
 		self.tc_tags = wx.TextCtrl(self, -1)
