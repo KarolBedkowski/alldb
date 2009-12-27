@@ -15,7 +15,7 @@ import wx
 from alldb.model.db import Db
 
 from _MainFrame import _MainFrame
-from _PanelInfo import PanelInfo
+from PanelInfo import PanelInfo
 from ClassesDlg import ClassesDlg
 
 class MainFrame(_MainFrame):
