@@ -51,6 +51,23 @@ class ObjectClass(BaseObject):
 	def objects(self):
 		return self._context.get_objects_by_index(self.objects_index)
 
+	def filter_objects(self, name_filter, tags):
+		items = self.objects
+		if name_filter:
+			items = [ item for item in items if item.title.find(name_filter) > -1 ]
+
+		if tags:
+			items = [ item for item in items if item.has_tags(tags) ]
+
+		return items
+
+	def get_all_items_tags(self):
+		tags = {}
+		for item in self.objects:
+			for tag in item.tags:
+				tags[tag] = tags.get(tag, 0) + 1
+		return tags
+
 	def _before_save(self):
 		self.objects_index = self._objects_index.oid
 		self.indexes_oid = [ idx.oid for idx in self._indexes ]

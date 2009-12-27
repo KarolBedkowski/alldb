@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
+Główne okno programu
 """
 
 __author__		= 'Karol Będkowski'
@@ -14,24 +15,24 @@ import wx
 
 from alldb.model.db import Db
 
-from _MainFrame import _MainFrame
-from PanelInfo import PanelInfo
-from ClassesDlg import ClassesDlg
+from ._MainFrame import _MainFrame
+from .PanelInfo import PanelInfo
+from .ClassesDlg import ClassesDlg
 
 class MainFrame(_MainFrame):
+	''' Klasa głównego okna programu'''	
 	def __init__(self):
 		_MainFrame.__init__(self, None, -1)
-		self.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_ACTIVEBORDER))
+		self.SetBackgroundColour(wx.SystemSettings.GetColour(
+			wx.SYS_COLOUR_ACTIVEBORDER))
 		self.window_1.SetSashPosition(200)
 
 		self._db = Db('test.db')
 		self._current_class = None
 		self._current_obj = None
 		self._current_info_panel = None
-		self._current_items = []
 		self._current_tags = {}
 
-		fclass_oid = self.fill_classes()
 		self.list_items.InsertColumn(0, _('No'), wx.LIST_FORMAT_RIGHT, 40)
 		self.list_items.InsertColumn(1, _('Title'))
 
@@ -42,12 +43,15 @@ class MainFrame(_MainFrame):
 		self.Bind(wx.EVT_TEXT, self._on_search, self.searchbox)
 		self.Bind(wx.EVT_CHECKLISTBOX, self._on_clb_tags, self.clb_tags)
 
-		self.choice_klasa.SetSelection(0)
+		fclass_oid = self._fill_classes()
 		if fclass_oid is not None:
-			self._show_panel(fclass_oid)
-			self.fill_items()
+			self.choice_klasa.SetSelection(0)
+			self._show_class(fclass_oid)
 
-	def fill_classes(self, select=None):
+	def _fill_classes(self, select=None):
+		''' wczytenie listy klas i wypełnienie choicebox-a 
+			@select - oid klasy do zaznaczenia lib None
+		'''
 		cls2select = None
 		self.choice_klasa.Clear()
 		classes = self._db.classes
@@ -62,34 +66,47 @@ class MainFrame(_MainFrame):
 
 		return classes[0].oid if classes else None
 
-	def fill_items(self, cls=None, select=None):
+	def _create_info_panel(self, cls):
+		''' utworzenie panela z polami dla podanej klasy '''
+		if self._current_info_panel:
+			self._current_info_panel.Destroy()
+		panel = PanelInfo(self.panel_info, cls)
+		panel_info_sizer = self.panel_info.GetSizer()
+		panel_info_sizer.Add(panel, 1, wx.EXPAND)
+		panel_info_sizer.Layout()
+		self._current_info_panel = panel
+		return panel
+
+	def _show_class(self, class_oid):
+		''' wyświetlenie klasy - listy tagów i obiektów '''
+		curr_class_oid = (self._current_class.oid if self._current_class 
+				else None)
+		next_class = self._db.get(class_oid)
+		if not curr_class_oid or curr_class_oid != class_oid:
+			self._create_info_panel(next_class)
+			self._current_obj = None
+		self._current_class = next_class
+		self._fill_tags((curr_class_oid != class_oid), reload_tags=True)
+		self._fill_items()
+		self._set_buttons_status()
+
+	def _fill_items(self, select=None):
+		''' wyświetlenie listy elemtów aktualnej klasy, opcjonalne zaznaczenie 
+			jednego '''
+		cls = self._current_class
 		list_items = self.list_items
 		list_items.DeleteAllItems()
-
-		if cls:
-			self._current_items = cls.objects
-		elif not self._current_items:
-			return
-
-		self._current_tags = tags = {}
 		search = self.searchbox.GetValue()
-		items = self._current_items
-		if search:
-			items = [ item for item in items if item.title.find(search) > -1 ]
-
 		selected_tags = self.selected_tags
-		if selected_tags:
-			items = [ item for item in items if item.has_tags(selected_tags) ]
+
+		items = cls.filter_objects(search, selected_tags)
+		items = sorted(items, key=operator.attrgetter('title'))
 
 		item2select = None
-		for num, item in enumerate(sorted(items, key=operator.attrgetter('title'))):
+		for num, item in enumerate(items):
 			list_items.InsertStringItem(num, str(num+1))
 			list_items.SetStringItem(num, 1, str(item.title))
 			list_items.SetItemData(num, item.oid)
-
-			for tag in item.tags:
-				tcounter = tags.get(tag, 0) + 1
-				tags[tag] = tcounter
 
 			if item.oid == select:
 				item2select = num
@@ -104,7 +121,14 @@ class MainFrame(_MainFrame):
 			list_items.SetItemState(item2select, wx.LIST_STATE_SELECTED, 
 				wx.LIST_STATE_SELECTED)
 
-	def fill_tags(self, clear_selection=False):
+	def _fill_tags(self, clear_selection=False, reload_tags=False):
+		''' wczytanie tagów dla wszystkich elementów i wyświetlenie
+			ich na liście.
+			@clear_selection - wyczyszczenie zaznaczonych tagów
+			@reload_tags - ponowne wczytanie tagów
+		'''
+		if reload_tags or self._current_class is None:
+			self._current_tags = self._current_class.get_all_items_tags()
 		selected_tags = [] if clear_selection else self.selected_tags
 		self.clb_tags.Clear()
 		for tag, count in sorted(self._current_tags.iteritems()):
@@ -121,35 +145,13 @@ class MainFrame(_MainFrame):
 		if self._current_info_panel:
 			self._current_info_panel.Show(record_showed)
 
-	def _show_panel(self, oid):
-		if oid is None:
-			if self._current_info_panel:
-				self._current_info_panel.Destroy()
-			self._current_info_panel = None
-			self._current_class = None
-			return
-
-		next_class = self._db.get(oid)
-		if not self._current_class or self._current_class.oid != oid:
-			if self._current_info_panel:
-				self._current_info_panel.Destroy()
-			self._current_info_panel = PanelInfo(self.panel_info, next_class)
-			panel_info_sizer = self.panel_info.GetSizer()
-			panel_info_sizer.Add(self._current_info_panel, 1, wx.EXPAND)
-			panel_info_sizer.Layout()
-			self._current_obj = None
-		self._current_class = next_class
-		self.fill_items(next_class)
-		self.fill_tags(True)
-		self._set_buttons_status()
-
 	def _show_object(self, oid):
 		self._current_obj = self._db.get(oid)
 		self._current_info_panel.update(self._current_obj)
 
 	def _on_class_select(self, evt):
 		oid = evt.GetClientData()
-		self._show_panel(oid)
+		self._show_class(oid)
 		evt.Skip()
 
 	def _on_item_deselect(self, event):
@@ -177,28 +179,28 @@ class MainFrame(_MainFrame):
 		self._current_obj.save()
 		oid = self._current_obj.oid
 		self._db.sync()
-		self.fill_items(self._current_class, select=oid)
-		self.fill_tags()
+		self._fill_tags(reload_tags=True)
+		self._fill_items(select=oid)
 
 	def _on_clb_tags(self, evt):
-		self.fill_items()
+		self._fill_items()
 		evt.Skip()
 
 	def _on_search(self, evt):
-		self.fill_items()
+		self._fill_items()
 
 	def _on_menu_exit(self, event):
 		self.Close()
 		event.Skip()
 
 	def _on_menu_categories(self, event):
-		current_class_oid = self._current_class.oid if self._current_class else None
+		current_class_oid = (self._current_class.oid if 
+				self._current_class else None)
 		classes_dlg = ClassesDlg(self, self._db)
 		classes_dlg.ShowModal()
 		classes_dlg.Destroy()
-		current_class_oid = self.fill_classes(current_class_oid)
-		self._show_panel(current_class_oid)
-		self.fill_items()
+		current_class_oid = self._fill_classes(current_class_oid)
+		self._show_class(current_class_oid)
 
 	@property
 	def selected_tags(self):
