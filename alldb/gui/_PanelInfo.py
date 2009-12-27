@@ -52,7 +52,8 @@ class PanelInfo(scrolled.ScrolledPanel):
 		grid = wx.FlexGridSizer(len(self._obj_cls.fields), 2, 3, 6)
 		grid.AddGrowableCol(1)
 		for name, ftype, _default, options in self._obj_cls.fields:
-			grid.Add(wx.StaticText(self, -1, "%s:" % name), 0, wx.ALIGN_CENTER_VERTICAL)
+			grid.Add(wx.StaticText(self, -1, "%s:" % format_label(name)), 0, 
+					wx.ALIGN_CENTER_VERTICAL)
 			ctrl = None
 			if ftype == 'bool':
 				ctrl = wx.CheckBox(self, -1)
@@ -103,7 +104,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 					time.localtime(self._obj.date_modified))
 		self.lb_created_modified.SetLabel(date_created + ' / ' + date_modified)
 
-	def _fill_fields_clear():
+	def _fill_fields_clear(self):
 		for field, ftype, _default, options in self._fields.itervalues():
 			if field:
 				if ftype == 'bool':
@@ -129,5 +130,11 @@ def strdate2wxdate(strdate):
 def wxdate2strdate(wxdate):
 	return wxdate.Format()
 
+
+def format_label(label):
+	label = label.strip()
+	label = label[0].upper() + label[1:]
+	label.replace('_', ' ')
+	return label
 
 # vim: encoding=utf8: ff=unix:
