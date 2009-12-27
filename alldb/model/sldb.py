@@ -63,7 +63,6 @@ class BaseObject(object):
 	def _after_del(self):		pass
 
 
-
 class SimpleObject(BaseObject):
 	"""docstring for SimpleObject"""
 	def __init__(self, oid=None, cls="_SIM", context=None, **kwarg):
@@ -126,7 +125,9 @@ class SchemaLessDatabase(object):
 				'_SIM': SimpleObject,
 				'_LST': ObjectsList,
 				'_IDX': Index
-		}	
+		}
+
+		self._db = None
 		if filename:
 			self.open(filename)
 		
@@ -134,7 +135,7 @@ class SchemaLessDatabase(object):
 		self.close()
 
 	def __contains__(self, oid):
-		return self._db.has_key(oid)
+		return self._db and self._db.has_key(oid)
 
 	def open(self, filename):
 		if filename:
@@ -151,6 +152,8 @@ class SchemaLessDatabase(object):
 			self._db.close()
 
 	def get(self, oid):
+		if not self._db:
+			return None
 		if isinstance(oid, (list, tuple)):
 			return map(self._get_single_object, oid)
 		return self._get_single_object(oid)
@@ -161,19 +164,21 @@ class SchemaLessDatabase(object):
 			del self._db[oid]
 
 	def delete(self, obj):
-		if obj.oid:
+		if self._db and obj.oid:
 			obj._before_del()
 			self.delitem(obj.oid)
 			obj._after_del()
 
 	def put(self, obj):
+		if not self._db:
+			return
 		if isinstance(obj, (list, tuple)):
 			map(self._put_single_object, obj)
 		else:
 			self._put_single_object(obj)
 
 	def sync(self):
-		self._db.sync()
+		self._db and self._db.sync()
 
 	def register_class(self, cls_name, cls):
 		self._registered_classess[cls_name] = cls
