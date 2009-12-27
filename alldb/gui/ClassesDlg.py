@@ -23,12 +23,12 @@ class ClassesDlg(_ClassesDlg):
 		self._current_cls = None
 
 		self.GetSizer().Add(
-				self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 
+				self.CreateStdDialogButtonSizer(wx.OK), 
 				0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 6)
 
 		self.Fit()
-
 		self.fill_classes()
+		self._set_buttons_state()
 
 	def fill_classes(self):
 		self.lc_classes.DeleteAllItems()
@@ -51,6 +51,12 @@ class ClassesDlg(_ClassesDlg):
 		self.show_class(cls)
 		event.Skip()
 
+	def _on_list_classes_deselect(self, event):
+		self._set_buttons_state()
+
+	def _on_list_classes_selected(self, event):
+		self._set_buttons_state()
+
 	def _on_list_classes_activate(self, event):
 		oid = event.GetData()
 		self._edit_class(oid)
@@ -70,6 +76,11 @@ class ClassesDlg(_ClassesDlg):
 	def _on_btn_delete(self, event): # wxGlade: _ClassesDlg.<event_handler>
 		print "Event handler `_on_btn_delete' not implemented!"
 		event.Skip()
+
+	def _set_buttons_state(self):
+		item_selected = self.lc_classes.GetSelectedItemCount() > 0
+		self.button_edit.Enable(item_selected)
+		self.button_delete.Enable(item_selected)
 
 
 # vim: encoding=utf8: ff=unix:

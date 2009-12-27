@@ -34,6 +34,7 @@ class EditClassesDlg(_EditClassesDlg):
 		self.lc_fields.InsertColumn(4, _('Options'))
 
 		self.show_class(cls)
+		self._set_buttons_status()
 
 		self.Bind(wx.EVT_BUTTON, self._on_ok, id=wx.ID_OK)
 		self.Centre(wx.BOTH)
@@ -61,6 +62,12 @@ class EditClassesDlg(_EditClassesDlg):
 	def _on_btn_title_refresh(self, event):
 		if self._cls.fields:
 			self.tc_title.SetValue('%%%s' % self._cls.fields[0][0])
+
+	def _on_fields_deselected(self, event):
+		self._set_buttons_status()
+
+	def _on_fields_selected(self, event):
+		self._set_buttons_status()
 
 	def _on_fields_activated(self, event): 
 		item_idx = self._get_selected_field_idx()
@@ -147,6 +154,12 @@ class EditClassesDlg(_EditClassesDlg):
 			return -1
 		return self.lc_fields.GetNextItem(-1, wx.LIST_NEXT_ALL, 
 				wx.LIST_STATE_SELECTED)
+
+	def _set_buttons_status(self):
+		selected_item = self.lc_fields.GetSelectedItemCount() > 0
+		self.b_del_field.Enable(selected_item)
+		self.button_up.Enable(selected_item)
+		self.button_down.Enable(selected_item)
 
 
 # vim: encoding=utf8: ff=unix:

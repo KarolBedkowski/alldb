@@ -40,7 +40,6 @@ class MainFrame(_MainFrame):
 		self.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self._on_search, self.searchbox)
 		self.Bind(wx.EVT_TEXT_ENTER, self._on_search, self.searchbox)
 		self.Bind(wx.EVT_TEXT, self._on_search, self.searchbox)
-#		self.Bind(wx.EVT_LISTBOX, self._on_clb_tags, self.clb_tags)
 		self.Bind(wx.EVT_CHECKLISTBOX, self._on_clb_tags, self.clb_tags)
 
 		self.choice_klasa.SetSelection(0)
@@ -48,15 +47,18 @@ class MainFrame(_MainFrame):
 			self._show_panel(fclass_oid)
 			self.fill_items()
 
-	def on_menu_exit(self, event):
-		self.Close()
-		event.Skip()
-
-	def fill_classes(self):
+	def fill_classes(self, select=None):
+		cls2select = None
 		self.choice_klasa.Clear()
 		classes = self._db.classes
 		for cls in classes:
-			self.choice_klasa.Append(cls.name, cls.oid)
+			num = self.choice_klasa.Append(cls.name, cls.oid)
+			if cls.oid == select:
+				cls2select = num
+
+		if cls2select is not None:
+			self.choice_klasa.SetSelection(cls2select)
+			return classes[cls2select].oid
 
 		return classes[0].oid if classes else None
 
@@ -141,7 +143,6 @@ class MainFrame(_MainFrame):
 		self.fill_tags(True)
 		self._set_buttons_status()
 
-
 	def _show_object(self, oid):
 		self._current_obj = self._db.get(oid)
 		self._current_info_panel.update(self._current_obj)
@@ -186,14 +187,18 @@ class MainFrame(_MainFrame):
 	def _on_search(self, evt):
 		self.fill_items()
 
-	def _on_menu_categories(self, event):
-		classes_dlg = ClassesDlg(self, self._db)
-		if classes_dlg.ShowModal() == wx.ID_OK:
-			self.fill_classes()
-			self._show_panel(None)
-			self.list_items.DeleteAllItems()
+	def _on_menu_exit(self, event):
+		self.Close()
+		event.Skip()
 
+	def _on_menu_categories(self, event):
+		current_class_oid = self._current_class.oid if self._current_class else None
+		classes_dlg = ClassesDlg(self, self._db)
+		classes_dlg.ShowModal()
 		classes_dlg.Destroy()
+		current_class_oid = self.fill_classes(current_class_oid)
+		self._show_panel(current_class_oid)
+		self.fill_items()
 
 	@property
 	def selected_tags(self):
