@@ -22,6 +22,7 @@ class ObjectClass(BaseObject):
 		self.indexes_oid = []
 		self.objects_index = None
 		self.title_expr = None
+		self.title_auto = True
 
 		self._indexes = []
 		self._objects_index = Index(name="obj index for " + str(self.name))
@@ -67,6 +68,15 @@ class ObjectClass(BaseObject):
 			for tag in item.tags:
 				tags[tag] = tags.get(tag, 0) + 1
 		return tags
+
+	def gen_auto_title(self):
+		title = ' - '.join([('%'+field[0]) for field in self.fields
+				if field[3] and field[3].get('in_title', False) ])
+		if not title and self.fields:
+			title = '%' + self.fields[0][0]
+		self.title = title or ''
+		return self.title
+
 
 	def _before_save(self):
 		self.objects_index = self._objects_index.oid

@@ -134,7 +134,8 @@ class MainFrame(_MainFrame):
 		for tag, count in sorted(self._current_tags.iteritems()):
 			num = self.clb_tags.Append(
 					_('%(tag)s (%(items)d)') % dict(tag=tag, items=count))
-			self.clb_tags.SetClientData(num, tag)
+			if wx.Platform != '__WXMSW__':
+				self.clb_tags.SetClientData(num, tag)
 			if tag in selected_tags:
 				self.clb_tags.Check(num, True)
 
@@ -205,9 +206,15 @@ class MainFrame(_MainFrame):
 	@property
 	def selected_tags(self):
 		cbl = self.clb_tags
-		checked =  [ cbl.GetClientData(num)
-				for num in xrange(cbl.GetCount())
-				if cbl.IsChecked(num) ]
+		if wx.Platform == '__WXMSW__':
+			checked =  [ cbl.GetString(num)
+					for num in xrange(cbl.GetCount())
+					if cbl.IsChecked(num) ]
+			checked = [ text[:text.rfind(' (')] for text in checked ]
+		else:
+			checked =  [ cbl.GetClientData(num)
+					for num in xrange(cbl.GetCount())
+					if cbl.IsChecked(num) ]
 		return checked
 
 

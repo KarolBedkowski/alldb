@@ -40,6 +40,8 @@ class EditFieldDlg(_EditFieldDlg):
 		data = self._data
 		self.tc_name.SetValue(data.get('name') or '')
 		self.tc_default.SetValue(data.get('default') or '')
+		options = data.get('options') or {}
+		self.cb_show_in_title.SetValue(options.get('in_title', False))
 		
 		ftype = data.get('type') or 'str'
 		radio = self._radios.get(ftype)
@@ -64,6 +66,9 @@ class EditFieldDlg(_EditFieldDlg):
 
 		self._data['name'] = name
 		self._data['default'] = self.tc_default.GetValue()
+		options = self._data.get('options') or {}
+		options['in_title'] = self.cb_show_in_title.IsChecked()
+		self._data['options'] = options
 
 		for ftype, ctrl in self._radios.iteritems():
 			if ctrl.GetValue():
