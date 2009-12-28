@@ -14,6 +14,7 @@ import wx
 import wx.lib.scrolledpanel as scrolled
 
 
+
 class PanelInfo(scrolled.ScrolledPanel):
 	def __init__(self, parent, obj_class, *argv, **kwarg):
 		scrolled.ScrolledPanel.__init__(self, parent, -1, *argv, **kwarg)
@@ -22,10 +23,15 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self._fields = {}
 		self._first_field = None
 
+		self._COLOR_HIGHLIGHT_BG = wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT)
+		self._COLOR_HIGHLIGHT_FG = wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT)
+
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 
+		main_grid.Add(self._create_fields_head(), 0, wx.EXPAND)
 		grid = self._create_fields()
-		main_grid.Add(grid, 1, wx.EXPAND|wx.ALL, 6)
+		main_grid.Add(grid, 0, wx.EXPAND|wx.ALL, 6)
+		main_grid.Add(self._create_fields_tail(), 0, wx.EXPAND)
 
 		self.SetSizer(main_grid)
 		self.SetAutoLayout(1)
@@ -52,6 +58,56 @@ class PanelInfo(scrolled.ScrolledPanel):
 	def set_focus(self):
 		if self._first_field:
 			self._first_field.SetFocus()
+
+	def _create_fields_head(self):
+		panel = wx.Panel(self, -1)
+		panel.SetBackgroundColour(self._COLOR_HIGHLIGHT_BG)
+
+		grid = wx.BoxSizer(wx.HORIZONTAL)
+		label = wx.StaticText(panel, -1, _('Title:'))
+		label.SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
+		font = label.GetFont()
+		font.SetWeight(wx.FONTWEIGHT_BOLD)
+		label.SetFont(font)
+		grid.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
+
+		self.tc_title = wx.StaticText(panel, -1, ' ')
+		self.tc_title.SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
+		grid.Add(self.tc_title, 1, wx.EXPAND|wx.ALL, 6)
+
+		panel.SetSizer(grid)
+		return panel
+
+	def _create_fields_tail(self):
+		panel = wx.Panel(self, -1)
+		panel.SetBackgroundColour(self._COLOR_HIGHLIGHT_BG)
+
+		grid = wx.BoxSizer(wx.HORIZONTAL)
+
+		label = wx.StaticText(panel, -1, _('Created:'))
+		label.SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
+		font = label.GetFont()
+		font.SetWeight(wx.FONTWEIGHT_BOLD)
+		label.SetFont(font)
+		grid.Add(label, 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
+
+		self.lb_created = wx.StaticText(panel, -1, '')
+		self.lb_created.SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
+		grid.Add(self.lb_created, 1, wx.EXPAND|wx.ALL, 6)
+
+		label = wx.StaticText(panel, -1, _('Modified:'))
+		label.SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
+		font = label.GetFont()
+		font.SetWeight(wx.FONTWEIGHT_BOLD)
+		label.SetFont(font)
+		grid.Add(label, 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
+
+		self.lb_modified = wx.StaticText(panel, -1, '      ')
+		self.lb_modified.SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
+		grid.Add(self.lb_modified, 1, wx.EXPAND|wx.ALL, 6)
+
+		panel.SetSizer(grid)
+		return panel
 
 	def _create_fields(self):
 		self._first_field = None
@@ -85,10 +141,6 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self.tc_tags = wx.TextCtrl(self, -1)
 		grid.Add(self.tc_tags, 1, wx.EXPAND)
 
-		grid.Add(wx.StaticText(self, -1, _("C. / M.:")), 0, wx.ALIGN_CENTER_VERTICAL)
-		self.lb_created_modified = wx.StaticText(self, -1, '')
-		grid.Add(self.lb_created_modified, 1, wx.EXPAND)
-
 		return grid
 
 	def _fill_fields_from_obj(self):
@@ -103,15 +155,18 @@ class PanelInfo(scrolled.ScrolledPanel):
 				field.SetValue(date)
 			else:
 				field.SetValue(str(value or ''))
+		self.tc_title.SetLabel(self._obj.title or '')
 		self.tc_tags.SetValue(self._obj.tags_str)
 		date_created, date_modified = '-', '-'
 		if self._obj.date_created:
 			date_created = time.strftime('%x %X',
 					time.localtime(self._obj.date_created))
+		self.lb_created.SetLabel(date_created)
+
 		if self._obj.date_modified:
 			date_modified = time.strftime('%x %X',
 					time.localtime(self._obj.date_modified))
-		self.lb_created_modified.SetLabel(date_created + ' / ' + date_modified)
+		self.lb_modified.SetLabel(date_modified)
 
 	def _fill_fields_clear(self):
 		for field, ftype, _default, options in self._fields.itervalues():
@@ -123,8 +178,10 @@ class PanelInfo(scrolled.ScrolledPanel):
 					field.SetValue(date)
 				else:
 					field.SetValue(str(_default))
+		self.tc_title.SetValue('')
 		self.tc_tags.SetValue('')
-		self.lb_created_modified.SetLabel('')
+		self.lb_modified.SetLabel('')
+		self.lb_created.SetLabel('')
 
 
 def strdate2wxdate(strdate):
