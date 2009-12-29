@@ -12,7 +12,8 @@ __release__		= '2009-12-20'
 import time
 import wx
 import wx.lib.scrolledpanel as scrolled
-
+import wx.gizmos as gizmos
+from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
 
 
 class PanelInfo(scrolled.ScrolledPanel):
@@ -50,6 +51,10 @@ class PanelInfo(scrolled.ScrolledPanel):
 			if field:
 				if ftype == 'date':
 					data[name] = wxdate2strdate(field.GetValue())
+				elif ftype == 'list':
+					data[name] = field.GetStrings()
+				elif ftype == 'choice':
+					data[name] = field.GetStringSelection()
 				else:
 					data[name] = field.GetValue()
 		tags = self.tc_tags.GetValue()
@@ -120,11 +125,18 @@ class PanelInfo(scrolled.ScrolledPanel):
 			if ftype == 'bool':
 				ctrl = wx.CheckBox(self, -1)
 			elif ftype == 'multi':
-				ctrl = wx.TextCtrl(self, -1, 
-						style=wx.TE_MULTILINE|wx.TE_WORDWRAP|wx.HSCROLL)
+				ctrl = ExpandoTextCtrl(self, -1)
+				self.Bind(EVT_ETC_LAYOUT_NEEDED, self._on_expand_text, ctrl)
+				#ctrl = wx.TextCtrl(self, -1, 
+				#		style=wx.TE_MULTILINE|wx.TE_WORDWRAP|wx.HSCROLL)
 			elif ftype == 'date':
 				ctrl = wx.DatePickerCtrl(self, -1, 
 						style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.DP_ALLOWNONE)
+			elif ftype == 'list':
+				ctrl = gizmos.EditableListBox(self, -1)
+			elif ftype == 'choice':
+				values = options.get('values') or []
+				ctrl = wx.Choice(self, -1, choices=values)
 			else:
 				ctrl = wx.TextCtrl(self,  -1)
 			self._fields[name] = (ctrl, ftype, _default, options)
@@ -153,6 +165,13 @@ class PanelInfo(scrolled.ScrolledPanel):
 			elif ftype == 'date':
 				date = strdate2wxdate(value)
 				field.SetValue(date)
+			elif ftype == 'list':
+				field.SetStrings(value)
+			elif ftype == 'choice':
+				if value:
+					field.SetStringSelection(value)
+				else:
+					field.SetSelection(-1)
 			else:
 				field.SetValue(str(value or ''))
 		self.tc_title.SetLabel(self._obj.title or '')
@@ -176,12 +195,24 @@ class PanelInfo(scrolled.ScrolledPanel):
 				elif ftype == 'date':
 					date = strdate2wxdate(_default)
 					field.SetValue(date)
+				elif ftype == 'list':
+					field.SetStrings([_default])
+				elif ftype == 'choice':
+					if _default:
+						field.SetStringSelection(_default)
+					else:
+						field.SetSelection(-1)
 				else:
 					field.SetValue(str(_default))
 		self.tc_title.SetValue('')
 		self.tc_tags.SetValue('')
 		self.lb_modified.SetLabel('')
 		self.lb_created.SetLabel('')
+
+	def _on_expand_text(self, evt):
+		self.Layout()
+		self.GetParent().Refresh()
+		self.SetupScrolling()
 
 
 def strdate2wxdate(strdate):

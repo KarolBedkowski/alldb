@@ -28,21 +28,20 @@ class MainFrame(_MainFrame):
 		self.window_1.SetSashPosition(200)
 
 		self._db = Db('test.db')
-		self._current_class = None
-		self._current_obj = None
-		self._current_info_panel = None
-		self._current_tags = {}
+		self._curr_class = None
+		self._curr_obj = None
+		self._curr_info_panel = None
+		self._curr_tags = {}
 
 		self.list_items.InsertColumn(0, _('No'), wx.LIST_FORMAT_RIGHT, 40)
 		self.list_items.InsertColumn(1, _('Title'))
-
-		self._set_buttons_status()
 
 		self.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self._on_search, self.searchbox)
 		self.Bind(wx.EVT_TEXT_ENTER, self._on_search, self.searchbox)
 		self.Bind(wx.EVT_TEXT, self._on_search, self.searchbox)
 		self.Bind(wx.EVT_CHECKLISTBOX, self._on_clb_tags, self.clb_tags)
 
+		self._set_buttons_status()
 		fclass_oid = self._fill_classes()
 		if fclass_oid is not None:
 			self.choice_klasa.SetSelection(0)
@@ -52,8 +51,8 @@ class MainFrame(_MainFrame):
 		''' wczytenie listy klas i wypełnienie choicebox-a 
 			@select - oid klasy do zaznaczenia lib None
 		'''
-		cls2select = None
 		self.choice_klasa.Clear()
+		cls2select = None
 		classes = self._db.classes
 		for cls in classes:
 			num = self.choice_klasa.Append(cls.name, cls.oid)
@@ -68,24 +67,24 @@ class MainFrame(_MainFrame):
 
 	def _create_info_panel(self, cls):
 		''' utworzenie panela z polami dla podanej klasy '''
-		if self._current_info_panel:
-			self._current_info_panel.Destroy()
+		if self._curr_info_panel:
+			self._curr_info_panel.Destroy()
 		panel = PanelInfo(self.panel_info, cls)
 		panel_info_sizer = self.panel_info.GetSizer()
 		panel_info_sizer.Add(panel, 1, wx.EXPAND)
 		panel_info_sizer.Layout()
-		self._current_info_panel = panel
+		self._curr_info_panel = panel
 		return panel
 
 	def _show_class(self, class_oid):
 		''' wyświetlenie klasy - listy tagów i obiektów '''
-		curr_class_oid = (self._current_class.oid if self._current_class 
+		curr_class_oid = (self._curr_class.oid if self._curr_class
 				else None)
 		next_class = self._db.get(class_oid)
 		if not curr_class_oid or curr_class_oid != class_oid:
 			self._create_info_panel(next_class)
-			self._current_obj = None
-		self._current_class = next_class
+			self._curr_obj = None
+		self._curr_class = next_class
 		self._fill_tags((curr_class_oid != class_oid), reload_tags=True)
 		self._fill_items()
 		self._set_buttons_status()
@@ -93,7 +92,7 @@ class MainFrame(_MainFrame):
 	def _fill_items(self, select=None):
 		''' wyświetlenie listy elemtów aktualnej klasy, opcjonalne zaznaczenie 
 			jednego '''
-		cls = self._current_class
+		cls = self._curr_class
 		list_items = self.list_items
 		list_items.DeleteAllItems()
 		search = self.searchbox.GetValue()
@@ -127,11 +126,11 @@ class MainFrame(_MainFrame):
 			@clear_selection - wyczyszczenie zaznaczonych tagów
 			@reload_tags - ponowne wczytanie tagów
 		'''
-		if reload_tags or self._current_class is None:
-			self._current_tags = self._current_class.get_all_items_tags()
+		if reload_tags or self._curr_class is None:
+			self._curr_tags = self._curr_class.get_all_items_tags()
 		selected_tags = [] if clear_selection else self.selected_tags
 		self.clb_tags.Clear()
-		for tag, count in sorted(self._current_tags.iteritems()):
+		for tag, count in sorted(self._curr_tags.iteritems()):
 			num = self.clb_tags.Append(
 					_('%(tag)s (%(items)d)') % dict(tag=tag, items=count))
 			if wx.Platform != '__WXMSW__':
@@ -140,15 +139,11 @@ class MainFrame(_MainFrame):
 				self.clb_tags.Check(num, True)
 
 	def _set_buttons_status(self):
-		record_showed = self._current_obj is not None
+		record_showed = self._curr_obj is not None
 		self.button_apply.Enable(record_showed)
-		self.button_new_item.Enable(self._current_class is not None)
-		if self._current_info_panel:
-			self._current_info_panel.Show(record_showed)
-
-	def _show_object(self, oid):
-		self._current_obj = self._db.get(oid)
-		self._current_info_panel.update(self._current_obj)
+		self.button_new_item.Enable(self._curr_class is not None)
+		if self._curr_info_panel:
+			self._curr_info_panel.Show(record_showed)
 
 	def _on_class_select(self, evt):
 		oid = evt.GetClientData()
@@ -157,28 +152,30 @@ class MainFrame(_MainFrame):
 
 	def _on_item_deselect(self, event):
 		if self.list_items.GetSelectedItemCount() == 0:
-			self._current_obj = None
+			self._curr_obj = None
 			self._set_buttons_status()
 
 	def _on_item_select(self, evt):
 		oid = evt.GetData()
-		self._show_object(oid)
+		self._curr_obj = self._db.get(oid)
+		self._curr_info_panel.update(self._curr_obj)
 		self._set_buttons_status()
 		evt.Skip()
 
 	def _on_btn_new(self, event): 
-		self._current_obj = self._current_class.create_object()
-		self._current_info_panel.update(self._current_obj)
+		self._curr_obj = self._curr_class.create_object()
+		self._curr_info_panel.update(self._curr_obj)
 		self._set_buttons_status()
-		self._current_info_panel.set_focus()
+		self._curr_info_panel.set_focus()
 		event.Skip()
 
 	def _on_btn_apply(self, event):
-		data, tags = self._current_info_panel.get_values()
-		self._current_obj.data.update(data)
-		self._current_obj.set_tags(tags)
-		self._current_obj.save()
-		oid = self._current_obj.oid
+		data, tags = self._curr_info_panel.get_values()
+		curr_obj = self._curr_obj
+		curr_obj.data.update(data)
+		curr_obj.set_tags(tags)
+		curr_obj.save()
+		oid = curr_obj.oid
 		self._db.sync()
 		self._fill_tags(reload_tags=True)
 		self._fill_items(select=oid)
@@ -195,11 +192,14 @@ class MainFrame(_MainFrame):
 		event.Skip()
 
 	def _on_menu_categories(self, event):
-		current_class_oid = (self._current_class.oid if 
-				self._current_class else None)
-		classes_dlg = ClassesDlg(self, self._db)
-		classes_dlg.ShowModal()
-		classes_dlg.Destroy()
+		current_class_oid = (self._curr_class.oid if self._curr_class else None)
+		dlg = ClassesDlg(self, self._db)
+		dlg.ShowModal()
+		dlg.Destroy()
+		if self._curr_info_panel:
+			self._curr_info_panel.Destroy()
+			self._curr_info_panel = None
+		self._curr_class = None
 		current_class_oid = self._fill_classes(current_class_oid)
 		self._show_class(current_class_oid)
 

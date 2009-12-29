@@ -11,19 +11,24 @@ __release__		= '2009-12-20'
 
 import wx
 
-
-from _EditFieldDlg import _EditFieldDlg
+from ._EditFieldDlg import _EditFieldDlg
+from .DlgEditValues import DlgEditValues
 
 class EditFieldDlg(_EditFieldDlg):
 	def __init__(self, parent, data):
 		_EditFieldDlg.__init__(self, parent, -1)
 
+		if not data.get('options'):
+			data['options'] = {}
 		self._data = data
+
 		self._radios = {
-			'str':	self.rb_type_text,
-			'bool':	self.rb_type_checkbox,
-			'date':	self.rb_type_date,
-			'multi':	self.rb_type_multiline
+			'str':		self.rb_type_text,
+			'bool':		self.rb_type_checkbox,
+			'date':		self.rb_type_date,
+			'multi':	self.rb_type_multiline,
+			'list':		self.rb_type_list,
+			'choice':	self.rb_type_choice,
 		}
 
 		self.GetSizer().Add(
@@ -77,6 +82,17 @@ class EditFieldDlg(_EditFieldDlg):
 
 		self.EndModal(wx.ID_OK)
 
+	def _on_rb_type_choice(self, event):
+		type_choice = self.rb_type_choice.GetValue()
+		self.btn_values.Enable(type_choice)
+
+	def _on_btn_values(self, event):
+		values = self._data['options'].get('values')
+		data = dict(values=values)
+		dlg = DlgEditValues(self, data)
+		if dlg.ShowModal() == wx.ID_OK:
+			self._data['options']['values'] = data['values']
+		dlg.Destroy()
 
 
 

@@ -70,13 +70,13 @@ class ObjectClass(BaseObject):
 		return tags
 
 	def gen_auto_title(self):
-		title = ' - '.join([('%'+field[0]) for field in self.fields
+		title = ' - '.join([('%%(%s)'%field[0])
+				for field in self.fields
 				if field[3] and field[3].get('in_title', False) ])
 		if not title and self.fields:
-			title = '%' + self.fields[0][0]
+			title = '%%(%s)' % self.fields[0][0]
 		self.title = title or ''
 		return self.title
-
 
 	def _before_save(self):
 		self.objects_index = self._objects_index.oid
@@ -93,7 +93,6 @@ class ObjectClass(BaseObject):
 		class_index = self._context.classes_index
 		class_index.update(self.oid, self.name)
 		class_index.save()
-
 
 
 class Object(BaseObject):
