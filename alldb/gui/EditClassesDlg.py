@@ -11,8 +11,8 @@ __release__		= '2009-12-20'
 
 import wx
 
-from _EditClassesDlg import _EditClassesDlg
-from EditFieldDlg	import EditFieldDlg
+from ._EditClassesDlg import _EditClassesDlg
+from .EditFieldDlg	import EditFieldDlg
 
 
 class EditClassesDlg(_EditClassesDlg):
@@ -22,16 +22,17 @@ class EditClassesDlg(_EditClassesDlg):
 		self._cls_names = cls_names
 
 		self.GetSizer().Add(
-				self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL), 
+				self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL),
 				0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 6)
 
 		self.Fit()
 
-		self.lc_fields.InsertColumn(0, _('No'))
-		self.lc_fields.InsertColumn(1, _('Name'))
-		self.lc_fields.InsertColumn(2, _('Type'))
-		self.lc_fields.InsertColumn(3, _('Default value'))
-		self.lc_fields.InsertColumn(4, _('Options'))
+		lc_fields = self.lc_fields
+		lc_fields.InsertColumn(0, _('No'))
+		lc_fields.InsertColumn(1, _('Name'))
+		lc_fields.InsertColumn(2, _('Type'))
+		lc_fields.InsertColumn(3, _('Default value'))
+		lc_fields.InsertColumn(4, _('Options'))
 
 		self.show_class(cls)
 		self._set_buttons_status()
@@ -53,21 +54,22 @@ class EditClassesDlg(_EditClassesDlg):
 		self.tc_title.Enable(not cls.title_auto)
 
 	def _refresh_list(self, cls):
-		self.lc_fields.DeleteAllItems()
+		lc_fields = self.lc_fields
+		lc_fields.DeleteAllItems()
 		for no, (name, ftype, default, options) in enumerate(cls.fields):
-			self.lc_fields.InsertStringItem(no, str(no+1))
-			self.lc_fields.SetStringItem(no, 1, str(name))
-			self.lc_fields.SetStringItem(no, 2, str(ftype))
-			self.lc_fields.SetStringItem(no, 3, str(default))
+			lc_fields.InsertStringItem(no, str(no+1))
+			lc_fields.SetStringItem(no, 1, str(name))
+			lc_fields.SetStringItem(no, 2, str(ftype))
+			lc_fields.SetStringItem(no, 3, str(default))
 			if options:
-				opt_str = ', '.join((('%s:%s' % item) for item in options.iteritems()))
-				self.lc_fields.SetStringItem(no, 4, opt_str)
-		
-		self.lc_fields.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-		self.lc_fields.SetColumnWidth(1, wx.LIST_AUTOSIZE)
-		self.lc_fields.SetColumnWidth(2, wx.LIST_AUTOSIZE)
-		self.lc_fields.SetColumnWidth(3, wx.LIST_AUTOSIZE)
-		self.lc_fields.SetColumnWidth(4, wx.LIST_AUTOSIZE)
+				opt_str = _options2string(options)
+				lc_fields.SetStringItem(no, 4, opt_str)
+
+		lc_fields.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+		lc_fields.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+		lc_fields.SetColumnWidth(2, wx.LIST_AUTOSIZE)
+		lc_fields.SetColumnWidth(3, wx.LIST_AUTOSIZE)
+		lc_fields.SetColumnWidth(4, wx.LIST_AUTOSIZE)
 
 	def _on_btn_title_refresh(self, event):
 		if self._cls.fields:
@@ -86,7 +88,7 @@ class EditClassesDlg(_EditClassesDlg):
 	def _on_fields_selected(self, event):
 		self._set_buttons_status()
 
-	def _on_fields_activated(self, event): 
+	def _on_fields_activated(self, event):
 		item_idx = self._get_selected_field_idx()
 		if item_idx < 0:
 			return
@@ -94,7 +96,7 @@ class EditClassesDlg(_EditClassesDlg):
 		field = self._cls.fields[item_idx]
 		name = field[0]
 		data = dict(name=name, type=field[1], default=field[2], options=field[3])
-		data['_fields_names'] = [ field[0] for field in self._cls.fields 
+		data['_fields_names'] = [ field[0] for field in self._cls.fields
 				if field[0] != name]
 		dlg = EditFieldDlg(self, data)
 		if dlg.ShowModal() == wx.ID_OK:
@@ -115,11 +117,11 @@ class EditClassesDlg(_EditClassesDlg):
 			self._on_title_auto(None)
 		dlg.Destroy()
 
-	def _on_btn_del_field(self, event): # wxGlade: _EditClassesDlg.<event_handler>
+	def _on_btn_del_field(self, event):
 		item_idx = self._get_selected_field_idx()
 		if item_idx < 1:
-			return 
-		dlg = wx.MessageDialog(self, _('Delete field?'), _('Class'), 
+			return
+		dlg = wx.MessageDialog(self, _('Delete field?'), _('Class'),
 				wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT)
 		if dlg.ShowModal() == wx.ID_YES:
 			self._cls.fields.pop(item_idx)
@@ -127,25 +129,25 @@ class EditClassesDlg(_EditClassesDlg):
 			self._on_title_auto(None)
 		dlg.Destroy()
 
-	def _on_button_up(self, event): # wxGlade: _EditClassesDlg.<event_handler>
+	def _on_button_up(self, event):
 		item_idx = self._get_selected_field_idx()
 		if item_idx < 1:
-			return 
+			return
 		fields = self._cls.fields
 		fields[item_idx], fields[item_idx-1] = fields[item_idx-1], fields[item_idx]
 		self._refresh_list(self._cls)
-		self.lc_fields.SetItemState(item_idx-1, wx.LIST_STATE_SELECTED, 
+		self.lc_fields.SetItemState(item_idx-1, wx.LIST_STATE_SELECTED,
 				wx.LIST_STATE_SELECTED)
 		self._on_title_auto(None)
 
 	def _on_button_down(self, event): # wxGlade: _EditClassesDlg.<event_handler>
 		item_idx = self._get_selected_field_idx()
 		if item_idx < 0 or item_idx == self.lc_fields.GetItemCount() - 1:
-			return 
+			return
 		fields = self._cls.fields
 		fields[item_idx], fields[item_idx+1] = fields[item_idx+1], fields[item_idx]
 		self._refresh_list(self._cls)
-		self.lc_fields.SetItemState(item_idx+1, wx.LIST_STATE_SELECTED, 
+		self.lc_fields.SetItemState(item_idx+1, wx.LIST_STATE_SELECTED,
 				wx.LIST_STATE_SELECTED)
 		self._on_title_auto(None)
 
@@ -174,7 +176,7 @@ class EditClassesDlg(_EditClassesDlg):
 	def _get_selected_field_idx(self):
 		if self.lc_fields.GetSelectedItemCount() == 0:
 			return -1
-		return self.lc_fields.GetNextItem(-1, wx.LIST_NEXT_ALL, 
+		return self.lc_fields.GetNextItem(-1, wx.LIST_NEXT_ALL,
 				wx.LIST_STATE_SELECTED)
 
 	def _set_buttons_status(self):
@@ -182,6 +184,14 @@ class EditClassesDlg(_EditClassesDlg):
 		self.b_del_field.Enable(selected_item)
 		self.button_up.Enable(selected_item)
 		self.button_down.Enable(selected_item)
+
+
+def _options2string(options):
+	result = []
+	if options.get('in_menu'):
+		result.append(_('In menu'))
+
+	return ', '.join(result)
 
 
 # vim: encoding=utf8: ff=unix:
