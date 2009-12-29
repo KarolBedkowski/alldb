@@ -24,8 +24,10 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self._fields = {}
 		self._first_field = None
 
-		self._COLOR_HIGHLIGHT_BG = wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT)
-		self._COLOR_HIGHLIGHT_FG = wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHTTEXT)
+		self._COLOR_HIGHLIGHT_BG = wx.SystemSettings.GetColour(
+				wx.SYS_COLOUR_HIGHLIGHT)
+		self._COLOR_HIGHLIGHT_FG = wx.SystemSettings.GetColour(
+				wx.SYS_COLOUR_HIGHLIGHTTEXT)
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 
@@ -50,13 +52,14 @@ class PanelInfo(scrolled.ScrolledPanel):
 		for name, (field, ftype, _default, options) in self._fields.iteritems():
 			if field:
 				if ftype == 'date':
-					data[name] = wxdate2strdate(field.GetValue())
+					value = wxdate2strdate(field.GetValue())
 				elif ftype == 'list':
-					data[name] = field.GetStrings()
+					value = field.GetStrings()
 				elif ftype == 'choice':
-					data[name] = field.GetStringSelection()
+					value = field.GetStringSelection()
 				else:
-					data[name] = field.GetValue()
+					value = field.GetValue()
+				data[name] = value
 		tags = self.tc_tags.GetValue()
 		return data, tags
 
@@ -127,8 +130,6 @@ class PanelInfo(scrolled.ScrolledPanel):
 			elif ftype == 'multi':
 				ctrl = ExpandoTextCtrl(self, -1)
 				self.Bind(EVT_ETC_LAYOUT_NEEDED, self._on_expand_text, ctrl)
-				#ctrl = wx.TextCtrl(self, -1, 
-				#		style=wx.TE_MULTILINE|wx.TE_WORDWRAP|wx.HSCROLL)
 			elif ftype == 'date':
 				ctrl = wx.DatePickerCtrl(self, -1, 
 						style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.DP_ALLOWNONE)
