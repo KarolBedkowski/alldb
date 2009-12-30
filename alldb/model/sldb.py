@@ -8,6 +8,7 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2009'
 __version__		= '0.1'
 __release__		= '2009-12-17'
 
+from itertools import imap
 
 from UserList import UserList
 from UserDict import IterableUserDict
@@ -155,7 +156,9 @@ class SchemaLessDatabase(object):
 		if not self._db:
 			return None
 		if isinstance(oid, (list, tuple)):
-			return map(self._get_single_object, oid)
+			return [ obj 
+					for obj in imap(self._get_single_object, oid)
+					if obj ]
 		return self._get_single_object(oid)
 
 	def delitem(self, oid):

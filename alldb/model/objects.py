@@ -129,8 +129,15 @@ class Object(BaseObject):
 		if not self.title:
 			self.title = ':'.join(self.data.items()[0])
 
+		if self._cls_objects_index is None:
+			cls = self._context.get(self.ocls)
+			self._cls_objects_index = cls._objects_index
+		self._cls_objects_index.update(self.oid, self.title)
+
+	def _before_delete(self):
 		if self._cls_objects_index is not None:
-			self._cls_objects_index.update(self.oid, self.title)
+			self._cls_objects_index.del_item(self.oid)
+			self._cls_objects_index.save()
 
 	def set_tags(self, tagstr):
 		if tagstr.strip():
@@ -147,6 +154,17 @@ class Object(BaseObject):
 	@property
 	def tags_str(self):
 		return ', '.join(self.tags)
+
+	def duplicate(self):
+		newobj = self.__class__(ocls=self.ocls, context=self._context)
+		newobj.title = self.title
+		newobj.data = self.data.copy()
+		newobj._cls_objects_index = self._cls_objects_index
+		newobj._cls_indexes = self._cls_indexes
+		newobj.tags = list(self.tags)
+		newobj.date_created = None
+		newobj.date_modified = None
+		return newobj
 
 
 

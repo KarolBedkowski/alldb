@@ -92,27 +92,22 @@ class PanelInfo(scrolled.ScrolledPanel):
 
 		grid = wx.BoxSizer(wx.HORIZONTAL)
 
-		label = wx.StaticText(panel, -1, _('Created:'))
-		label.SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
-		font = label.GetFont()
-		font.SetWeight(wx.FONTWEIGHT_BOLD)
-		label.SetFont(font)
-		grid.Add(label, 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
+		def create(label):
+			label = wx.StaticText(panel, -1, label)
+			label.SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
+			font = label.GetFont()
+			font.SetWeight(wx.FONTWEIGHT_BOLD)
+			label.SetFont(font)
+			grid.Add(label, 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
+	
+			field = wx.StaticText(panel, -1, '          ')
+			field .SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
+			grid.Add(field, 1, wx.EXPAND|wx.ALL, 6)
+			return field
 
-		self.lb_created = wx.StaticText(panel, -1, '')
-		self.lb_created.SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
-		grid.Add(self.lb_created, 1, wx.EXPAND|wx.ALL, 6)
-
-		label = wx.StaticText(panel, -1, _('Modified:'))
-		label.SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
-		font = label.GetFont()
-		font.SetWeight(wx.FONTWEIGHT_BOLD)
-		label.SetFont(font)
-		grid.Add(label, 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
-
-		self.lb_modified = wx.StaticText(panel, -1, '      ')
-		self.lb_modified.SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
-		grid.Add(self.lb_modified, 1, wx.EXPAND|wx.ALL, 6)
+		self.lb_created = create(_('Created:'))
+		self.lb_modified = create(_('Modified:'))
+		self.lb_id = create(_('ID:'))
 
 		panel.SetSizer(grid)
 		return panel
@@ -122,7 +117,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		grid = wx.FlexGridSizer(len(self._obj_cls.fields), 2, 3, 6)
 		grid.AddGrowableCol(1)
 		for name, ftype, _default, options in self._obj_cls.fields:
-			grid.Add(wx.StaticText(self, -1, "%s:" % format_label(name)), 0, 
+			grid.Add(wx.StaticText(self, -1, "%s:" % format_label(name)), 0,
 					wx.ALIGN_CENTER_VERTICAL)
 			ctrl = None
 			if ftype == 'bool':
@@ -131,7 +126,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 				ctrl = ExpandoTextCtrl(self, -1)
 				self.Bind(EVT_ETC_LAYOUT_NEEDED, self._on_expand_text, ctrl)
 			elif ftype == 'date':
-				ctrl = wx.DatePickerCtrl(self, -1, 
+				ctrl = wx.DatePickerCtrl(self, -1,
 						style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.DP_ALLOWNONE)
 			elif ftype == 'list':
 				ctrl = gizmos.EditableListBox(self, -1)
@@ -151,10 +146,23 @@ class PanelInfo(scrolled.ScrolledPanel):
 				self._first_field = ctrl
 
 		grid.Add(wx.StaticText(self, -1, _("Tags:")), 0, wx.ALIGN_CENTER_VERTICAL)
-		self.tc_tags = wx.TextCtrl(self, -1)
-		grid.Add(self.tc_tags, 1, wx.EXPAND)
+		grid.Add(self._create_fields_tag(self), 1, wx.EXPAND)
 
 		return grid
+
+	def _create_fields_tag(self, parent):
+		box = wx.BoxSizer(wx.HORIZONTAL)
+		self.tc_tags = wx.TextCtrl(parent, -1)
+		box.Add(self.tc_tags, 1, wx.EXPAND)
+
+		box.Add((6, 6))
+
+		btn_choice_tags = wx.Button(parent, -1, _('Select'))
+		box.Add(btn_choice_tags)
+
+		self.Bind(wx.EVT_BUTTON, self._on_btn_choice_tags, btn_choice_tags)
+
+		return box
 
 	def _fill_fields_from_obj(self):
 		for name, (field, ftype, _default, options) in self._fields.iteritems():
@@ -187,6 +195,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 			date_modified = time.strftime('%x %X',
 					time.localtime(self._obj.date_modified))
 		self.lb_modified.SetLabel(date_modified)
+		self.lb_id.SetLabel(str(self._obj.oid or _("new")))
 
 	def _fill_fields_clear(self):
 		for field, ftype, _default, options in self._fields.itervalues():
@@ -209,25 +218,47 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self.tc_tags.SetValue('')
 		self.lb_modified.SetLabel('')
 		self.lb_created.SetLabel('')
+		self.lb_id.SetLabel('')
 
 	def _on_expand_text(self, evt):
 		self.Layout()
 		self.GetParent().Refresh()
 		self.SetupScrolling()
 
+	def _on_btn_choice_tags(self, evt):
+		cls_tags = self._obj_cls.get_all_items_tags()
+		item_tags_str = self.tc_tags.GetValue()
+		item_tags = []
+		if item_tags_str:
+			item_tags = [ t.strip() for t in item_tags_str.split(',') ]
+		if item_tags:
+			for tag in item_tags:
+				cls_tags[tag] = None
+		if cls_tags:
+			tag_list = sorted(cls_tags.iterkeys())
+			dlg = wx.MultiChoiceDialog(self, _("Select tags"),
+					_("Tags"), tag_list)
+			selected = [ idx for idx, key in enumerate(tag_list)
+					if key in item_tags ]
+			dlg.SetSelections(selected)
+			if dlg.ShowModal() == wx.ID_OK:
+				selections = dlg.GetSelections()
+				tags = ', '.join((tag_list[idx] for idx in selections))
+				self.tc_tags.SetValue(tags)
+			dlg.Destroy()
+
 
 def strdate2wxdate(strdate):
 	date = wx.DateTime()
-	try:
-		date.ParseDate(strdate)
-	except Exception, err:
-		print err
+	if strdate:
+		try:
+			date.ParseDate(strdate)
+		except Exception, err:
+			print err
 	return date
 
-
 def wxdate2strdate(wxdate):
-	return wxdate.Format()
-
+	return wxdate.Format() if wxdate else None
 
 def format_label(label):
 	label = label.strip()

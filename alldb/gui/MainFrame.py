@@ -191,6 +191,29 @@ class MainFrame(_MainFrame):
 		self.Close()
 		event.Skip()
 
+	def _on_menu_item_new(self, event):
+		if self._curr_class:
+			self._on_btn_new(event)
+
+	def _on_menu_item_delete(self, event):
+		if self._curr_obj:
+			dlg = wx.MessageDialog(self, _('Delete current object?'),
+					_('Delete'), wx.YES_NO|wx.NO_DEFAULT|wx.ICON_HAND)
+			if dlg.ShowModal() == wx.ID_YES:
+				self._db.delete(self._curr_obj)
+				self._db.sync()
+				self._curr_obj = None
+				self._fill_tags(reload_tags=True)
+				self._fill_items()
+			dlg.Destroy()
+
+	def _on_menu_item_duplicate(self, event):
+		if self._curr_obj:
+			self._curr_obj = self._curr_obj.duplicate()
+			self._curr_info_panel.update(self._curr_obj)
+			self._set_buttons_status()
+			self._curr_info_panel.set_focus()
+
 	def _on_menu_categories(self, event):
 		current_class_oid = (self._curr_class.oid if self._curr_class else None)
 		dlg = ClassesDlg(self, self._db)

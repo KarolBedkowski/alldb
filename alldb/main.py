@@ -21,7 +21,7 @@ def run():
 	try:
 		locale.setlocale(locale.LC_ALL, "")
 	except locale.Error, e:
-		pass
+		print e
 
 	app = wx.PySimpleApp(0)
 	wx.InitAllImageHandlers()
