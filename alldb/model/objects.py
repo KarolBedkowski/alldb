@@ -140,10 +140,7 @@ class Object(BaseObject):
 			self._cls_objects_index.save()
 
 	def set_tags(self, tagstr):
-		if tagstr.strip():
-			self.tags = sorted(( tag.strip() for tag in tagstr.split(',') ))
-		else:
-			self.tags = []
+		self.tags = tags2str(tagstr)
 
 	def has_tags(self, taglist):
 		for tag in taglist:
@@ -171,8 +168,14 @@ class Object(BaseObject):
 			if self.data.get(key) != val:
 				return True
 
-		tags = tags or []
-		return self.tags != tags
+		return self.tags != tags2str(tags)
+
+
+def tags2str(tagstr):
+	tagstr = tagstr.strip() if tagstr else ''
+	if tagstr:
+		return sorted(( tag.strip() for tag in tagstr.split(',') ))
+	return []
 
 
 
