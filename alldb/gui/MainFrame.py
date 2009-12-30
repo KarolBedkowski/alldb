@@ -80,6 +80,7 @@ class MainFrame(_MainFrame):
 		''' wyświetlenie klasy - listy tagów i obiektów '''
 		curr_class_oid = (self._curr_class.oid if self._curr_class
 				else None)
+
 		next_class = self._db.get(class_oid)
 		if not curr_class_oid or curr_class_oid != class_oid:
 			self._create_info_panel(next_class)
@@ -139,30 +140,56 @@ class MainFrame(_MainFrame):
 				self.clb_tags.Check(num, True)
 
 	def _set_buttons_status(self):
-		record_showed = self._curr_obj is not None
+		record_showed =  self.list_items.GetSelectedItemCount() > 0
 		self.button_apply.Enable(record_showed)
 		self.button_new_item.Enable(self._curr_class is not None)
 		if self._curr_info_panel:
 			self._curr_info_panel.Show(record_showed)
 
+	def _save_object(self, ask_for_save=False, update_lists=True, select=None):
+		if not self._curr_obj:
+			return
+		data, tags = self._curr_info_panel.get_values()
+		curr_obj = self._curr_obj
+		if curr_obj.check_for_changes(data, tags):
+			if ask_for_save:
+				dlg = wx.MessageDialog(self, _('Save changes?'),
+						_('AllDb'), wx.YES_NO|wx.YES_DEFAULT|wx.ICON_WARNING)
+				dont_save = dlg.ShowModal() == wx.ID_NO
+				dlg.Destroy()
+				if dont_save:
+					return
+
+			curr_obj.data.update(data)
+			curr_obj.set_tags(tags)
+			curr_obj.save()
+			oid = curr_obj.oid
+			self._db.sync()
+			if update_lists:
+				self._fill_tags(reload_tags=True)
+				self._fill_items(select=(select or oid))
+
 	def _on_class_select(self, evt):
 		oid = evt.GetClientData()
-		self._show_class(oid)
-		evt.Skip()
+		if oid != (self._curr_class.oid if self._curr_class else None):
+			self._save_object(True, False)
+			self._show_class(oid)
 
 	def _on_item_deselect(self, event):
-		if self.list_items.GetSelectedItemCount() == 0:
-			self._curr_obj = None
-			self._set_buttons_status()
+		pass
 
 	def _on_item_select(self, evt):
 		oid = evt.GetData()
+		if oid == (self._curr_obj.oid if self._curr_obj else None):
+			return
+		self._save_object(True, True, oid)
 		self._curr_obj = self._db.get(oid)
 		self._curr_info_panel.update(self._curr_obj)
 		self._set_buttons_status()
 		evt.Skip()
 
 	def _on_btn_new(self, event): 
+		self._save_object(True, True)
 		self._curr_obj = self._curr_class.create_object()
 		self._curr_info_panel.update(self._curr_obj)
 		self._set_buttons_status()
@@ -170,18 +197,7 @@ class MainFrame(_MainFrame):
 		event.Skip()
 
 	def _on_btn_apply(self, event):
-		data, tags = self._curr_info_panel.get_values()
-		curr_obj = self._curr_obj
-		if not curr_obj.check_for_changes(data, tags):
-			print 'not updated'
-			return
-		curr_obj.data.update(data)
-		curr_obj.set_tags(tags)
-		curr_obj.save()
-		oid = curr_obj.oid
-		self._db.sync()
-		self._fill_tags(reload_tags=True)
-		self._fill_items(select=oid)
+		self._save_object()
 
 	def _on_clb_tags(self, evt):
 		self._fill_items()
@@ -191,6 +207,7 @@ class MainFrame(_MainFrame):
 		self._fill_items()
 
 	def _on_menu_exit(self, event):
+		self._save_object(True, False)
 		self.Close()
 		event.Skip()
 
