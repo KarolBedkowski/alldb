@@ -72,11 +72,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		panel.SetBackgroundColour(self._COLOR_HIGHLIGHT_BG)
 
 		grid = wx.BoxSizer(wx.HORIZONTAL)
-		label = wx.StaticText(panel, -1, _('Title:'))
-		label.SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
-		font = label.GetFont()
-		font.SetWeight(wx.FONTWEIGHT_BOLD)
-		label.SetFont(font)
+		label = _create_label(panel, _('Title:'), self._COLOR_HIGHLIGHT_FG)
 		grid.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
 
 		self.tc_title = wx.StaticText(panel, -1, ' ')
@@ -93,16 +89,11 @@ class PanelInfo(scrolled.ScrolledPanel):
 		grid = wx.BoxSizer(wx.HORIZONTAL)
 
 		def create(label):
-			label = wx.StaticText(panel, -1, label)
-			label.SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
-			font = label.GetFont()
-			font.SetWeight(wx.FONTWEIGHT_BOLD)
-			label.SetFont(font)
-			grid.Add(label, 0, wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
-	
+			label = _create_label(panel, label, self._COLOR_HIGHLIGHT_FG)
+			grid.Add(label, 0, 	wx.EXPAND|wx.ALL, 6)
 			field = wx.StaticText(panel, -1, '          ')
 			field .SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
-			grid.Add(field, 1, wx.EXPAND|wx.ALL, 6)
+			grid.Add(field, 1, wx.EXPAND|wx.RIGHT|wx.TOP|wx.BOTTOM, 6)
 			return field
 
 		self.lb_created = create(_('Created:'))
@@ -165,10 +156,11 @@ class PanelInfo(scrolled.ScrolledPanel):
 		return box
 
 	def _fill_fields_from_obj(self):
+		obj = self._obj
 		for name, (field, ftype, _default, options) in self._fields.iteritems():
 			if not field:
 				continue
-			value = self._obj.data.get(name)
+			value = obj.data.get(name)
 			if ftype == 'bool':
 				field.SetValue(bool(value))
 			elif ftype == 'date':
@@ -183,19 +175,11 @@ class PanelInfo(scrolled.ScrolledPanel):
 					field.SetSelection(-1)
 			else:
 				field.SetValue(str(value or ''))
-		self.tc_title.SetLabel(self._obj.title or '')
-		self.tc_tags.SetValue(self._obj.tags_str)
-		date_created, date_modified = '-', '-'
-		if self._obj.date_created:
-			date_created = time.strftime('%x %X',
-					time.localtime(self._obj.date_created))
-		self.lb_created.SetLabel(date_created)
-
-		if self._obj.date_modified:
-			date_modified = time.strftime('%x %X',
-					time.localtime(self._obj.date_modified))
-		self.lb_modified.SetLabel(date_modified)
-		self.lb_id.SetLabel(str(self._obj.oid or _("new")))
+		self.tc_title.SetLabel(obj.title or '')
+		self.tc_tags.SetValue(obj.tags_str)
+		self.lb_created.SetLabel(format_date(obj.date_created))
+		self.lb_modified.SetLabel(format_date(obj.date_modified))
+		self.lb_id.SetLabel(str(obj.oid or _("new")))
 
 	def _fill_fields_clear(self):
 		for field, ftype, _default, options in self._fields.itervalues():
@@ -214,6 +198,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 						field.SetSelection(-1)
 				else:
 					field.SetValue(str(_default))
+
 		self.tc_title.SetValue('')
 		self.tc_tags.SetValue('')
 		self.lb_modified.SetLabel('')
@@ -231,9 +216,9 @@ class PanelInfo(scrolled.ScrolledPanel):
 		item_tags = []
 		if item_tags_str:
 			item_tags = [ t.strip() for t in item_tags_str.split(',') ]
-		if item_tags:
 			for tag in item_tags:
 				cls_tags[tag] = None
+
 		if cls_tags:
 			tag_list = sorted(cls_tags.iterkeys())
 			dlg = wx.MultiChoiceDialog(self, _("Select tags"),
@@ -243,9 +228,19 @@ class PanelInfo(scrolled.ScrolledPanel):
 			dlg.SetSelections(selected)
 			if dlg.ShowModal() == wx.ID_OK:
 				selections = dlg.GetSelections()
-				tags = ', '.join((tag_list[idx] for idx in selections))
+				tags = ', '.join(sorted((tag_list[idx] for idx in selections)))
 				self.tc_tags.SetValue(tags)
 			dlg.Destroy()
+
+
+def _create_label(parent, label, colour=None):
+	label = wx.StaticText(parent, -1, label)
+	if colour:
+		label.SetForegroundColour(colour)
+	font = label.GetFont()
+	font.SetWeight(wx.FONTWEIGHT_BOLD)
+	label.SetFont(font)
+	return label
 
 
 def strdate2wxdate(strdate):
@@ -265,5 +260,12 @@ def format_label(label):
 	label = label[0].upper() + label[1:]
 	label.replace('_', ' ')
 	return label
+
+def format_date(date):
+	if date:
+		return time.strftime('%x %X', time.localtime(date))
+	return '-'
+
+
 
 # vim: encoding=utf8: ff=unix:

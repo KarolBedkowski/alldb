@@ -172,6 +172,9 @@ class MainFrame(_MainFrame):
 	def _on_btn_apply(self, event):
 		data, tags = self._curr_info_panel.get_values()
 		curr_obj = self._curr_obj
+		if not curr_obj.check_for_changes(data, tags):
+			print 'not updated'
+			return
 		curr_obj.data.update(data)
 		curr_obj.set_tags(tags)
 		curr_obj.save()

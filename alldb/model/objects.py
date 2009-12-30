@@ -141,7 +141,7 @@ class Object(BaseObject):
 
 	def set_tags(self, tagstr):
 		if tagstr.strip():
-			self.tags = [ tag.strip() for tag in tagstr.split(',') ]
+			self.tags = sorted(( tag.strip() for tag in tagstr.split(',') ))
 		else:
 			self.tags = []
 
@@ -165,6 +165,14 @@ class Object(BaseObject):
 		newobj.date_created = None
 		newobj.date_modified = None
 		return newobj
+
+	def check_for_changes(self, new_data, tags):
+		for key, val in new_data.iteritems():
+			if self.data.get(key) != val:
+				return True
+
+		tags = tags or []
+		return self.tags != tags
 
 
 
