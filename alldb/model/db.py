@@ -68,6 +68,8 @@ class Db(SchemaLessDatabase):
 
 	def get_objects_by_index(self, index_oid, match_function=None):
 		index = self.get(index_oid)
+		if not isinstance(index, Index):
+			return None
 		if match_function:
 			items = index.get_matching(match_function)
 		else:
