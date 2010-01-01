@@ -13,12 +13,12 @@ import wx
 
 from alldb.model import objects
 
-from _ClassesDlg import _ClassesDlg
-from EditClassesDlg import EditClassesDlg
+from .DlgClassesWx import DlgClassesWx
+from .DlgEditClass import DlgEditClass
 
-class ClassesDlg(_ClassesDlg):
+class DlgClasses(DlgClassesWx):
 	def __init__(self, parent, db):
-		_ClassesDlg.__init__(self, None, -1)
+		DlgClassesWx.__init__(self, None, -1)
 		self._db = db
 		self._current_cls = None
 
@@ -40,7 +40,7 @@ class ClassesDlg(_ClassesDlg):
 		cls = self._db.get(cls_oid) if cls_oid else objects.ObjectClass()
 		cls_names = [ c.name for c in (self._db.classes or []) 
 				if c.oid != cls_oid ]
-		dlg = EditClassesDlg(self, cls, cls_names)
+		dlg = DlgEditClass(self, cls, cls_names)
 		if dlg.ShowModal() == wx.ID_OK:
 			self._db.put(cls)
 			self._db.sync()
@@ -64,7 +64,7 @@ class ClassesDlg(_ClassesDlg):
 		self._edit_class(oid)
 		event.Skip()
 
-	def _on_btn_new(self, event): # wxGlade: _ClassesDlg.<event_handler>
+	def _on_btn_new(self, event):
 		self._edit_class(None)
 
 	def _on_btn_edit(self, event):
@@ -74,7 +74,7 @@ class ClassesDlg(_ClassesDlg):
 		oid = self.lc_classes.GetItemData(item_idx)
 		self._edit_class(oid)
 
-	def _on_btn_delete(self, event): # wxGlade: _ClassesDlg.<event_handler>
+	def _on_btn_delete(self, event):
 		print "Event handler `_on_btn_delete' not implemented!"
 		event.Skip()
 

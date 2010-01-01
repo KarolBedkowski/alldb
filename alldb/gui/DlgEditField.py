@@ -11,12 +11,12 @@ __release__		= '2009-12-20'
 
 import wx
 
-from ._EditFieldDlg import _EditFieldDlg
+from .DlgEditFieldWx import DlgEditFieldWx
 from .DlgEditValues import DlgEditValues
 
-class EditFieldDlg(_EditFieldDlg):
+class DlgEditField(DlgEditFieldWx):
 	def __init__(self, parent, data):
-		_EditFieldDlg.__init__(self, parent, -1)
+		DlgEditFieldWx.__init__(self, parent, -1)
 
 		if not data.get('options'):
 			data['options'] = {}

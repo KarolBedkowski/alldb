@@ -14,7 +14,7 @@ import locale
 
 import wx
 
-from gui.MainFrame import MainFrame
+from gui.FrameMain import FrameMain
 
 from libs.appconfig import AppConfig
 
@@ -31,7 +31,7 @@ def run():
 
 	app = wx.PySimpleApp(0)
 	wx.InitAllImageHandlers()
-	main_frame = MainFrame(db_filename)
+	main_frame = FrameMain(db_filename)
 	app.SetTopWindow(main_frame)
 	main_frame.Show()
 	app.MainLoop()

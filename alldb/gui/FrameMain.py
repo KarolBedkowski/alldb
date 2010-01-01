@@ -15,14 +15,14 @@ import wx
 
 from alldb.model.db import Db
 
-from ._MainFrame import _MainFrame
+from .FrameMainWx import FrameMainWx
 from .PanelInfo import PanelInfo
-from .ClassesDlg import ClassesDlg
+from .DlgClasses import DlgClasses
 
-class MainFrame(_MainFrame):
+class FrameMain(FrameMainWx):
 	''' Klasa głównego okna programu'''	
 	def __init__(self, db_name):
-		_MainFrame.__init__(self, None, -1)
+		FrameMainWx.__init__(self, None, -1)
 		self.SetBackgroundColour(wx.SystemSettings.GetColour(
 			wx.SYS_COLOUR_ACTIVEBORDER))
 		self.window_1.SetSashPosition(200)
@@ -237,7 +237,7 @@ class MainFrame(_MainFrame):
 
 	def _on_menu_categories(self, event):
 		current_class_oid = (self._curr_class.oid if self._curr_class else None)
-		dlg = ClassesDlg(self, self._db)
+		dlg = DlgClasses(self, self._db)
 		dlg.ShowModal()
 		dlg.Destroy()
 		if self._curr_info_panel:

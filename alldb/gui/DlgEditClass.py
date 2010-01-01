@@ -11,13 +11,13 @@ __release__		= '2009-12-20'
 
 import wx
 
-from ._EditClassesDlg import _EditClassesDlg
-from .EditFieldDlg	import EditFieldDlg
+from .DlgEditClassWx import DlgEditClassWx
+from .DlgEditField	import DlgEditField
 
 
-class EditClassesDlg(_EditClassesDlg):
+class DlgEditClass(DlgEditClassWx):
 	def __init__(self, parent, cls, cls_names):
-		_EditClassesDlg.__init__(self, None, -1)
+		DlgEditClassWx.__init__(self, None, -1)
 		self._cls = cls
 		self._cls_names = cls_names
 
@@ -98,7 +98,7 @@ class EditClassesDlg(_EditClassesDlg):
 		data = dict(name=name, type=field[1], default=field[2], options=field[3])
 		data['_fields_names'] = [ field[0] for field in self._cls.fields
 				if field[0] != name]
-		dlg = EditFieldDlg(self, data)
+		dlg = DlgEditField(self, data)
 		if dlg.ShowModal() == wx.ID_OK:
 			field = (data['name'], data['type'], data['default'], data['options'])
 			self._cls.fields[item_idx] = field
@@ -109,7 +109,7 @@ class EditClassesDlg(_EditClassesDlg):
 	def _on_btn_add_field(self, event):
 		data = {}
 		data['_fields_names'] = [ field[0] for field in self._cls.fields ]
-		dlg = EditFieldDlg(self, data)
+		dlg = DlgEditField(self, data)
 		if dlg.ShowModal() == wx.ID_OK:
 			field = (data['name'], data['type'], data['default'], data['options'])
 			self._cls.fields.append(field)
@@ -140,7 +140,7 @@ class EditClassesDlg(_EditClassesDlg):
 				wx.LIST_STATE_SELECTED)
 		self._on_title_auto(None)
 
-	def _on_button_down(self, event): # wxGlade: _EditClassesDlg.<event_handler>
+	def _on_button_down(self, event):
 		item_idx = self._get_selected_field_idx()
 		if item_idx < 0 or item_idx == self.lc_fields.GetItemCount() - 1:
 			return
