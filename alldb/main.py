@@ -33,6 +33,8 @@ def run():
 	db = Db(db_filename)
 	db.open()
 
+	config['_DB'] = db
+
 	app = wx.PySimpleApp(0)
 	wx.InitAllImageHandlers()
 	main_frame = FrameMain(db)

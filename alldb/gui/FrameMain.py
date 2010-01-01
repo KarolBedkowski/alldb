@@ -13,7 +13,6 @@ import operator
 
 import wx
 
-from alldb.model.db import Db
 from alldb.libs.appconfig import AppConfig
 
 from .FrameMainWx import FrameMainWx
