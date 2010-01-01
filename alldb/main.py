@@ -16,6 +16,7 @@ import wx
 
 from alldb.gui.FrameMain import FrameMain
 from alldb.libs.appconfig import AppConfig
+from alldb.model.db import Db
 
 
 def run():
@@ -29,13 +30,17 @@ def run():
 	except locale.Error, e:
 		print e
 
+	db = Db(db_filename)
+	db.open()
+
 	app = wx.PySimpleApp(0)
 	wx.InitAllImageHandlers()
-	main_frame = FrameMain(db_filename)
+	main_frame = FrameMain(db)
 	app.SetTopWindow(main_frame)
 	main_frame.Show()
 	app.MainLoop()
 
+	db.close()
 	config.save()
 
 

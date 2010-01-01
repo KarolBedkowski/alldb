@@ -22,12 +22,13 @@ from .DlgClasses import DlgClasses
 
 class FrameMain(FrameMainWx):
 	''' Klasa głównego okna programu'''	
-	def __init__(self, db_name):
+	def __init__(self, db):
 		FrameMainWx.__init__(self, None, -1)
 		self.SetBackgroundColour(wx.SystemSettings.GetColour(
 			wx.SYS_COLOUR_ACTIVEBORDER))
+		self.SetAutoLayout(True)
 
-		self._db = Db(db_name)
+		self._db = db
 		self._curr_class = None
 		self._curr_obj = None
 		self._curr_info_panel = None
@@ -42,24 +43,26 @@ class FrameMain(FrameMainWx):
 		self.Bind(wx.EVT_CHECKLISTBOX, self._on_clb_tags, self.clb_tags)
 		self.Bind(wx.EVT_CLOSE, self._on_close)
 
-		appconfig = AppConfig()
-		size = appconfig.get('frame_main', 'size', (800, 600))
-		if size:
-			self.SetSize(size)
-		position = appconfig.get('frame_main', 'position')
-		if position:
-			self.Move(position)
-		else:
-			self.Centre(wx.BOTH)
-		
-		self.window_1.SetSashPosition(appconfig.get('frame_main', 'win1', 200))
-		self.window_2.SetSashPosition(appconfig.get('frame_main', 'win2', -200))
-
 		self._set_buttons_status()
 		fclass_oid = self._fill_classes()
 		if fclass_oid is not None:
 			self.choice_klasa.SetSelection(0)
 			self._show_class(fclass_oid)
+
+		self._set_size_pos()
+
+	def _set_size_pos(self):
+		appconfig = AppConfig()
+		size = appconfig.get('frame_main', 'size', (800, 600))
+		if size:
+			self.SetSize(size)
+
+		position = appconfig.get('frame_main', 'position')
+		if position:
+			self.Move(position)
+
+		self.window_1.SetSashPosition(appconfig.get('frame_main', 'win1', 200))
+		self.window_2.SetSashPosition(appconfig.get('frame_main', 'win2', -200))
 
 	def _fill_classes(self, select=None):
 		''' wczytenie listy klas i wypełnienie choicebox-a 
@@ -161,6 +164,7 @@ class FrameMain(FrameMainWx):
 		self.button_new_item.Enable(self._curr_class is not None)
 		if self._curr_info_panel:
 			self._curr_info_panel.Show(record_showed)
+			self.panel_info.GetSizer().Layout()
 
 	def _save_object(self, ask_for_save=False, update_lists=True, select=None):
 		if not self._curr_obj:
