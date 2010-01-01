@@ -148,12 +148,12 @@ class SchemaLessDatabase(object):
 			raise Exception('No filename')
 
 	def close(self):
-		if self._db:
+		if self._db is not None:
 			self._before_close()
 			self._db.close()
 
 	def get(self, oid):
-		if not self._db:
+		if self._db is None:
 			return None
 		if isinstance(oid, (list, tuple)):
 			return [ obj 
@@ -173,7 +173,8 @@ class SchemaLessDatabase(object):
 			obj._after_del()
 
 	def put(self, obj):
-		if not self._db:
+		if self._db is None:
+			raise Exception('No database open')
 			return
 		if isinstance(obj, (list, tuple)):
 			map(self._put_single_object, obj)

@@ -8,6 +8,7 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2009'
 __revision__	= '2009-11-12'
 
 
+import os
 import gettext
 import locale
 
@@ -15,8 +16,13 @@ import wx
 
 from gui.MainFrame import MainFrame
 
+from libs.appconfig import AppConfig
+
 
 def run():
+	config = AppConfig(__file__, 'alldb')
+	db_filename = os.path.join(config.path_share, 'alldb.db')
+
 	gettext.install("alldb", unicode=True)
 	try:
 		locale.setlocale(locale.LC_ALL, "")
@@ -25,7 +31,7 @@ def run():
 
 	app = wx.PySimpleApp(0)
 	wx.InitAllImageHandlers()
-	main_frame = MainFrame()
+	main_frame = MainFrame(db_filename)
 	app.SetTopWindow(main_frame)
 	main_frame.Show()
 	app.MainLoop()

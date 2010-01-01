@@ -21,13 +21,13 @@ from .ClassesDlg import ClassesDlg
 
 class MainFrame(_MainFrame):
 	''' Klasa głównego okna programu'''	
-	def __init__(self):
+	def __init__(self, db_name):
 		_MainFrame.__init__(self, None, -1)
 		self.SetBackgroundColour(wx.SystemSettings.GetColour(
 			wx.SYS_COLOUR_ACTIVEBORDER))
 		self.window_1.SetSashPosition(200)
 
-		self._db = Db('test.db')
+		self._db = Db(db_name)
 		self._curr_class = None
 		self._curr_obj = None
 		self._curr_info_panel = None
@@ -54,10 +54,11 @@ class MainFrame(_MainFrame):
 		self.choice_klasa.Clear()
 		cls2select = None
 		classes = self._db.classes
-		for cls in classes:
-			num = self.choice_klasa.Append(cls.name, cls.oid)
-			if cls.oid == select:
-				cls2select = num
+		if classes:
+			for cls in classes:
+				num = self.choice_klasa.Append(cls.name, cls.oid)
+				if cls.oid == select:
+					cls2select = num
 
 		if cls2select is not None:
 			self.choice_klasa.SetSelection(cls2select)
@@ -139,8 +140,9 @@ class MainFrame(_MainFrame):
 			if tag in selected_tags:
 				self.clb_tags.Check(num, True)
 
-	def _set_buttons_status(self):
-		record_showed =  self.list_items.GetSelectedItemCount() > 0
+	def _set_buttons_status(self, new_record=False):
+		record_showed =  (self.list_items.GetSelectedItemCount() > 0) or \
+				new_record
 		self.button_apply.Enable(record_showed)
 		self.button_new_item.Enable(self._curr_class is not None)
 		if self._curr_info_panel:
@@ -186,18 +188,17 @@ class MainFrame(_MainFrame):
 		self._curr_obj = self._db.get(oid)
 		self._curr_info_panel.update(self._curr_obj)
 		self._set_buttons_status()
-		evt.Skip()
 
 	def _on_btn_new(self, event): 
 		self._save_object(True, True)
 		self._curr_obj = self._curr_class.create_object()
 		self._curr_info_panel.update(self._curr_obj)
-		self._set_buttons_status()
+		self._set_buttons_status(True)
 		self._curr_info_panel.set_focus()
-		event.Skip()
 
 	def _on_btn_apply(self, event):
 		self._save_object()
+		self._curr_info_panel.update(self._curr_obj)
 
 	def _on_clb_tags(self, evt):
 		self._fill_items()

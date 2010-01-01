@@ -121,10 +121,11 @@ class Object(BaseObject):
 		cls = self._context.get(self.ocls)
 		title_expr = cls.title_expr
 		if title_expr:
-			repl = lambda x: ("%%" + x.group(0)[1:].strip()+"s ")
+			repl = lambda x: ("%" + x.group(0)[1:].strip()+"s ")
 			title_expr = re.sub('(%\([\w ]+\))', repl, title_expr)
-			repl = lambda x: ('%%(%s)s ' % x.group(0)[1:].strip())
+			repl = lambda x: ('%(%s)s ' % x.group(0)[1:].strip())
 			title_expr = re.sub('(%[\w ]+)', repl, title_expr)
+			print title_expr, self.data
 			self.title = title_expr % (self.data)
 		if not self.title:
 			self.title = ':'.join(self.data.items()[0])

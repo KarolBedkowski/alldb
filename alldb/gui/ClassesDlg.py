@@ -32,16 +32,18 @@ class ClassesDlg(_ClassesDlg):
 
 	def fill_classes(self):
 		self.lc_classes.DeleteAllItems()
-		for no, cls in enumerate(self._db.classes):
+		for no, cls in enumerate(self._db.classes or []):
 			self.lc_classes.InsertStringItem(no, str(cls.name))
 			self.lc_classes.SetItemData(no, cls.oid)
 
 	def _edit_class(self, cls_oid):
 		cls = self._db.get(cls_oid) if cls_oid else objects.ObjectClass()
-		cls_names = [ c.name for c in self._db.classes if c.oid != cls_oid ]
+		cls_names = [ c.name for c in (self._db.classes or []) 
+				if c.oid != cls_oid ]
 		dlg = EditClassesDlg(self, cls, cls_names)
 		if dlg.ShowModal() == wx.ID_OK:
 			self._db.put(cls)
+			self._db.sync()
 			self.fill_classes()
 		dlg.Destroy()
 
@@ -71,7 +73,6 @@ class ClassesDlg(_ClassesDlg):
 		item_idx = self.lc_classes.GetNextItem(-1, wx.LIST_NEXT_ALL, wx.LIST_STATE_SELECTED)
 		oid = self.lc_classes.GetItemData(item_idx)
 		self._edit_class(oid)
-
 
 	def _on_btn_delete(self, event): # wxGlade: _ClassesDlg.<event_handler>
 		print "Event handler `_on_btn_delete' not implemented!"
