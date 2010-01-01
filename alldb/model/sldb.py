@@ -110,13 +110,21 @@ class Index(BaseObject, IterableUserDict):
 	def get_all(self):
 		for ilist in self.data.itervalues():
 			for item in ilist:
-				yield item
+				yield str(item)
 
 	def get_matching(self, match_function):
 		for key, ilist in self.data.iteritems():
 			if match_function(key):
 				for item in ilist:
-					yield item
+					yield str(item)
+
+	def check_and_clean(self):
+		oids_to_delete = [ item for item in self.get_all()
+			if str(item) not in self._context ]
+		for oid in oids_to_delete:
+			print 'clean ', oid
+			self.del_item(oid)
+		self.save()
 
 
 class SchemaLessDatabase(object):
@@ -129,16 +137,14 @@ class SchemaLessDatabase(object):
 		}
 
 		self._db = None
-		if filename:
-			self.open(filename)
-		
+
 	def __del__(self):
 		self.close()
 
 	def __contains__(self, oid):
 		return self._db and self._db.has_key(oid)
 
-	def open(self, filename):
+	def open(self, filename=None):
 		if filename:
 			self._filename = filename
 		if self._filename:
