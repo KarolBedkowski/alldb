@@ -14,6 +14,7 @@ import operator
 import wx
 
 from alldb.model.db import Db
+from alldb.libs.appconfig import AppConfig
 
 from .FrameMainWx import FrameMainWx
 from .PanelInfo import PanelInfo
@@ -25,7 +26,6 @@ class FrameMain(FrameMainWx):
 		FrameMainWx.__init__(self, None, -1)
 		self.SetBackgroundColour(wx.SystemSettings.GetColour(
 			wx.SYS_COLOUR_ACTIVEBORDER))
-		self.window_1.SetSashPosition(200)
 
 		self._db = Db(db_name)
 		self._curr_class = None
@@ -40,6 +40,20 @@ class FrameMain(FrameMainWx):
 		self.Bind(wx.EVT_TEXT_ENTER, self._on_search, self.searchbox)
 		self.Bind(wx.EVT_TEXT, self._on_search, self.searchbox)
 		self.Bind(wx.EVT_CHECKLISTBOX, self._on_clb_tags, self.clb_tags)
+		self.Bind(wx.EVT_CLOSE, self._on_close)
+
+		appconfig = AppConfig()
+		size = appconfig.get('frame_main', 'size', (800, 600))
+		if size:
+			self.SetSize(size)
+		position = appconfig.get('frame_main', 'position')
+		if position:
+			self.Move(position)
+		else:
+			self.Centre(wx.BOTH)
+		
+		self.window_1.SetSashPosition(appconfig.get('frame_main', 'win1', 200))
+		self.window_2.SetSashPosition(appconfig.get('frame_main', 'win2', -200))
 
 		self._set_buttons_status()
 		fclass_oid = self._fill_classes()
@@ -170,6 +184,14 @@ class FrameMain(FrameMainWx):
 			if update_lists:
 				self._fill_tags(reload_tags=True)
 				self._fill_items(select=(select or oid))
+
+	def _on_close(self, evt):
+		appconfig = AppConfig()
+		appconfig.set('frame_main','size', self.GetSizeTuple())
+		appconfig.set('frame_main','position', self.GetPositionTuple())
+		appconfig.set('frame_main','win1', self.window_1.GetSashPosition())
+		appconfig.set('frame_main','win2', self.window_2.GetSashPosition())
+		evt.Skip()
 
 	def _on_class_select(self, evt):
 		oid = evt.GetClientData()

@@ -14,13 +14,13 @@ import locale
 
 import wx
 
-from gui.FrameMain import FrameMain
-
-from libs.appconfig import AppConfig
+from alldb.gui.FrameMain import FrameMain
+from alldb.libs.appconfig import AppConfig
 
 
 def run():
 	config = AppConfig(__file__, 'alldb')
+	config.load()
 	db_filename = os.path.join(config.path_share, 'alldb.db')
 
 	gettext.install("alldb", unicode=True)
@@ -35,6 +35,8 @@ def run():
 	app.SetTopWindow(main_frame)
 	main_frame.Show()
 	app.MainLoop()
+
+	config.save()
 
 
 
