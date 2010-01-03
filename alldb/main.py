@@ -18,6 +18,14 @@ from alldb.gui.FrameMain import FrameMain
 from alldb.libs.appconfig import AppConfig
 from alldb.model.db import Db
 
+import sys
+reload(sys)
+try:
+	sys.setappdefaultencoding("utf-8")
+except Exception, _:
+	sys.setdefaultencoding("utf-8")
+
+
 
 def run():
 	config = AppConfig(__file__, 'alldb')

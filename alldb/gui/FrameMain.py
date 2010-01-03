@@ -14,7 +14,7 @@ import operator
 import wx
 
 from alldb.libs.appconfig import AppConfig
-from alldb.export.csv_exporter import export2csv
+from alldb.filetypes.csv_support import export2csv, import_csv
 
 from .FrameMainWx import FrameMainWx
 from .PanelInfo import PanelInfo
@@ -278,11 +278,21 @@ class FrameMain(FrameMainWx):
 			self._on_btn_new(event)
 
 	def _on_menu_item_delete(self, event):
-		if self._curr_obj:
-			dlg = wx.MessageDialog(self, _('Delete current object?'),
+		litems = self.list_items
+		cnt = litems.GetSelectedItemCount()
+		if cnt > 0:
+			dlg = wx.MessageDialog(self, _('Delete %d object/s?') % cnt,
 					_('Delete'), wx.YES_NO|wx.NO_DEFAULT|wx.ICON_HAND)
 			if dlg.ShowModal() == wx.ID_YES:
-				self._db.delete(self._curr_obj)
+				itemid = -1
+				while True:
+					itemid = litems.GetNextItem(itemid, wx.LIST_NEXT_ALL,
+							wx.LIST_STATE_SELECTED)
+					if itemid == -1:
+						break
+					oid = litems.GetItemData(itemid)
+					self._db.delitem(oid)
+
 				self._db.sync()
 				self._curr_obj = None
 				self._fill_tags(reload_tags=True)
@@ -307,6 +317,20 @@ class FrameMain(FrameMainWx):
 		self._curr_class = None
 		current_class_oid = self._fill_classes(current_class_oid)
 		self._show_class(current_class_oid)
+
+	def _on_menu_import_csv(self, event):
+		dlg = wx.FileDialog(self, _('Choice a file'), 
+				wildcard=_('CSV files (*.csv)|*.csv|All files|*.*'), 
+				style=wx.FD_OPEN|wx.FD_FILE_MUST_EXIST)
+		if dlg.ShowModal() == wx.ID_OK:
+			filepath = dlg.GetPath()
+			cls = self._curr_class
+			items = list(import_csv(filepath, cls))
+			for item in items:
+				self._db.put(item)
+			self._db.sync()
+
+		dlg.Destroy()
 
 	def _on_menu_export_csv(self, event):
 		dlg = wx.FileDialog(self, _('Choice a file'), 

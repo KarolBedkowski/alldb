@@ -13,6 +13,7 @@ __release__		= '2009-11-12'
 
 
 import csv
+import codecs
 
 
 def export2csv(filename, cls, items):
@@ -28,6 +29,19 @@ def export2csv(filename, cls, items):
 		writer.writerow(dict(( (f,f) for f in fields )))
 		writer.writerows(itemsdata)
 
+
+
+def import_csv(filename, cls):
+	with codecs.open(filename, 'rt', 'utf-8') as fcsv:
+		for row in csv.DictReader(fcsv):
+			for field in cls.fields:
+				if field[1] == 'bool':
+					row[field[0]] = bool(row[field[0]])
+				else:
+					row[field[0]] = unicode(row[field[0]])
+			item = cls.create_object()
+			item.data.update(row)
+			yield item
 
 
 
