@@ -35,6 +35,7 @@ class FrameMain(FrameMainWx):
 		self._curr_info_panel = None
 		self._curr_tags = {}
 		self._cols = []
+		self._current_sorting_col = 0
 
 		self.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self._on_search, self.searchbox)
 		self.Bind(wx.EVT_TEXT_ENTER, self._on_search, self.searchbox)
@@ -108,6 +109,8 @@ class FrameMain(FrameMainWx):
 				self._cols.append(field[0])
 				cols += 1
 
+		self._current_sorting_col = 0
+
 	def _show_class(self, class_oid):
 		''' wyświetlenie klasy - listy tagów i obiektów '''
 		curr_class_oid = (self._curr_class.oid if self._curr_class
@@ -133,7 +136,15 @@ class FrameMain(FrameMainWx):
 		selected_tags = self.selected_tags
 
 		items = cls.filter_objects(search, selected_tags)
-		items = sorted(items, key=operator.attrgetter('title'))
+		sort_col = self._current_sorting_col
+		if sort_col == 0:
+			if cls.title_show:
+				items = sorted(items, key=operator.attrgetter('title'))
+		else:
+			reverse = sort_col < 0
+			sort_col_name = self._cols[abs(sort_col)-1]
+			items = sorted(items, key=lambda x:x.get_value(sort_col_name), 
+					reverse=reverse)
 
 		item2select = None
 		for num, item in enumerate(items):
@@ -230,6 +241,14 @@ class FrameMain(FrameMainWx):
 		self._curr_obj = self._db.get(oid)
 		self._curr_info_panel.update(self._curr_obj)
 		self._set_buttons_status()
+
+	def _on_items_col_click(self, event):
+		col = event.m_col
+		if col == abs(self._current_sorting_col):
+			self._current_sorting_col = -self._current_sorting_col
+		else:
+			self._current_sorting_col = col
+		self._fill_items(self._curr_obj.oid if self._curr_obj else None)
 
 	def _on_btn_new(self, event): 
 		self._save_object(True, True)
