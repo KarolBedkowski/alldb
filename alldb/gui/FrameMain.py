@@ -14,10 +14,12 @@ import operator
 import wx
 
 from alldb.libs.appconfig import AppConfig
+from alldb.export.csv_exporter import export2csv
 
 from .FrameMainWx import FrameMainWx
 from .PanelInfo import PanelInfo
 from .DlgClasses import DlgClasses
+
 
 class FrameMain(FrameMainWx):
 	''' Klasa głównego okna programu'''	
@@ -271,6 +273,22 @@ class FrameMain(FrameMainWx):
 		self._curr_class = None
 		current_class_oid = self._fill_classes(current_class_oid)
 		self._show_class(current_class_oid)
+
+	def _on_menu_export_csv(self, event):
+		dlg = wx.FileDialog(self, _('Choice a file'), 
+				wildcard=_('CSV files (*.csv)|*.csv|All files|*.*'), 
+				style=wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT)
+		if dlg.ShowModal() == wx.ID_OK:
+			filepath = dlg.GetPath()
+			cls = self._curr_class
+			list_items = self.list_items
+			items_oids = [ list_items.GetItemData(x)
+					for x in xrange(list_items.GetItemCount())
+			]
+			items = self._db.get(items_oids)
+			export2csv(filepath, cls, items)
+
+		dlg.Destroy()
 
 	@property
 	def selected_tags(self):

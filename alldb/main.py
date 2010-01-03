@@ -29,6 +29,8 @@ def run():
 		locale.setlocale(locale.LC_ALL, "")
 	except locale.Error, e:
 		print e
+	wxlocale = wx.Locale(wx.LANGUAGE_DEFAULT)
+	wxlocale.AddCatalog('alldb')
 
 	db = Db(db_filename)
 	db.open()
