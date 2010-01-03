@@ -34,9 +34,7 @@ class FrameMain(FrameMainWx):
 		self._curr_obj = None
 		self._curr_info_panel = None
 		self._curr_tags = {}
-
-		self.list_items.InsertColumn(0, _('No'), wx.LIST_FORMAT_RIGHT, 40)
-		self.list_items.InsertColumn(1, _('Title'))
+		self._cols = []
 
 		self.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self._on_search, self.searchbox)
 		self.Bind(wx.EVT_TEXT_ENTER, self._on_search, self.searchbox)
@@ -95,6 +93,21 @@ class FrameMain(FrameMainWx):
 		self._curr_info_panel = panel
 		return panel
 
+	def _create_columns_in_list(self, cls):
+		self.list_items.ClearAll()
+		self.list_items.InsertColumn(0, _('No'), wx.LIST_FORMAT_RIGHT, 40)
+		self._cols = []
+		if cls.title_show:
+			self._cols.append('__title')
+			self.list_items.InsertColumn(1, _('Title'))
+
+		cols = len(self._cols)+1
+		for field in cls.fields:
+			if field[3] and field[3].get('in_title'):
+				self.list_items.InsertColumn(cols, _(field[0]))
+				self._cols.append(field[0])
+				cols += 1
+
 	def _show_class(self, class_oid):
 		''' wyświetlenie klasy - listy tagów i obiektów '''
 		curr_class_oid = (self._curr_class.oid if self._curr_class
@@ -104,6 +117,7 @@ class FrameMain(FrameMainWx):
 		if not curr_class_oid or curr_class_oid != class_oid:
 			self._create_info_panel(next_class)
 			self._curr_obj = None
+		self._create_columns_in_list(next_class)
 		self._curr_class = next_class
 		self._fill_tags((curr_class_oid != class_oid), reload_tags=True)
 		self._fill_items()
@@ -124,14 +138,15 @@ class FrameMain(FrameMainWx):
 		item2select = None
 		for num, item in enumerate(items):
 			list_items.InsertStringItem(num, str(num+1))
-			list_items.SetStringItem(num, 1, str(item.title))
+			for colnum, col in enumerate(self._cols):
+				list_items.SetStringItem(num, colnum+1, str(item.get_value(col)))
 			list_items.SetItemData(num, item.oid)
 
 			if item.oid == select:
 				item2select = num
 
-		list_items.SetColumnWidth(0, wx.LIST_AUTOSIZE)
-		list_items.SetColumnWidth(1, wx.LIST_AUTOSIZE)
+		for x in xrange(len(self._cols)+2):
+			list_items.SetColumnWidth(x, wx.LIST_AUTOSIZE)
 
 		items_count = self.list_items.GetItemCount()
 		self.label_info.SetLabel(_('Items: %d') % items_count)

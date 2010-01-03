@@ -80,6 +80,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		grid.Add(self.tc_title, 1, wx.EXPAND|wx.ALL, 6)
 
 		panel.SetSizer(grid)
+		panel.Show(self._obj_cls.title_show)
 		return panel
 
 	def _create_fields_tail(self):

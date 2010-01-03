@@ -41,7 +41,7 @@ class BaseObject(object):
 		return dict((
 			(key, val) 
 			for (key, val) in self.__dict__.iteritems()
-			if val and not key.startswith('_')))
+			if val is not None and not key.startswith('_')))
 
 	def _load(self, data):
 		self.__dict__.update(data)

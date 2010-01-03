@@ -45,6 +45,8 @@ class DlgEditClass(DlgEditClassWx):
 		self.tc_title.SetValue(str(cls.title_expr or ''))
 		self._refresh_list(cls)
 		self.show_title(cls)
+		self.cb_show_title.SetValue(cls.title_show)
+		self.cb_title_auto.SetValue(cls.title_auto)
 
 	def show_title(self, cls):
 		if cls.title_auto:
@@ -170,6 +172,7 @@ class DlgEditClass(DlgEditClassWx):
 
 		self._cls.name = name
 		self._cls.title_expr = title_expr
+		self._cls.title_show = self.cb_show_title.IsChecked()
 
 		self.EndModal(wx.ID_OK)
 
@@ -188,8 +191,10 @@ class DlgEditClass(DlgEditClassWx):
 
 def _options2string(options):
 	result = []
-	if options.get('in_menu'):
-		result.append(_('In menu'))
+	if options.get('in_title'):
+		result.append(_('in title'))
+	if options.get('in_list'):
+		result.append(_('show in list'))
 
 	return ', '.join(result)
 

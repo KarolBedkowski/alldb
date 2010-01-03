@@ -47,6 +47,7 @@ class DlgEditField(DlgEditFieldWx):
 		self.tc_default.SetValue(data.get('default') or '')
 		options = data.get('options') or {}
 		self.cb_show_in_title.SetValue(options.get('in_title', False))
+		self.cb_show_in_list.SetValue(options.get('in_list', False))
 		
 		ftype = data.get('type') or 'str'
 		radio = self._radios.get(ftype)
@@ -73,6 +74,7 @@ class DlgEditField(DlgEditFieldWx):
 		self._data['default'] = self.tc_default.GetValue()
 		options = self._data.get('options') or {}
 		options['in_title'] = self.cb_show_in_title.IsChecked()
+		options['in_list'] = self.cb_show_in_list.IsChecked()
 		self._data['options'] = options
 
 		for ftype, ctrl in self._radios.iteritems():

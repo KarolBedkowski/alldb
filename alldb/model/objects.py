@@ -23,6 +23,7 @@ class ObjectClass(BaseObject):
 		self.objects_index = None
 		self.title_expr = None
 		self.title_auto = True
+		self.title_show = True
 
 		self._indexes = []
 		self._objects_index = Index(name="obj index for " + str(self.name))
@@ -107,6 +108,11 @@ class Object(BaseObject):
 		self.date_created = None
 		self.date_modified = None
 
+	def get_value(self, key):
+		if key.startswith('__'):
+			return self.__dict__.get(key[2:])
+		return self.data.get(key)
+
 	def obj2dump(self):
 		yield self
 		if self._cls_objects_index:
@@ -125,7 +131,6 @@ class Object(BaseObject):
 			title_expr = re.sub('(%\([\w ]+\))', repl, title_expr)
 			repl = lambda x: ('%(%s)s ' % x.group(0)[1:].strip())
 			title_expr = re.sub('(%[\w ]+)', repl, title_expr)
-			print title_expr, self.data
 			self.title = title_expr % (self.data)
 		if not self.title:
 			self.title = ':'.join(self.data.items()[0])
