@@ -150,7 +150,7 @@ class FrameMain(FrameMainWx):
 		for num, item in enumerate(items):
 			list_items.InsertStringItem(num, str(num+1))
 			for colnum, col in enumerate(self._cols):
-				list_items.SetStringItem(num, colnum+1, str(item.get_value(col)))
+				list_items.SetStringItem(num, colnum+1, unicode(item.get_value(col)))
 			list_items.SetItemData(num, item.oid)
 
 			if item.oid == select:

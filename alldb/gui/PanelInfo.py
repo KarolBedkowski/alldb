@@ -175,7 +175,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 				else:
 					field.SetSelection(-1)
 			else:
-				field.SetValue(str(value or ''))
+				field.SetValue(unicode(value or ''))
 		self.tc_title.SetLabel(obj.title or '')
 		self.tc_tags.SetValue(obj.tags_str)
 		self.lb_created.SetLabel(format_date(obj.date_created))
