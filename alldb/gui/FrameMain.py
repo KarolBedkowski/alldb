@@ -140,6 +140,9 @@ class FrameMain(FrameMainWx):
 		if sort_col == 0:
 			if cls.title_show:
 				items = sorted(items, key=operator.attrgetter('title'))
+			else:
+				sort_col_name = self._cols[0]
+				items = sorted(items, key=lambda x:x.get_value(sort_col_name))
 		else:
 			reverse = sort_col < 0
 			sort_col_name = self._cols[abs(sort_col)-1]
