@@ -8,11 +8,11 @@ __copyright__	= 'Copyright (C) Karol Będkowski 2009'
 __version__		= '0.1'
 __release__		= '2009-12-17'
 
-from itertools import imap
-
+import logging
+import anydbm
+from itertools import imap, chain
 from UserList import UserList
 from UserDict import IterableUserDict
-import anydbm
 try:
 	import cjson
 	decoder = cjson.decode
@@ -25,6 +25,8 @@ except ImportError:
 #import cPickle
 #encoder = cPickle.dumps
 #decoder = cPickle.loads
+
+_LOG = logging.getLogger(__name__)
 
 
 class BaseObject(object):
@@ -85,6 +87,12 @@ class Index(BaseObject, IterableUserDict):
 		BaseObject.__init__(self, oid, '_IDX', context)
 		IterableUserDict.__init__(self)
 		self.name = name
+	
+	def _load(self, data):
+		BaseObject._load(self, data)
+		newdata = {}
+		for keya, ilist in self.data.iteritems():
+			newdata[keya] = map(str, ilist)
 
 	def update(self, oid, new_key, old_key=None):
 		self.del_item(oid, old_key)
@@ -99,7 +107,7 @@ class Index(BaseObject, IterableUserDict):
 
 	def del_item(self, oid, key=None):
 		if key is None:
-			for ilist in self.data.itervalues():
+			for keya, ilist in self.data.iteritems():
 				if oid in ilist:
 					ilist.remove(oid)
 		else:
@@ -108,9 +116,7 @@ class Index(BaseObject, IterableUserDict):
 				ilist.remove(oid)
 
 	def get_all(self):
-		for ilist in self.data.itervalues():
-			for item in ilist:
-				yield str(item)
+		return imap(str, chain(*self.data.itervalues()))
 
 	def get_matching(self, match_function):
 		for key, ilist in self.data.iteritems():
@@ -120,11 +126,12 @@ class Index(BaseObject, IterableUserDict):
 
 	def check_and_clean(self):
 		oids_to_delete = [ item for item in self.get_all()
-			if str(item) not in self._context ]
+			if item not in self._context ]
 		for oid in oids_to_delete:
-			print 'clean ', oid
 			self.del_item(oid)
 		self.save()
+		_LOG.info('Index.check_and_clean: deleted=%d, all=%d', 
+				len(oids_to_delete), len(list(self.get_all())))
 
 
 class SchemaLessDatabase(object):
@@ -135,18 +142,19 @@ class SchemaLessDatabase(object):
 				'_LST': ObjectsList,
 				'_IDX': Index
 		}
-
 		self._db = None
 
 	def __del__(self):
 		self.close()
 
 	def __contains__(self, oid):
-		return self._db and self._db.has_key(oid)
+		return self._db and self._db.has_key(str(oid))
 
 	def open(self, filename=None):
 		if filename:
 			self._filename = filename
+		_LOG.info('SchemaLessDatabase.open(%s); filename=%s', filename,
+				self._filename)
 		if self._filename:
 			self._db = anydbm.open(self._filename, 'c')
 			self._after_open()
@@ -154,40 +162,45 @@ class SchemaLessDatabase(object):
 			raise Exception('No filename')
 
 	def close(self):
+		_LOG.info('SchemaLessDatabase.close()')
 		if self._db is not None:
 			self._before_close()
 			self._db.close()
 
 	def get(self, oid):
+		_LOG.debug('SchemaLessDatabase.get(%r)', oid)
 		if self._db is None:
 			return None
 		if isinstance(oid, (list, tuple)):
 			return [ obj 
 					for obj in imap(self._get_single_object, oid)
-					if obj ]
+					if obj is not None]
 		return self._get_single_object(oid)
 
 	def delitem(self, oid):
+		_LOG.debug('SchemaLessDatabase.delitem(%r)', oid)
 		oid = str(oid)
 		if self._db.has_key(oid):
 			del self._db[oid]
 
 	def delete(self, obj):
+		_LOG.debug('SchemaLessDatabase.delete(%r)', obj)
 		if self._db and obj.oid:
 			obj._before_del()
 			self.delitem(obj.oid)
 			obj._after_del()
 
 	def put(self, obj):
+		_LOG.debug('SchemaLessDatabase.put(%r)', obj)
 		if self._db is None:
 			raise Exception('No database open')
-			return
 		if isinstance(obj, (list, tuple)):
 			map(self._put_single_object, obj)
 		else:
 			self._put_single_object(obj)
 
 	def sync(self):
+		_LOG.debug('SchemaLessDatabase.sync()')
 		self._db and self._db.sync()
 
 	def register_class(self, cls_name, cls):
@@ -200,8 +213,8 @@ class SchemaLessDatabase(object):
 	def next_seq(self, sequence, begin=10000, step=1):
 		seq_name = 'SEQ_' + sequence
 		seq = decoder(self._db[seq_name]) if self._db.has_key(seq_name) else begin
-		seq = int(seq) + step
-		self._db[seq_name] = encoder(str(seq))
+		seq = str(int(seq) + step)
+		self._db[seq_name] = encoder(seq)
 		self._db.sync()
 		return seq
 
@@ -210,6 +223,7 @@ class SchemaLessDatabase(object):
 
 	def _get_single_object(self, oid):
 		oid = str(oid)
+#		_LOG.debug('SchemaLessDatabase._get_single_object(%r)', oid)
 		if self._db.has_key(oid):
 			data = decoder(self._db[oid])
 			obj_cls = SimpleObject
@@ -230,7 +244,7 @@ class SchemaLessDatabase(object):
 		obj._before_save()
 		self._db[str(obj.oid)] = encoder(obj._dump())
 		obj._after_save()
-		print 'saved ', obj
+		_LOG.debug('saved %r', obj)
 
 	def _after_open(self):		pass
 	def _before_close(self):	pass
@@ -238,7 +252,6 @@ class SchemaLessDatabase(object):
 	def _print_all(self):
 		for k, v in self._db.iteritems():
 			print k, decoder(v)
-
 
 
 

@@ -10,13 +10,13 @@ __release__		= '2009-12-17'
 
 
 import string
+import logging
 
 from .sldb import SchemaLessDatabase, Index
 import objects
 
-
-
-CLASS_IDX_OID = 'IDX_CLASSES'
+_LOG = logging.getLogger(__name__)
+CLASS_IDX_OID = u'IDX_CLASSES'
 
 
 class Db(SchemaLessDatabase):
@@ -92,7 +92,7 @@ class Db(SchemaLessDatabase):
 
 		garbage_objects = [ key for key in self._db.iterkeys()
 				if key[0] in string.digits and key not in items_oids ]
-		print 'garbage_objects:', garbage_objects
+		_LOG.debug('garbage_objects: count=%d', len(garbage_objects))
 		for obj in garbage_objects:
 			del self._db[obj]
 
