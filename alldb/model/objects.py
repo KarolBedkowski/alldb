@@ -53,10 +53,28 @@ class ObjectClass(BaseObject):
 	def objects(self):
 		return self._context.get_objects_by_index(self.objects_index)
 
+	@property
+	def fields_in_list(self):
+		fields = []
+		if self.title_show:
+			fields.append('__title')
+		for field in self.fields:
+			if field[3] and field[3].get('in_title'):
+				fields.append(field[0])
+		return fields
+
 	def filter_objects(self, name_filter, tags):
 		items = self.objects
 		if name_filter:
-			items = [ item for item in items if item.title.find(name_filter) > -1 ]
+			name_filter = name_filter.lower()
+			fields2check = self.fields_in_list
+			def check(item):
+				for field in fields2check:
+					val = item.get_value(field)
+					if val and val.lower().find(name_filter) > -1:
+						return True
+				return False
+			items = [ item for item in items if check(item) ]
 
 		if tags:
 			items = [ item for item in items if item.has_tags(tags) ]

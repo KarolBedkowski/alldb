@@ -97,18 +97,9 @@ class FrameMain(FrameMainWx):
 	def _create_columns_in_list(self, cls):
 		self.list_items.ClearAll()
 		self.list_items.InsertColumn(0, _('No'), wx.LIST_FORMAT_RIGHT, 40)
-		self._cols = []
-		if cls.title_show:
-			self._cols.append('__title')
-			self.list_items.InsertColumn(1, _('Title'))
-
-		cols = len(self._cols)+1
-		for field in cls.fields:
-			if field[3] and field[3].get('in_title'):
-				self.list_items.InsertColumn(cols, _(field[0]))
-				self._cols.append(field[0])
-				cols += 1
-
+		self._cols = cls.fields_in_list
+		for col, field in enumerate(self._cols):
+			self.list_items.InsertColumn(col+1, _(field))
 		self._current_sorting_col = 0
 
 	def _show_class(self, class_oid):
@@ -131,6 +122,7 @@ class FrameMain(FrameMainWx):
 			jednego '''
 		cls = self._curr_class
 		list_items = self.list_items
+		list_items.Freeze()
 		list_items.DeleteAllItems()
 		search = self.searchbox.GetValue()
 		selected_tags = self.selected_tags
@@ -168,6 +160,7 @@ class FrameMain(FrameMainWx):
 		if item2select is not None:
 			list_items.SetItemState(item2select, wx.LIST_STATE_SELECTED, 
 				wx.LIST_STATE_SELECTED)
+		list_items.Thaw()
 
 	def _fill_tags(self, clear_selection=False, reload_tags=False):
 		''' wczytanie tagów dla wszystkich elementów i wyświetlenie
