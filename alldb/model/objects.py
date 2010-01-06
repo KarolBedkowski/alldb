@@ -63,7 +63,7 @@ class ObjectClass(BaseObject):
 				fields.append(field[0])
 		return fields
 
-	def filter_objects(self, name_filter, tags):
+	def filter_objects(self, name_filter, tags, cols=None):
 		items = self.objects
 		if name_filter:
 			name_filter = name_filter.lower()
@@ -74,10 +74,20 @@ class ObjectClass(BaseObject):
 					if val and val.lower().find(name_filter) > -1:
 						return True
 				return False
-			items = [ item for item in items if check(item) ]
+			items = ( item for item in items if check(item) )
 
 		if tags:
-			items = [ item for item in items if item.has_tags(tags) ]
+			items = ( item for item in items if item.has_tags(tags) )
+
+		if cols:
+			items = [ (item.oid, [ item.get_value(col) for col in cols ]) for item in items ]
+		else:
+			if self.title_show:
+				items = [ (item.oid, [item.title]) for item in items ]
+			else:
+				items = [ (item.oid, 
+	 					[ '='.join(key, val) for key, val in item.data.iteritems() ])
+						for item in items ]
 
 		return items
 
@@ -130,6 +140,9 @@ class Object(BaseObject):
 		if key.startswith('__'):
 			return self.__dict__.get(key[2:])
 		return self.data.get(key)
+
+	def get_values(self, keys):
+		return ','.join((self.get_value(key) for key in keys ))
 
 	def obj2dump(self):
 		yield self

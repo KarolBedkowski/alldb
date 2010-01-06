@@ -10,6 +10,7 @@ __version__		= '0.1'
 __release__		= '2009-12-20'
 
 import operator
+import locale
 
 import wx
 
@@ -22,7 +23,7 @@ from .DlgClasses import DlgClasses
 
 
 class FrameMain(FrameMainWx):
-	''' Klasa głównego okna programu'''	
+	''' Klasa głównego okna programu'''
 	def __init__(self, db):
 		FrameMainWx.__init__(self, None, -1)
 		self.SetBackgroundColour(wx.SystemSettings.GetColour(
@@ -36,6 +37,7 @@ class FrameMain(FrameMainWx):
 		self._curr_tags = {}
 		self._cols = []
 		self._current_sorting_col = 0
+		self._items = None
 
 		self.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self._on_search, self.searchbox)
 		self.Bind(wx.EVT_TEXT_ENTER, self._on_search, self.searchbox)
@@ -65,7 +67,7 @@ class FrameMain(FrameMainWx):
 		self.window_2.SetSashPosition(appconfig.get('frame_main', 'win2', -200))
 
 	def _fill_classes(self, select=None):
-		''' wczytenie listy klas i wypełnienie choicebox-a 
+		''' wczytenie listy klas i wypełnienie choicebox-a
 			@select - oid klasy do zaznaczenia lib None
 		'''
 		self.choice_klasa.Clear()
@@ -100,7 +102,7 @@ class FrameMain(FrameMainWx):
 		self._cols = cls.fields_in_list
 		for col, field in enumerate(self._cols):
 			self.list_items.InsertColumn(col+1, _(field))
-		self._current_sorting_col = 0
+		self._current_sorting_col = 1
 
 	def _show_class(self, class_oid):
 		''' wyświetlenie klasy - listy tagów i obiektów '''
@@ -114,11 +116,11 @@ class FrameMain(FrameMainWx):
 		self._create_columns_in_list(next_class)
 		self._curr_class = next_class
 		self._fill_tags((curr_class_oid != class_oid), reload_tags=True)
-		self._fill_items()
+		self._fill_items(force=True)
 		self._set_buttons_status()
 
-	def _fill_items(self, select=None):
-		''' wyświetlenie listy elemtów aktualnej klasy, opcjonalne zaznaczenie 
+	def _fill_items(self, select=None, force=False):
+		''' wyświetlenie listy elemtów aktualnej klasy, opcjonalne zaznaczenie
 			jednego '''
 		cls = self._curr_class
 		list_items = self.list_items
@@ -127,28 +129,30 @@ class FrameMain(FrameMainWx):
 		search = self.searchbox.GetValue()
 		selected_tags = self.selected_tags
 
-		items = cls.filter_objects(search, selected_tags)
-		sort_col = self._current_sorting_col
-		if sort_col == 0:
-			if cls.title_show:
-				items = sorted(items, key=operator.attrgetter('title'))
-			else:
-				sort_col_name = self._cols[0]
-				items = sorted(items, key=lambda x:x.get_value(sort_col_name))
+		if self._items and not force:
+			items = self._items
 		else:
-			reverse = sort_col < 0
-			sort_col_name = self._cols[abs(sort_col)-1]
-			items = sorted(items, key=lambda x:x.get_value(sort_col_name), 
-					reverse=reverse)
+			items = self._items = cls.filter_objects(search, selected_tags, 
+					self._cols)
+		sort_col = self._current_sorting_col
+		reverse = sort_col < 0
+		sort_col = max(abs(sort_col)-1, 0)
+		sort_cols = [sort_col] + [ x for x in range(len(self._cols)) if x != sort_col ]
+
+		def get_sorted_cols(item):
+			return ','.join((item[1][col] for col in sort_cols))
+
+		items = sorted(items, cmp=locale.strcoll, key=get_sorted_cols, reverse=reverse)
 
 		item2select = None
 		for num, item in enumerate(items):
+			oid, cols = item
 			list_items.InsertStringItem(num, str(num+1))
-			for colnum, col in enumerate(self._cols):
-				list_items.SetStringItem(num, colnum+1, unicode(item.get_value(col)))
-			list_items.SetItemData(num, item.oid)
+			for colnum, col in enumerate(cols):
+				list_items.SetStringItem(num, colnum+1, unicode(col))
+			list_items.SetItemData(num, oid)
 
-			if item.oid == select:
+			if oid == select:
 				item2select = num
 
 		for x in xrange(len(self._cols)+2):
@@ -158,7 +162,7 @@ class FrameMain(FrameMainWx):
 		self.label_info.SetLabel(_('Items: %d') % items_count)
 
 		if item2select is not None:
-			list_items.SetItemState(item2select, wx.LIST_STATE_SELECTED, 
+			list_items.SetItemState(item2select, wx.LIST_STATE_SELECTED,
 				wx.LIST_STATE_SELECTED)
 		list_items.Thaw()
 
@@ -210,7 +214,7 @@ class FrameMain(FrameMainWx):
 			self._db.sync()
 			if update_lists:
 				self._fill_tags(reload_tags=True)
-				self._fill_items(select=(select or oid))
+				self._fill_items(select=(select or oid), force=True)
 
 	def _on_close(self, evt):
 		appconfig = AppConfig()
@@ -246,7 +250,7 @@ class FrameMain(FrameMainWx):
 			self._current_sorting_col = col
 		self._fill_items(self._curr_obj.oid if self._curr_obj else None)
 
-	def _on_btn_new(self, event): 
+	def _on_btn_new(self, event):
 		self._save_object(True, True)
 		self._curr_obj = self._curr_class.create_object()
 		self._curr_info_panel.update(self._curr_obj)
@@ -258,11 +262,11 @@ class FrameMain(FrameMainWx):
 		self._curr_info_panel.update(self._curr_obj)
 
 	def _on_clb_tags(self, evt):
-		self._fill_items()
+		self._fill_items(force=True)
 		evt.Skip()
 
 	def _on_search(self, evt):
-		self._fill_items()
+		self._fill_items(force=True)
 
 	def _on_menu_exit(self, event):
 		self._save_object(True, False)
@@ -292,7 +296,7 @@ class FrameMain(FrameMainWx):
 				self._db.sync()
 				self._curr_obj = None
 				self._fill_tags(reload_tags=True)
-				self._fill_items()
+				self._fill_items(force=True)
 			dlg.Destroy()
 
 	def _on_menu_item_duplicate(self, event):
@@ -315,8 +319,8 @@ class FrameMain(FrameMainWx):
 		self._show_class(current_class_oid)
 
 	def _on_menu_import_csv(self, event):
-		dlg = wx.FileDialog(self, _('Choice a file'), 
-				wildcard=_('CSV files (*.csv)|*.csv|All files|*.*'), 
+		dlg = wx.FileDialog(self, _('Choice a file'),
+				wildcard=_('CSV files (*.csv)|*.csv|All files|*.*'),
 				style=wx.FD_OPEN|wx.FD_FILE_MUST_EXIST)
 		if dlg.ShowModal() == wx.ID_OK:
 			filepath = dlg.GetPath()
@@ -329,8 +333,8 @@ class FrameMain(FrameMainWx):
 		dlg.Destroy()
 
 	def _on_menu_export_csv(self, event):
-		dlg = wx.FileDialog(self, _('Choice a file'), 
-				wildcard=_('CSV files (*.csv)|*.csv|All files|*.*'), 
+		dlg = wx.FileDialog(self, _('Choice a file'),
+				wildcard=_('CSV files (*.csv)|*.csv|All files|*.*'),
 				style=wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT)
 		if dlg.ShowModal() == wx.ID_OK:
 			filepath = dlg.GetPath()
