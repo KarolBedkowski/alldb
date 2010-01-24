@@ -267,6 +267,18 @@ def format_date(date):
 		return time.strftime('%x %X', time.localtime(date))
 	return '-'
 
+def find_objs_commons(objs):
+	fields = dict(objs[0].data)
+	for obj in objs:
+		if not obj.data:
+			continue
+		for key, val in obj.data.iteritems():
+			if fields.get(key) is None:
+				continue
+			if fields[key] != val:
+				fields[key] = None
+	return fields
+
 
 
 # vim: encoding=utf8: ff=unix:

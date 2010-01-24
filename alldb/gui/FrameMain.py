@@ -142,7 +142,7 @@ class FrameMain(FrameMainWx):
 		def get_sorted_cols(item):
 			return ','.join((item[1][col] for col in sort_cols))
 
-		items = sorted(items, cmp=locale.strcoll, key=get_sorted_cols, reverse=reverse)
+		items.sort(cmp=locale.strcoll, key=get_sorted_cols, reverse=reverse)
 
 		item2select = None
 		for num, item in enumerate(items):
@@ -150,7 +150,7 @@ class FrameMain(FrameMainWx):
 			list_items.InsertStringItem(num, str(num+1))
 			for colnum, col in enumerate(cols):
 				list_items.SetStringItem(num, colnum+1, unicode(col))
-			list_items.SetItemData(num, oid)
+			list_items.SetItemData(num, int(oid))
 
 			if oid == select:
 				item2select = num
@@ -212,8 +212,21 @@ class FrameMain(FrameMainWx):
 			curr_obj.save()
 			oid = curr_obj.oid
 			self._db.sync()
+			reload_items = True
 			if update_lists:
-				self._fill_tags(reload_tags=True)
+				if self._items:
+					ind = [ idx for idx, (ioid, item) in enumerate(self._items) if ioid == oid ]
+					if ind:
+						indx = ind[0]
+						info = self._curr_class.get_object_info(oid, self._cols)
+						print info
+						self._items[ind[0]] = info
+						for col, val in enumerate(info[1]):
+							self.list_items.SetStringItem(indx, col+1, str(val))
+						reload_items = False
+			
+			self._fill_tags(reload_tags=True)
+			if reload_items:
 				self._fill_items(select=(select or oid), force=True)
 
 	def _on_close(self, evt):

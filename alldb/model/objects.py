@@ -86,10 +86,22 @@ class ObjectClass(BaseObject):
 				items = [ (item.oid, [item.title]) for item in items ]
 			else:
 				items = [ (item.oid, 
-	 					[ '='.join(key, val) for key, val in item.data.iteritems() ])
+	 					[ '='.join((key, str(val))) for key, val in item.data.iteritems() ])
 						for item in items ]
 
 		return items
+
+	def get_object_info(self, oid, cols=None):
+		item = self._context.get(oid)
+		if cols:
+			item = (item.oid, [ item.get_value(col) for col in cols ])
+		else:
+			if self.title_show:
+				item = (item.oid, [item.title])
+			else:
+				item = (item.oid, [ '='.join((key, str(val))) for key, val in item.data.iteritems() ])
+
+		return item
 
 	def get_all_items_tags(self):
 		tags = {}
