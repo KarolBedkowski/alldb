@@ -81,23 +81,10 @@ import wx
 
 
 def run():
-	debug = sys.argv.count('-d') > 0
-	if debug:
-		sys.argv.remove('-d')
-	debug = debug or __debug__
-
-	logging_setup('alldb.log', debug)
-
 	config = AppConfig(__file__, 'alldb')
 	config.load()
-	config.debug = debug
+	config.debug = DEBUG
 	db_filename = os.path.join(config.path_share, 'alldb.db')
-
-	gettext.install("alldb", unicode=True)
-	try:
-		locale.setlocale(locale.LC_ALL, "")
-	except locale.Error, e:
-		print e
 
 	app = wx.PySimpleApp(0)
 

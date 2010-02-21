@@ -1,0 +1,11 @@
+./alldb/gui/DlgClasses.py
+./alldb/gui/DlgClassesWx.py
+./alldb/gui/DlgEditClass.py
+./alldb/gui/DlgEditClassWx.py
+./alldb/gui/DlgEditField.py
+./alldb/gui/DlgEditFieldWx.py
+./alldb/gui/DlgEditValues.py
+./alldb/gui/FrameMain.py
+./alldb/gui/FrameMainWx.py
+./alldb/gui/PanelInfo.py
+./alldb/main.py

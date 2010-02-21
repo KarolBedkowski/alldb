@@ -1,0 +1,291 @@
+# Polish translation
+# Copyright (C) 2010, Karol Będkowski
+# This file is distributed under the same license as the AllDB package.
+# Karol Będkowski <karol.bedkowski@gmail.com>, 2010.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: alldb\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-02-21 21:21+0100\n"
+"PO-Revision-Date: 2010-02-21 21:30+0100\n"
+"Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
+"Language-Team: Polish <>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2); \n"
+
+#: .././alldb/gui/DlgClassesWx.py:20
+msgid "&Edit"
+msgstr "&Edytuj"
+
+#. begin wxGlade: DlgClassesWx.__set_properties
+#: .././alldb/gui/DlgClassesWx.py:36
+msgid "Classes"
+msgstr "Klasy"
+
+#: .././alldb/gui/DlgEditClass.py:31 .././alldb/gui/FrameMain.py:109
+msgid "No"
+msgstr "Lp"
+
+#: .././alldb/gui/DlgEditClass.py:32
+msgid "Name"
+msgstr "Nazwa"
+
+#: .././alldb/gui/DlgEditClass.py:33
+msgid "Type"
+msgstr "Typ"
+
+#: .././alldb/gui/DlgEditClass.py:34
+msgid "Default value"
+msgstr "Wartość domyślna"
+
+#: .././alldb/gui/DlgEditClass.py:35
+msgid "Options"
+msgstr "Opcje"
+
+#: .././alldb/gui/DlgEditClass.py:126
+msgid "Delete field?"
+msgstr "Usunąć pole?"
+
+#. begin wxGlade: DlgEditClassWx.__set_properties
+#: .././alldb/gui/DlgEditClass.py:126 .././alldb/gui/DlgEditClass.py:161
+#: .././alldb/gui/DlgEditClass.py:168 .././alldb/gui/DlgEditClassWx.py:46
+#: .././alldb/gui/DlgEditField.py:61 .././alldb/gui/DlgEditField.py:68
+msgid "Class"
+msgstr "Klasa"
+
+#: .././alldb/gui/DlgEditClass.py:160
+msgid "Enter name and title expresion"
+msgstr "Wprowadź nazwę i wyrażenie tytułu"
+
+#: .././alldb/gui/DlgEditClass.py:167
+msgid "Class with this name alreaty exists"
+msgstr "Klasa o tej nazwie już istnieje"
+
+#: .././alldb/gui/DlgEditClass.py:195
+msgid "in title"
+msgstr "w tytule"
+
+#: .././alldb/gui/DlgEditClass.py:197
+msgid "show in list"
+msgstr "pokaż na liście"
+
+#: .././alldb/gui/DlgEditClassWx.py:18 .././alldb/gui/DlgEditFieldWx.py:18
+msgid "Name:"
+msgstr "Nazwa"
+
+#: .././alldb/gui/DlgEditClassWx.py:20
+msgid "Item have title"
+msgstr "Element ma tytuł"
+
+#: .././alldb/gui/DlgEditClassWx.py:21
+msgid "Auto"
+msgstr "Auto"
+
+#: .././alldb/gui/DlgEditClassWx.py:23
+msgid "Show title in items list"
+msgstr "Pokaż tytuł na liście elementów"
+
+#: .././alldb/gui/DlgEditClassWx.py:24
+msgid "Fields:"
+msgstr "Pola"
+
+#: .././alldb/gui/DlgEditField.py:60
+msgid "Enter name"
+msgstr "Wprowadź nazwę"
+
+#: .././alldb/gui/DlgEditField.py:67
+msgid "Field with this name alreaty exists"
+msgstr "Pole o tej nazwie już istnieje"
+
+#: .././alldb/gui/DlgEditFieldWx.py:20
+msgid "Type:"
+msgstr "Typ"
+
+#: .././alldb/gui/DlgEditFieldWx.py:21
+msgid "text"
+msgstr "tekst"
+
+#: .././alldb/gui/DlgEditFieldWx.py:22
+msgid "checkbox"
+msgstr "zaznaczenie"
+
+#: .././alldb/gui/DlgEditFieldWx.py:23
+msgid "multiline"
+msgstr "wieloliniowe"
+
+#: .././alldb/gui/DlgEditFieldWx.py:24
+msgid "date"
+msgstr "data"
+
+#: .././alldb/gui/DlgEditFieldWx.py:25
+msgid "list"
+msgstr "lista"
+
+#: .././alldb/gui/DlgEditFieldWx.py:26
+msgid "choice"
+msgstr "wybór"
+
+#: .././alldb/gui/DlgEditFieldWx.py:27
+msgid "Default"
+msgstr "Domyślne"
+
+#: .././alldb/gui/DlgEditFieldWx.py:29
+msgid "Options:"
+msgstr "Opcje"
+
+#: .././alldb/gui/DlgEditFieldWx.py:30
+msgid "Show in title"
+msgstr "Pokaż w tytule"
+
+#: .././alldb/gui/DlgEditFieldWx.py:31
+msgid "Show column in items list"
+msgstr "Pokaż kolumnę na liscie"
+
+#: .././alldb/gui/DlgEditFieldWx.py:32
+msgid "Define values"
+msgstr "Określ wartości"
+
+#. begin wxGlade: DlgEditFieldWx.__set_properties
+#: .././alldb/gui/DlgEditFieldWx.py:43
+msgid "Field"
+msgstr "Pole"
+
+#: .././alldb/gui/DlgEditValues.py:9
+msgid "Values"
+msgstr "Wartość"
+
+#: .././alldb/gui/FrameMain.py:113
+msgid "Title"
+msgstr "Tytuł"
+
+#: .././alldb/gui/FrameMain.py:163
+#, python-format
+msgid "Items: %d"
+msgstr "Elementy: %d"
+
+#: .././alldb/gui/FrameMain.py:180
+#, python-format
+msgid "%(tag)s (%(items)d)"
+msgstr "%(tag)s (%(items)d)"
+
+#: .././alldb/gui/FrameMain.py:202
+msgid "Save changes?"
+msgstr "Zapisać zmiany?"
+
+#: .././alldb/gui/FrameMain.py:203
+msgid "AllDb"
+msgstr "AllDb"
+
+#: .././alldb/gui/FrameMain.py:291
+#, python-format
+msgid "Delete %d object/s?"
+msgstr "Usunąć %d obiektów?"
+
+#: .././alldb/gui/FrameMain.py:292 .././alldb/gui/FrameMainWx.py:32
+msgid "Delete"
+msgstr "Usuń"
+
+#: .././alldb/gui/FrameMain.py:327 .././alldb/gui/FrameMain.py:341
+msgid "Choice a file"
+msgstr "Wybór pliku"
+
+#: .././alldb/gui/FrameMain.py:328 .././alldb/gui/FrameMain.py:342
+msgid "CSV files (*.csv)|*.csv|All files|*.*"
+msgstr "Pliki CSV (*.csv)|*.csv|Wszystkie pliki|*.*"
+
+#: .././alldb/gui/FrameMainWx.py:26
+msgid "Export to &csv..."
+msgstr "Eksport do &csv..."
+
+#: .././alldb/gui/FrameMainWx.py:27
+msgid "&Import from csv"
+msgstr "&Import z csv"
+
+#: .././alldb/gui/FrameMainWx.py:28
+msgid "&Exit\tAlt-F4"
+msgstr "&Wyjście\tAlt-F4"
+
+#: .././alldb/gui/FrameMainWx.py:29
+msgid "&File"
+msgstr "&Plik"
+
+#: .././alldb/gui/FrameMainWx.py:31
+msgid "New"
+msgstr "Nowy"
+
+#: .././alldb/gui/FrameMainWx.py:33
+msgid "Duplicate"
+msgstr "Duplikuj"
+
+#: .././alldb/gui/FrameMainWx.py:34
+msgid "&Item"
+msgstr "&Element"
+
+#: .././alldb/gui/FrameMainWx.py:36
+msgid "Manage"
+msgstr "Zarządzaj"
+
+#: .././alldb/gui/FrameMainWx.py:37
+msgid "&Categories"
+msgstr "&Kategorie"
+
+#: .././alldb/gui/FrameMainWx.py:42
+msgid "Items: 0"
+msgstr "Elementy: 0"
+
+#. begin wxGlade: FrameMainWx.__set_properties
+#: .././alldb/gui/FrameMainWx.py:68
+msgid "AllDB"
+msgstr "AllDB"
+
+#: .././alldb/gui/FrameMainWx.py:71
+msgid "Category"
+msgstr "Kateogria"
+
+#: .././alldb/gui/FrameMainWx.py:73
+msgid "Tags defined in all items this category"
+msgstr "Tagi zdefiniowane we wszystkich elementach tej klasy"
+
+#: .././alldb/gui/FrameMainWx.py:74
+msgid "Items"
+msgstr "Elementy"
+
+#: .././alldb/gui/PanelInfo.py:76
+msgid "Title:"
+msgstr "Tytuł:"
+
+#: .././alldb/gui/PanelInfo.py:101
+msgid "Created:"
+msgstr "Utworzony:"
+
+#: .././alldb/gui/PanelInfo.py:102
+msgid "Modified:"
+msgstr "Zmodyfikowany:"
+
+#: .././alldb/gui/PanelInfo.py:103
+msgid "ID:"
+msgstr "ID:"
+
+#: .././alldb/gui/PanelInfo.py:141
+msgid "Tags:"
+msgstr "Tagi:"
+
+#: .././alldb/gui/PanelInfo.py:153
+msgid "Select"
+msgstr "Wybierz"
+
+#: .././alldb/gui/PanelInfo.py:184
+msgid "new"
+msgstr "new"
+
+#: .././alldb/gui/PanelInfo.py:226
+msgid "Select tags"
+msgstr "Wybierz tagi"
+
+#: .././alldb/gui/PanelInfo.py:227
+msgid "Tags"
+msgstr "Tagi"
