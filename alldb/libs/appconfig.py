@@ -3,44 +3,32 @@
 """
 Konfiguracja programu
 
+kPyLibs.appconfig
+Copyright (c) Karol Będkowski, 2007
 
- kPyLibs.appconfig
- Copyright (c) Karol Będkowski, 2007
+This file is part of kPyLibs
 
- This file is part of kPyLibs
-
- kPyLibs is free software; you can redistribute it and/or modify it under the
- terms of the GNU General Public License as published by the Free Software
- Foundation, version 2.
-
- SAG is distributed in the hope that it will be useful, but WITHOUT ANY
- WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- FOR A PARTICULAR PURPOSE.	See the GNU General Public License for more
- details.
-
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+kPyLibs is free software; you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, version 2.
 """
 
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2006'
-__revision__	= '$Id$'
-
-__all__			= []
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__revision__ = '$Id$'
+__all__ = []
 
 
 import sys
 import os
 import imp
 import logging
-_LOG = logging.getLogger(__name__)
-
 import ConfigParser
 
-
 from .singleton import Singleton
+
+_LOG = logging.getLogger(__name__)
 
 
 def create_dir(path):
@@ -54,8 +42,9 @@ def create_dir(path):
 class AppConfig(Singleton):
 	''' konfiguracja aplikacji '''
 
-	def _init__(self, main_file_path, app_name):
-		_LOG.debug('__init__(%s, %s)' % (main_file_path, app_name))
+	def _init(self, filename, main_file_path=None, use_home_dir=False,
+			app_name=None):
+		_LOG.debug('__init__(%s)' % filename)
 
 		self.main_is_frozen = self._main_is_frozen()
 		self.main_dir = self._main_dir()
@@ -63,22 +52,22 @@ class AppConfig(Singleton):
 
 		user_home = os.path.expanduser('~')
 		self.path_config = os.path.join(user_home, '.config', app_name)
-		self.path_share = os.path.join(user_home, '.local', 'share', app_name)
-
+		self.path_share = os.path.join(user_home, '.local', 'share', app_name)	
+		self._filename = os.path.join(self.path_config, filename)
+		self._config = ConfigParser.SafeConfigParser()
+		
 		create_dir(self.path_config)
 		create_dir(self.path_share)
-
-		self._config_filename = os.path.join(self.path_config, app_name+'.cfg')
-		self._config = ConfigParser.SafeConfigParser()
 
 		self.clear()
 
 		_LOG.debug('AppConfig.__init__: frozen=%s, main_dir=%s, config=%s' %
-				(self.main_is_frozen, self.main_dir, self._config_filename))
+				(self.main_is_frozen, self.main_dir, self._filename))
 
 	def clear(self):
 		self.last_open_files = []
-		map(self._config.remove_section, self._config.sections())
+		for section in self._config.sections():
+			self._config.remove_section(section)
 		self._runtime_params = {}
 
 	###########################################################################
@@ -99,27 +88,29 @@ class AppConfig(Singleton):
 	def __iter__(self):
 		self._runtime_params.__iter__()
 
-
 	def _get_debug(self):
-		return self._runtime_params.get('_DEBUG', False)
+		return self._runtime_params.get('DEBUG', False)
 
 	def _set_debug(self, value):
-		self._runtime_params['_DEBUG'] = value
+		self._runtime_params['DEBUG'] = value
 
 	debug = property(_get_debug, _set_debug)
 
 	###########################################################################
 
 	def load(self):
-		if os.path.exists(self._config_filename):
+		if os.path.exists(self._filename):
 			_LOG.debug('load')
 			cfile = None
 			try:
-				cfile = open(self._config_filename, 'r')
+				cfile = open(self._filename, 'r')
 				self._config.readfp(cfile)
 
 			except StandardError:
 				_LOG.exception('load error')
+
+			else:
+				self._after_load(self._config)
 
 			if cfile is not None:
 				cfile.close()
@@ -129,9 +120,11 @@ class AppConfig(Singleton):
 	def save(self):
 		_LOG.debug('save')
 
+		self._before_save(self._config)
+
 		cfile = None
 		try:
-			cfile = open(self._config_filename, 'w')
+			cfile = open(self._filename, 'w')
 			self._config.write(cfile)
 
 		except StandardError:
@@ -142,20 +135,21 @@ class AppConfig(Singleton):
 
 		_LOG.debug('save end')
 
+	def add_last_open_file(self, filename):
+		if filename in self.last_open_files:
+			self.last_open_files.remove(filename)
+
+		self.last_open_files.insert(0, filename)
+		self.last_open_files = self.last_open_files[:7]
+
 	@property
 	def locales_dir(self):
+		locales_dir = None
 		if self.main_is_frozen:
 			locales_dir = os.path.join(self.main_dir, 'locale')
-
 		else:
-			if self.main_file_path is None:
-				path = os.path.join(os.path.dirname(__file__), '..')
-
-			else:
-				path = os.path.dirname(self.main_file_path)
-
-			locales_dir = os.path.join( path ,  'locale')
-
+			if os.path.isdir('./locale'):
+				locales_dir = './locale'
 		return locales_dir
 
 	def _main_is_frozen(self):
@@ -169,8 +163,25 @@ class AppConfig(Singleton):
 
 		return os.path.abspath(os.path.dirname(sys.argv[0]))
 
+	def _after_load(self, config):
+		if config.has_section('last_files'):
+			self.last_open_files = [val[1] for val in sorted(config.items('last_files'))]
+		else:
+			self.last_open_files = []
+
+	def _before_save(self, config):
+		if config.has_section('last_files'):
+			config.remove_section('last_files')
+
+		config.add_section('last_files')
+
+		last_open_files = self.last_open_files[:7]
+		for fidn, fname in enumerate(last_open_files):
+			config.set('last_files', 'file%d' % fidn, fname)
+
 	def get(self, section, key, default=None):
-		if self._config.has_section(section) and self._config.has_option(section, key):
+		if self._config.has_section(section) \
+				and self._config.has_option(section, key):
 			try:
 				return eval(self._config.get(section, key))
 
@@ -183,7 +194,7 @@ class AppConfig(Singleton):
 		if self._config.has_section(section):
 			try:
 				items = self._config.items(section)
-				result = tuple(( (key, eval(val)) for key, val in items ))
+				result = tuple((key, eval(val)) for key, val in items)
 				return result
 
 			except:
@@ -210,6 +221,19 @@ class AppConfig(Singleton):
 
 		config.add_section(section)
 
+
+if __name__ == '__main__':
+	acfg = AppConfig('test.cfg')
+	acfg.last_open_files = ['1', '2', 'q', 'w']
+	print id(acfg), acfg.last_open_files
+	acfg.save()
+
+	acfg.clear()
+	print id(acfg), acfg.last_open_files
+
+	acfg = AppConfig('test.cfg')
+	acfg.load()
+	print id(acfg), acfg.last_open_files
 
 
 

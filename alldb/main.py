@@ -3,24 +3,22 @@
 """
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2009'
-__revision__	= '2009-11-12'
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2009'
+__revision__ = '2009-11-12'
 
 
 import os
 import gettext
 import locale
 import imp
-import tempfile
 
 import logging
 _LOG = logging.getLogger(__name__)
 
-import wx
-
 from alldb.gui.FrameMain import FrameMain
 from alldb.libs.appconfig import AppConfig
+from alldb.libs.logging_setup import logging_setup
 from alldb.model.db import Db
 
 import sys
@@ -30,52 +28,63 @@ try:
 except Exception, _:
 	sys.setdefaultencoding("utf-8")
 
+# logowanie
+DEBUG = sys.argv.count('-d') > 0
+if DEBUG:
+	sys.argv.remove('-d')
+logging_setup('alldb.log', DEBUG)
+
+
+def _setup_locale():
+	''' setup locales and gettext '''
+	use_home_dir = sys.platform != 'winnt'
+	app_config = AppConfig('alldb.cfg', __file__, use_home_dir=use_home_dir,
+			app_name='alldb')
+	locales_dir = app_config.locales_dir
+	package_name = 'alldb'
+	_LOG.info('run: locale dir: %s' % locales_dir)
+	try:
+		locale.bindtextdomain(package_name, locales_dir)
+		locale.bind_textdomain_codeset(package_name, "UTF-8")
+	except:
+		pass
+	default_locale = locale.getdefaultlocale()
+	locale.setlocale(locale.LC_ALL, '')
+	os.environ['LC_ALL'] = os.environ.get('LC_ALL') or default_locale[0]
+	gettext.install(package_name, localedir=locales_dir, unicode=True,
+			names=("ngettext",))
+	gettext.bindtextdomain(package_name, locales_dir)
+	gettext.bind_textdomain_codeset(package_name, "UTF-8")
+
+	_LOG.info('locale: %s' % str(locale.getlocale()))
+
+
+_setup_locale()
+
+
 def _is_frozen():
 	return (hasattr(sys, "frozen")		# new py2exe
 			or hasattr(sys, "importers")	# old py2exe
 			or imp.is_frozen("__main__"))	# tools/freeze
 
-def logging_setup(filename, debug=False):
-	log_fullpath = os.path.abspath(filename)
-	log_dir = os.path.dirname(log_fullpath)
-	log_dir_access = os.access(log_dir, os.W_OK)
+if not _is_frozen():
+	try:
+		import wxversion
+		try:
+			wxversion.select('2.8')
+		except wxversion.AlreadyImportedError:
+			pass
+	except ImportError, err:
+		print 'No wxversion.... (%s)' % str(err)
 
-	if os.path.isabs(filename):
-		if not log_dir_access:
-			log_fullpath = os.path.join(tempfile.gettempdir(), filename)
-	else:
-		if _is_frozen() or not log_dir_access:
-			log_fullpath = os.path.join(tempfile.gettempdir(), filename)
-
-	print 'Logging to %s' % log_fullpath
-
-	if debug:
-		level_console	= logging.DEBUG
-		level_file		= logging.DEBUG
-	else:
-		level_console	= logging.INFO
-		level_file		= logging.ERROR
-
-	logging.basicConfig(level=level_file, format='%(asctime)s %(levelname)-8s %(name)s - %(message)s',
-			filename=log_fullpath, filemode='w')
-	console = logging.StreamHandler()
-	console.setLevel(level_console)
-
-	console.setFormatter(logging.Formatter('%(levelname)-8s %(name)s - %(message)s'))
-	logging.getLogger('').addHandler(console)
-
-	logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
-	logging.getLogger('sqlalchemy.orm.unitofwork').setLevel(logging.WARN)
-
-	_LOG = logging.getLogger(__name__)
-	_LOG.debug('logging_setup() finished')
+import wx
 
 
 def run():
 	debug = sys.argv.count('-d') > 0
 	if debug:
 		sys.argv.remove('-d')
-	debug =  debug or __debug__
+	debug = debug or __debug__
 
 	logging_setup('alldb.log', debug)
 
@@ -89,11 +98,8 @@ def run():
 		locale.setlocale(locale.LC_ALL, "")
 	except locale.Error, e:
 		print e
-	
-	app = wx.PySimpleApp(0)
 
-	wxlocale = wx.Locale(wx.LANGUAGE_DEFAULT)
-	wxlocale.AddCatalog('alldb')
+	app = wx.PySimpleApp(0)
 
 	db = Db(db_filename)
 	db.open()
