@@ -4,13 +4,10 @@
 Główne okno programu
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2009'
-__version__		= '0.1'
-__release__		= '2009-12-20'
-
-import operator
-import locale
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2009,2010'
+__version__ = '0.1'
+__release__ = '2009-12-20'
 
 import wx
 
@@ -31,10 +28,9 @@ class FrameMain(FrameMainWx):
 		self.SetAutoLayout(True)
 
 		self._db = db
-		self._curr_class = None
 		self._curr_obj = None
 		self._curr_info_panel = None
-		self._curr_tags = {}
+		self._result = None
 		self._cols = []
 		self._current_sorting_col = 0
 		self._items = None
@@ -52,6 +48,18 @@ class FrameMain(FrameMainWx):
 			self._show_class(fclass_oid)
 
 		self._set_size_pos()
+
+	@property
+	def current_class_id(self):
+		return self._result.cls.oid if self._result else None
+
+	@property
+	def current_obj_id(self):
+		return self._curr_obj.oid if self._curr_obj else None
+
+	@property
+	def current_tags(self):
+		return self._result.tags if self._result else []
 
 	def _set_size_pos(self):
 		appconfig = AppConfig()
@@ -89,7 +97,7 @@ class FrameMain(FrameMainWx):
 		''' utworzenie panela z polami dla podanej klasy '''
 		if self._curr_info_panel:
 			self._curr_info_panel.Destroy()
-		panel = PanelInfo(self.panel_info, cls)
+		panel = PanelInfo(self, self.panel_info, cls)
 		panel_info_sizer = self.panel_info.GetSizer()
 		panel_info_sizer.Add(panel, 1, wx.EXPAND)
 		panel_info_sizer.Layout()
@@ -101,48 +109,41 @@ class FrameMain(FrameMainWx):
 		self.list_items.InsertColumn(0, _('No'), wx.LIST_FORMAT_RIGHT, 40)
 		self._cols = cls.fields_in_list
 		for col, field in enumerate(self._cols):
-			self.list_items.InsertColumn(col+1, _(field))
+			if field == '__title':
+				field = _('Title')
+			elif field.startswith('__'):
+				field = field[2:]
+			self.list_items.InsertColumn(col+1, field)
 		self._current_sorting_col = 1
 
 	def _show_class(self, class_oid):
 		''' wyświetlenie klasy - listy tagów i obiektów '''
-		curr_class_oid = (self._curr_class.oid if self._curr_class
-				else None)
+		curr_class_oid = self.current_class_id
 
-		next_class = self._db.get(class_oid)
-		if not curr_class_oid or curr_class_oid != class_oid:
-			self._create_info_panel(next_class)
+		result = self._db.load_class(class_oid)
+		if not curr_class_oid or curr_class_oid != class_oid \
+				or self._curr_info_panel is None:
+			self._create_info_panel(result.cls)
 			self._curr_obj = None
-		self._create_columns_in_list(next_class)
-		self._curr_class = next_class
-		self._fill_tags((curr_class_oid != class_oid), reload_tags=True)
-		self._fill_items(force=True)
+		self._result = result
+		self._create_columns_in_list(result.cls)
+		self._fill_tags((curr_class_oid != class_oid))
+		self._fill_items()
 		self._set_buttons_status()
 
-	def _fill_items(self, select=None, force=False):
+	def _fill_items(self, select=None, do_filter=True, do_sort=True):
 		''' wyświetlenie listy elemtów aktualnej klasy, opcjonalne zaznaczenie
 			jednego '''
-		cls = self._curr_class
 		list_items = self.list_items
 		list_items.Freeze()
 		list_items.DeleteAllItems()
 		search = self.searchbox.GetValue()
 		selected_tags = self.selected_tags
 
-		if self._items and not force:
-			items = self._items
-		else:
-			items = self._items = cls.filter_objects(search, selected_tags, 
-					self._cols)
-		sort_col = self._current_sorting_col
-		reverse = sort_col < 0
-		sort_col = max(abs(sort_col)-1, 0)
-		sort_cols = [sort_col] + [ x for x in range(len(self._cols)) if x != sort_col ]
-
-		def get_sorted_cols(item):
-			return ','.join((item[1][col] for col in sort_cols))
-
-		items.sort(cmp=locale.strcoll, key=get_sorted_cols, reverse=reverse)
+		if do_filter:
+			items = self._result.filter_items(search, selected_tags, self._cols)
+		if do_sort:
+			items = self._result.sort_items(self._current_sorting_col)
 
 		item2select = None
 		for num, item in enumerate(items):
@@ -155,7 +156,7 @@ class FrameMain(FrameMainWx):
 			if oid == select:
 				item2select = num
 
-		for x in xrange(len(self._cols)+2):
+		for x in xrange(len(self._cols) + 2):
 			list_items.SetColumnWidth(x, wx.LIST_AUTOSIZE)
 
 		items_count = self.list_items.GetItemCount()
@@ -166,17 +167,15 @@ class FrameMain(FrameMainWx):
 				wx.LIST_STATE_SELECTED)
 		list_items.Thaw()
 
-	def _fill_tags(self, clear_selection=False, reload_tags=False):
+	def _fill_tags(self, clear_selection=False):
 		''' wczytanie tagów dla wszystkich elementów i wyświetlenie
 			ich na liście.
 			@clear_selection - wyczyszczenie zaznaczonych tagów
 			@reload_tags - ponowne wczytanie tagów
 		'''
-		if reload_tags or self._curr_class is None:
-			self._curr_tags = self._curr_class.get_all_items_tags()
 		selected_tags = [] if clear_selection else self.selected_tags
 		self.clb_tags.Clear()
-		for tag, count in sorted(self._curr_tags.iteritems()):
+		for tag, count in sorted(self._result.tags.iteritems()):
 			num = self.clb_tags.Append(
 					_('%(tag)s (%(items)d)') % dict(tag=tag, items=count))
 			if wx.Platform != '__WXMSW__':
@@ -188,7 +187,7 @@ class FrameMain(FrameMainWx):
 		record_showed =  (self.list_items.GetSelectedItemCount() > 0) or \
 				new_record
 		self.button_apply.Enable(record_showed)
-		self.button_new_item.Enable(self._curr_class is not None)
+		self.button_new_item.Enable(self._result is not None)
 		if self._curr_info_panel:
 			self._curr_info_panel.Show(record_showed)
 			self.panel_info.GetSizer().Layout()
@@ -211,23 +210,22 @@ class FrameMain(FrameMainWx):
 			curr_obj.set_tags(tags)
 			curr_obj.save()
 			oid = curr_obj.oid
-			self._db.sync()
 			reload_items = True
 			if update_lists:
 				if self._items:
-					ind = [ idx for idx, (ioid, item) in enumerate(self._items) if ioid == oid ]
+					ind = [idx for idx, (ioid, item) in enumerate(self._items) if ioid == oid]
 					if ind:
 						indx = ind[0]
-						info = self._curr_class.get_object_info(oid, self._cols)
-						print info
+						info = get_object_info(self._result.cls, curr_obj, self._cols)
 						self._items[ind[0]] = info
 						for col, val in enumerate(info[1]):
 							self.list_items.SetStringItem(indx, col+1, str(val))
 						reload_items = False
 			
-			self._fill_tags(reload_tags=True)
+			self._result = self._db.load_class(self._result.cls.oid)
+			self._fill_tags()
 			if reload_items:
-				self._fill_items(select=(select or oid), force=True)
+				self._fill_items(select=(select or oid))
 
 	def _on_close(self, evt):
 		appconfig = AppConfig()
@@ -239,7 +237,7 @@ class FrameMain(FrameMainWx):
 
 	def _on_class_select(self, evt):
 		oid = evt.GetClientData()
-		if oid != (self._curr_class.oid if self._curr_class else None):
+		if oid != self.current_class_id:
 			self._save_object(True, False)
 			self._show_class(oid)
 
@@ -248,24 +246,20 @@ class FrameMain(FrameMainWx):
 
 	def _on_item_select(self, evt):
 		oid = evt.GetData()
-		if oid == (self._curr_obj.oid if self._curr_obj else None):
+		if oid == self.current_obj_id:
 			return
 		self._save_object(True, True, oid)
-		self._curr_obj = self._db.get(oid)
+		self._curr_obj = self._db.get_object(oid)
 		self._curr_info_panel.update(self._curr_obj)
 		self._set_buttons_status()
 
 	def _on_items_col_click(self, event):
-		col = event.m_col
-		if col == abs(self._current_sorting_col):
-			self._current_sorting_col = -self._current_sorting_col
-		else:
-			self._current_sorting_col = col
-		self._fill_items(self._curr_obj.oid if self._curr_obj else None)
+		self._current_sorting_col = event.m_col
+		self._fill_items(self.current_obj_id, do_filter=False)
 
 	def _on_btn_new(self, event):
 		self._save_object(True, True)
-		self._curr_obj = self._curr_class.create_object()
+		self._curr_obj = self._result.cls.create_object()
 		self._curr_info_panel.update(self._curr_obj)
 		self._set_buttons_status(True)
 		self._curr_info_panel.set_focus()
@@ -275,11 +269,11 @@ class FrameMain(FrameMainWx):
 		self._curr_info_panel.update(self._curr_obj)
 
 	def _on_clb_tags(self, evt):
-		self._fill_items(force=True)
+		self._fill_items()
 		evt.Skip()
 
 	def _on_search(self, evt):
-		self._fill_items(force=True)
+		self._fill_items(do_sort=False)
 
 	def _on_menu_exit(self, event):
 		self._save_object(True, False)
@@ -287,7 +281,7 @@ class FrameMain(FrameMainWx):
 		event.Skip()
 
 	def _on_menu_item_new(self, event):
-		if self._curr_class:
+		if self._result:
 			self._on_btn_new(event)
 
 	def _on_menu_item_delete(self, event):
@@ -306,10 +300,9 @@ class FrameMain(FrameMainWx):
 					oid = litems.GetItemData(itemid)
 					self._db.delitem(oid)
 
-				self._db.sync()
 				self._curr_obj = None
-				self._fill_tags(reload_tags=True)
-				self._fill_items(force=True)
+				self._fill_tags()
+				self._fill_items()
 			dlg.Destroy()
 
 	def _on_menu_item_duplicate(self, event):
@@ -320,14 +313,13 @@ class FrameMain(FrameMainWx):
 			self._curr_info_panel.set_focus()
 
 	def _on_menu_categories(self, event):
-		current_class_oid = (self._curr_class.oid if self._curr_class else None)
+		current_class_oid = self.current_class_id
 		dlg = DlgClasses(self, self._db)
 		dlg.ShowModal()
 		dlg.Destroy()
 		if self._curr_info_panel:
 			self._curr_info_panel.Destroy()
 			self._curr_info_panel = None
-		self._curr_class = None
 		current_class_oid = self._fill_classes(current_class_oid)
 		self._show_class(current_class_oid)
 
@@ -337,13 +329,13 @@ class FrameMain(FrameMainWx):
 				style=wx.FD_OPEN|wx.FD_FILE_MUST_EXIST)
 		if dlg.ShowModal() == wx.ID_OK:
 			filepath = dlg.GetPath()
-			cls = self._curr_class
+			cls = self._result.cls
 			items = list(import_csv(filepath, cls))
-			for item in items:
-				self._db.put(item)
-			self._db.sync()
+			self._db.put_object(items)
 
 		dlg.Destroy()
+		current_class_oid = self._fill_classes(self.current_class_oid)
+		self._show_class(current_class_oid)
 
 	def _on_menu_export_csv(self, event):
 		dlg = wx.FileDialog(self, _('Choice a file'),
@@ -351,11 +343,10 @@ class FrameMain(FrameMainWx):
 				style=wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT)
 		if dlg.ShowModal() == wx.ID_OK:
 			filepath = dlg.GetPath()
-			cls = self._curr_class
+			cls = self._result.cls
 			list_items = self.list_items
-			items_oids = [ list_items.GetItemData(x)
-					for x in xrange(list_items.GetItemCount())
-			]
+			items_oids = [list_items.GetItemData(x)
+					for x in xrange(list_items.GetItemCount())]
 			items = self._db.get(items_oids)
 			export2csv(filepath, cls, items)
 
@@ -376,6 +367,17 @@ class FrameMain(FrameMainWx):
 		return checked
 
 
+def get_object_info(self, cls, item, cols=None):
+	info = None
+	if cols:
+		info = (item.oid, [item.get_value(col) for col in cols])
+	else:
+		if cls.title_show:
+			info = (item.oid, [item.title])
+		else:
+			info = (item.oid, ['='.join((key, str(val))) 
+				for key, val in item.data.iteritems()])
+	return info
 
 
 # vim: encoding=utf8: ff=unix:

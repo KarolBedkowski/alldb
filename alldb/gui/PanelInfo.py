@@ -17,8 +17,9 @@ from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
 
 
 class PanelInfo(scrolled.ScrolledPanel):
-	def __init__(self, parent, obj_class, *argv, **kwarg):
+	def __init__(self, window, parent, obj_class, *argv, **kwarg):
 		scrolled.ScrolledPanel.__init__(self, parent, -1, *argv, **kwarg)
+		self._window = window
 		self._obj = None
 		self._obj_cls = obj_class
 		self._fields = {}
@@ -178,8 +179,8 @@ class PanelInfo(scrolled.ScrolledPanel):
 				field.SetValue(unicode(value or ''))
 		self.tc_title.SetLabel(obj.title or '')
 		self.tc_tags.SetValue(obj.tags_str)
-		self.lb_created.SetLabel(format_date(obj.date_created))
-		self.lb_modified.SetLabel(format_date(obj.date_modified))
+		self.lb_created.SetLabel(format_date(obj.created))
+		self.lb_modified.SetLabel(format_date(obj.updated))
 		self.lb_id.SetLabel(str(obj.oid or _("new")))
 
 	def _fill_fields_clear(self):
@@ -212,7 +213,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self.SetupScrolling()
 
 	def _on_btn_choice_tags(self, evt):
-		cls_tags = self._obj_cls.get_all_items_tags()
+		cls_tags = self._window.current_tags.copy()#self._obj_cls.get_all_items_tags()
 		item_tags_str = self.tc_tags.GetValue()
 		item_tags = []
 		if item_tags_str:

@@ -42,14 +42,14 @@ class DlgEditClass(DlgEditClassWx):
 
 	def show_class(self, cls):
 		self.tc_name.SetValue(str(cls.name or ''))
-		self.tc_title.SetValue(str(cls.title_expr or ''))
+		self.tc_title.SetValue(str(cls.title_expr))
 		self._refresh_list(cls)
 		self.show_title(cls)
 		self.cb_show_title.SetValue(cls.title_show)
 		self.cb_title_auto.SetValue(cls.title_auto)
 
 	def show_title(self, cls):
-		if cls.title_auto:
+		if cls['title_auto']:
 			self.tc_title.Enable(True)
 			self.cb_title_auto.SetValue(cls.title_auto)
 			self.tc_title.Enable(False)

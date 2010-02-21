@@ -3,10 +3,10 @@
 """
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2009'
-__version__		= '0.1'
-__release__		= '2009-12-20'
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2009'
+__version__ = '0.1'
+__release__ = '2009-12-20'
 
 
 import wx
@@ -37,13 +37,12 @@ class DlgClasses(DlgClassesWx):
 			self.lc_classes.SetItemData(no, cls.oid)
 
 	def _edit_class(self, cls_oid):
-		cls = self._db.get(cls_oid) if cls_oid else objects.ObjectClass()
+		cls = self._db.get_class(cls_oid) if cls_oid else objects.ADObjectClass()
 		cls_names = [ c.name for c in (self._db.classes or []) 
 				if c.oid != cls_oid ]
 		dlg = DlgEditClass(self, cls, cls_names)
 		if dlg.ShowModal() == wx.ID_OK:
-			self._db.put(cls)
-			self._db.sync()
+			self._db.put_class(cls)
 			self.fill_classes()
 		dlg.Destroy()
 
