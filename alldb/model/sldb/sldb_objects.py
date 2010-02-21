@@ -105,4 +105,21 @@ class Object(BaseObject):
 			raise RuntimeError('No context')
 		self.sldb_context.delete_object(self)
 
+
+class Index(BaseObject):
+	__slots__ = ('class_id', 'name')
+	__persistattr__ = ('data', )
+
+	def __init__(self, oid=None, class_id=None, name=None, context=None):
+		BaseObject.__init__(self, oid, context)
+		self.class_id = class_id
+		self.name = name
+
+	def _set_fields(self, fields): self.data['fields'] = fields
+	def _get_fields(self): return self.data.get('fields')
+	fields = property(_get_fields, _set_fields)
+
+
+
+
 # vim: encoding=utf8: ff=unix:
