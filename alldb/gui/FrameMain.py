@@ -334,7 +334,7 @@ class FrameMain(FrameMainWx):
 			self._db.put_object(items)
 
 		dlg.Destroy()
-		current_class_oid = self._fill_classes(self.current_class_oid)
+		current_class_oid = self._fill_classes(self._result.cls.oid)
 		self._show_class(current_class_oid)
 
 	def _on_menu_export_csv(self, event):
@@ -344,10 +344,7 @@ class FrameMain(FrameMainWx):
 		if dlg.ShowModal() == wx.ID_OK:
 			filepath = dlg.GetPath()
 			cls = self._result.cls
-			list_items = self.list_items
-			items_oids = [list_items.GetItemData(x)
-					for x in xrange(list_items.GetItemCount())]
-			items = self._db.get(items_oids)
+			items = self._result.items
 			export2csv(filepath, cls, items)
 
 		dlg.Destroy()

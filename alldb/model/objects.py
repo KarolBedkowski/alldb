@@ -115,9 +115,14 @@ class SearchResult(object):
 		self.cls = None
 		self.reset()
 
+	@property
+	def items(self):
+		self_items = self._items
+		return (self_items[oid] for oid, _data in self.filtered_items)
+
 	def reset(self):
 		self.tags = {}
-		self.items = []
+		self._items = {}
 		self.filtered_items = []
 		self.current_sorting_col = 0
 		self._last_filter = None
@@ -127,7 +132,7 @@ class SearchResult(object):
 		self.reset()
 
 	def set_items(self, items):
-		self.items = items
+		self._items = dict((item.oid, item) for item in items)
 		self._update_tags()
 
 	def filter_items(self, name_filter, tags, cols):
@@ -137,7 +142,7 @@ class SearchResult(object):
 		_LOG.debug('filter_items(%r, %r, %r)', name_filter, tags, cols)
 		self._last_filter = (name_filter, tags, cols)
 
-		items = self.items
+		items = self._items.itervalues()
 		if name_filter:
 			name_filter = name_filter.lower()
 
@@ -171,7 +176,7 @@ class SearchResult(object):
 
 	def _update_tags(self):
 		tags = {}
-		for item in self.items:
+		for item in self._items.itervalues():
 			for tag in item.tags:
 				tags[tag] = tags.get(tag, 0) + 1
 		self.tags = tags

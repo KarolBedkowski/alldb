@@ -22,11 +22,11 @@ def export2csv(filename, cls, items):
 		@cls klasa do eksportu
 		@items lista elementów do eksportu
 	'''
-	fields = [ f[0] for f in cls.fields ]
-	itemsdata = ( i.data for i in items )
+	fields = [f[0] for f in cls.fields]
+	itemsdata = (i.data for i in items)
 	with open(filename, 'wt') as fcsv:
 		writer = csv.DictWriter(fcsv, fields, extrasaction='ignore')
-		writer.writerow(dict(( (f,f) for f in fields )))
+		writer.writerow(dict((f,f) for f in fields))
 		writer.writerows(itemsdata)
 
 
