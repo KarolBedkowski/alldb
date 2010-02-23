@@ -159,6 +159,7 @@ class SearchResult(object):
 
 		self.filtered_items = [(item.oid, [item.get_value(col) for col in cols])
 				for item in items]
+		self._do_sort_items()
 		return self.filtered_items
 
 	def sort_items(self, col):
@@ -166,7 +167,9 @@ class SearchResult(object):
 			self.current_sorting_col = - self.current_sorting_col
 		else:
 			self.current_sorting_col = max(col, 1)
+		return self._do_sort_items()
 
+	def _do_sort_items(self):
 		current_sorting_col = abs(self.current_sorting_col) - 1
 		if current_sorting_col >= 0:
 			reverse = self.current_sorting_col < 0
