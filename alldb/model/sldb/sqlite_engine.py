@@ -142,7 +142,8 @@ class SqliteEngineTx(object):
 		_LOG.debug('SqliteEngineTx.del_object(%r)', oid)
 		if not hasattr(oid, '__iter__'):
 			oid = (oid, )
-		self._cursor.execute('delete from objects where oid=?', oid)
+		for ioid in oid:
+			self._cursor.execute('delete from objects where oid=?', (oid, ))
 
 	def put_object(self, objs):
 		_LOG.debug('SqliteEngineTx.put(%r)', objs)
@@ -187,7 +188,8 @@ class SqliteEngineTx(object):
 		_LOG.debug('SqliteEngineTx.del_class(%r)', class_id)
 		if not hasattr(class_id, '__iter__'):
 			class_id = (class_id, )
-		self._cursor.execute('delete from classes where id = ?', class_id)
+		for cid in class_id:
+			self._cursor.execute('delete from classes where id = ?', (class_id, ))
 
 
 
