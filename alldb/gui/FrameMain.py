@@ -152,7 +152,6 @@ class FrameMain(FrameMainWx):
 			for colnum, col in enumerate(cols):
 				list_items.SetStringItem(num, colnum+1, unicode(col))
 			list_items.SetItemData(num, int(oid))
-
 			if oid == select:
 				item2select = num
 
@@ -287,23 +286,27 @@ class FrameMain(FrameMainWx):
 	def _on_menu_item_delete(self, event):
 		litems = self.list_items
 		cnt = litems.GetSelectedItemCount()
-		if cnt > 0:
-			dlg = wx.MessageDialog(self, _('Delete %d object/s?') % cnt,
-					_('Delete'), wx.YES_NO|wx.NO_DEFAULT|wx.ICON_HAND)
-			if dlg.ShowModal() == wx.ID_YES:
-				itemid = -1
-				while True:
-					itemid = litems.GetNextItem(itemid, wx.LIST_NEXT_ALL,
-							wx.LIST_STATE_SELECTED)
-					if itemid == -1:
-						break
-					oid = litems.GetItemData(itemid)
-					self._db.delitem(oid)
+		if cnt == 0:
+			return
 
-				self._curr_obj = None
-				self._fill_tags()
-				self._fill_items()
-			dlg.Destroy()
+		dlg = wx.MessageDialog(self, _('Delete %d object/s?') % cnt, _('Delete'),
+				wx.YES_NO | wx.NO_DEFAULT | wx.ICON_HAND)
+		if dlg.ShowModal() == wx.ID_YES:
+			items_to_delete = []
+			itemid = -1
+			while True:
+				itemid = litems.GetNextItem(itemid, wx.LIST_NEXT_ALL,
+						wx.LIST_STATE_SELECTED)
+				if itemid == -1:
+					break
+				items_to_delete.append(litems.GetItemData(itemid))
+
+			self._db.del_objects(items_to_delete)
+			self._curr_obj = None
+			self._result = self._db.load_class(self._result.cls.oid)
+			self._fill_tags()
+			self._fill_items()
+		dlg.Destroy()
 
 	def _on_menu_item_duplicate(self, event):
 		if self._curr_obj:

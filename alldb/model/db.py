@@ -27,7 +27,7 @@ class Db(SchemaLessDatabase):
 
 	@property
 	def classes(self):
-		return self.get_classes()
+		return self.get_classes() or []
 
 	def _create_class_object(self, cid, name, data):
 		cls = ADObjectClass(cid, name, self)

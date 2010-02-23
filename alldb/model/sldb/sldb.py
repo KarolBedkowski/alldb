@@ -69,6 +69,11 @@ class SchemaLessDatabase(object):
 			for oid, class_id, data in res:
 				return self._create_single_object(oid, class_id, data)
 
+	def del_objects(self, oids):
+		with self._engine.create_transaction(self) as trans:
+			trans.del_object(oids)
+		self._engine.sync()
+
 	def get_objects_by_class(self, class_id):
 		with self._engine.create_transaction(self) as trans:
 			res = trans.get_objects_by_class(class_id)
