@@ -22,24 +22,21 @@ class DlgClasses(DlgClassesWx):
 		self._db = db
 		self._current_cls = None
 
-		self.GetSizer().Add(
-				self.CreateStdDialogButtonSizer(wx.OK), 
-				0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 6)
-
+		self.GetSizer().Add(self.CreateStdDialogButtonSizer(wx.OK), 0,
+				wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 6)
 		self.Fit()
 		self.fill_classes()
 		self._set_buttons_state()
 
 	def fill_classes(self):
 		self.lc_classes.DeleteAllItems()
-		for no, cls in enumerate(self._db.classes or []):
+		for no, cls in enumerate(self._db.classes):
 			self.lc_classes.InsertStringItem(no, str(cls.name))
 			self.lc_classes.SetItemData(no, cls.oid)
 
 	def _edit_class(self, cls_oid):
 		cls = self._db.get_class(cls_oid) if cls_oid else objects.ADObjectClass()
-		cls_names = [ c.name for c in (self._db.classes or []) 
-				if c.oid != cls_oid ]
+		cls_names = [c.name for c in self._db.classes if c.oid != cls_oid]
 		dlg = DlgEditClass(self, cls, cls_names)
 		if dlg.ShowModal() == wx.ID_OK:
 			self._db.put_class(cls)
@@ -69,13 +66,23 @@ class DlgClasses(DlgClassesWx):
 	def _on_btn_edit(self, event):
 		if self.lc_classes.GetSelectedItemCount() == 0:
 			return
-		item_idx = self.lc_classes.GetNextItem(-1, wx.LIST_NEXT_ALL, wx.LIST_STATE_SELECTED)
+		item_idx = self.lc_classes.GetNextItem(-1, wx.LIST_NEXT_ALL, 
+				wx.LIST_STATE_SELECTED)
 		oid = self.lc_classes.GetItemData(item_idx)
 		self._edit_class(oid)
 
 	def _on_btn_delete(self, event):
-		print "Event handler `_on_btn_delete' not implemented!"
-		event.Skip()
+		if self.lc_classes.GetSelectedItemCount() == 0:
+			return
+		dlg = wx.MessageDialog(self, _('Delete selected class and ALL items?'),
+				_('Delete class'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_HAND)
+		if dlg.ShowModal() == wx.ID_YES:
+			item_idx = self.lc_classes.GetNextItem(-1, wx.LIST_NEXT_ALL,
+					wx.LIST_STATE_SELECTED)
+			oid = self.lc_classes.GetItemData(item_idx)
+			self._db.del_class(oid)
+			self.fill_classes()
+		dlg.Destroy()
 
 	def _set_buttons_state(self):
 		item_selected = self.lc_classes.GetSelectedItemCount() > 0

@@ -187,7 +187,7 @@ class SqliteEngineTx(object):
 		_LOG.debug('SqliteEngineTx.del_class(%r)', class_id)
 		if not hasattr(class_id, '__iter__'):
 			class_id = (class_id, )
-		self._cursor.execute('delete from classws where class_id=?', class_id)
+		self._cursor.execute('delete from classes where id = ?', class_id)
 
 
 

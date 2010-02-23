@@ -54,6 +54,11 @@ class SchemaLessDatabase(object):
 			return [self._create_class_object(cid, name, data)
 					for cid, name, data in trans.get_classes()]
 
+	def del_class(self, oids):
+		with self._engine.create_transaction(self) as trans:
+			trans.del_class(oids)
+		self._engine.sync()
+
 	def put_object(self, obj):
 		with self._engine.create_transaction(self) as trans:
 			obj = obj if hasattr(obj, '__iter__') else (obj, )
