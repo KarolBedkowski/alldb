@@ -11,13 +11,12 @@ __revision__ = '2009-11-12'
 import os
 import gettext
 import locale
-import imp
 
 import logging
 _LOG = logging.getLogger(__name__)
 
 from alldb.gui.FrameMain import FrameMain
-from alldb.libs.appconfig import AppConfig
+from alldb.libs import appconfig
 from alldb.libs.logging_setup import logging_setup
 from alldb.model.db import Db
 
@@ -38,7 +37,7 @@ logging_setup('alldb.log', DEBUG)
 def _setup_locale():
 	''' setup locales and gettext '''
 	use_home_dir = sys.platform != 'winnt'
-	app_config = AppConfig('alldb.cfg', __file__, use_home_dir=use_home_dir,
+	app_config = appconfig.AppConfig('alldb.cfg', __file__, use_home_dir=use_home_dir,
 			app_name='alldb')
 	locales_dir = app_config.locales_dir
 	package_name = 'alldb'
@@ -62,12 +61,7 @@ def _setup_locale():
 _setup_locale()
 
 
-def _is_frozen():
-	return (hasattr(sys, "frozen")		# new py2exe
-			or hasattr(sys, "importers")	# old py2exe
-			or imp.is_frozen("__main__"))	# tools/freeze
-
-if not _is_frozen():
+if not appconfig.is_frozen():
 	try:
 		import wxversion
 		try:
@@ -81,7 +75,7 @@ import wx
 
 
 def run():
-	config = AppConfig(__file__, 'alldb')
+	config = appconfig.AppConfig(__file__, 'alldb')
 	config.load()
 	config.debug = DEBUG
 	db_filename = os.path.join(config.path_share, 'alldb.db')

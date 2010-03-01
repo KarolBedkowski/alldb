@@ -31,14 +31,6 @@ from .singleton import Singleton
 _LOG = logging.getLogger(__name__)
 
 
-def create_dir(path):
-	if not os.path.exists(path):
-		try:
-			os.makedirs(path)
-		except:
-			_LOG.exception('Error creating directory: %s' % path)
-
-
 class AppConfig(Singleton):
 	''' konfiguracja aplikacji '''
 
@@ -46,19 +38,27 @@ class AppConfig(Singleton):
 			app_name=None):
 		_LOG.debug('__init__(%s)' % filename)
 
-		self.main_is_frozen = self._main_is_frozen()
+		self.main_is_frozen = is_frozen()
 		self.main_dir = self._main_dir()
 		self.main_file_path = main_file_path
 
-		user_home = os.path.expanduser('~')
-		self.path_config = os.path.join(user_home, '.config', app_name)
-		self.path_share = os.path.join(user_home, '.local', 'share', app_name)	
-		self._filename = os.path.join(self.path_config, filename)
-		self._config = ConfigParser.SafeConfigParser()
-		
-		create_dir(self.path_config)
-		create_dir(self.path_share)
+		if use_home_dir and app_name is not None:
+			user_home = os.path.expanduser('~')
+			self.config_path = os.path.join(user_home, '.config', app_name)
+			if not os.path.exists(self.config_path):
+				try:
+					os.makedirs(self.config_path)
+				except:
+					_LOG.exception('Error creating config directory: %s' \
+							% self.config_path)
+					self.config_path = self.main_dir
+			self.path_share = os.path.join(user_home, '.local/share', app_name)
+		else:
+			self.config_path = self.main_dir
+			self.path_share = self.main_dir
 
+		self._filename = os.path.join(self.config_path, filename)
+		self._config = ConfigParser.SafeConfigParser()
 		self.clear()
 
 		_LOG.debug('AppConfig.__init__: frozen=%s, main_dir=%s, config=%s' %
@@ -105,40 +105,30 @@ class AppConfig(Singleton):
 			try:
 				cfile = open(self._filename, 'r')
 				self._config.readfp(cfile)
-
 			except StandardError:
 				_LOG.exception('load error')
-
 			else:
 				self._after_load(self._config)
-
 			if cfile is not None:
 				cfile.close()
-
 			_LOG.debug('load end')
 
 	def save(self):
 		_LOG.debug('save')
-
 		self._before_save(self._config)
-
 		cfile = None
 		try:
 			cfile = open(self._filename, 'w')
 			self._config.write(cfile)
-
 		except StandardError:
 			_LOG.exception('save error')
-
 		if cfile is not None:
 			cfile.close()
-
 		_LOG.debug('save end')
 
 	def add_last_open_file(self, filename):
 		if filename in self.last_open_files:
 			self.last_open_files.remove(filename)
-
 		self.last_open_files.insert(0, filename)
 		self.last_open_files = self.last_open_files[:7]
 
@@ -150,31 +140,24 @@ class AppConfig(Singleton):
 		else:
 			if os.path.isdir('./locale'):
 				locales_dir = './locale'
-		return locales_dir
 
-	def _main_is_frozen(self):
-		return (hasattr(sys, "frozen")		# new py2exe
-				or hasattr(sys, "importers")	# old py2exe
-				or imp.is_frozen("__main__"))	# tools/freeze
+		if not locales_dir or not os.path.isdir(locales_dir):
+			if os.path.isdir('/usr/share/locale/'):
+				locales_dir = '/usr/share/locale'
+		return locales_dir
 
 	def _main_dir(self):
 		if self.main_is_frozen:
 			return os.path.abspath(os.path.dirname(sys.executable))
-
 		return os.path.abspath(os.path.dirname(sys.argv[0]))
 
 	def _after_load(self, config):
-		if config.has_section('last_files'):
-			self.last_open_files = [val[1] for val in sorted(config.items('last_files'))]
-		else:
-			self.last_open_files = []
+		self.last_open_files = [val[1] for val in sorted(config.items('last_files'))]
 
 	def _before_save(self, config):
 		if config.has_section('last_files'):
 			config.remove_section('last_files')
-
 		config.add_section('last_files')
-
 		last_open_files = self.last_open_files[:7]
 		for fidn, fname in enumerate(last_open_files):
 			config.set('last_files', 'file%d' % fidn, fname)
@@ -184,10 +167,8 @@ class AppConfig(Singleton):
 				and self._config.has_option(section, key):
 			try:
 				return eval(self._config.get(section, key))
-
 			except:
 				_LOG.exception('AppConfig.get(%s, %s, %r)' % (section, key, default))
-
 		return default
 
 	def get_items(self, section):
@@ -196,30 +177,30 @@ class AppConfig(Singleton):
 				items = self._config.items(section)
 				result = tuple((key, eval(val)) for key, val in items)
 				return result
-
 			except:
 				_LOG.exception('AppConfig.get(%s)' % section)
-
 		return None
 
 	def set(self, section, key, val):
 		if not self._config.has_section(section):
 			self._config.add_section(section)
-
 		self._config.set(section, key, repr(val))
 
 	def set_items(self, section, key, items):
 		config = self._config
-		self._remove_and_create_section(config, section)
-
+		if config.has_section(section):
+			config.remove_section(section)
+		config.add_section(section)
 		for idx, item in enumerate(items):
 			config.set(section, '%s%05d' % (key, idx), repr(item))
 
-	def _remove_and_create_section(self, config, section):
-		if config.has_section(section):
-			config.remove_section(section)
 
-		config.add_section(section)
+def is_frozen():
+	if __file__.startswith('/usr/share/'):
+		return True
+	return (hasattr(sys, "frozen")		# new py2exe
+			or hasattr(sys, "importers")	# old py2exe
+			or imp.is_frozen("__main__"))	# tools/freeze
 
 
 if __name__ == '__main__':
