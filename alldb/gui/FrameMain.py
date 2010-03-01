@@ -109,11 +109,8 @@ class FrameMain(FrameMainWx):
 		self.list_items.InsertColumn(0, _('No'), wx.LIST_FORMAT_RIGHT, 40)
 		self._cols = cls.fields_in_list
 		for col, field in enumerate(self._cols):
-			if field == '__title':
-				field = _('Title')
-			elif field.startswith('__'):
-				field = field[2:]
-			self.list_items.InsertColumn(col+1, field)
+			field_name = get_field_human(field)
+			self.list_items.InsertColumn(col+1, field_name)
 		self._current_sorting_col = 1
 
 	def _show_class(self, class_oid):
@@ -378,6 +375,14 @@ def get_object_info(self, cls, item, cols=None):
 			info = (item.oid, ['='.join((key, str(val))) 
 				for key, val in item.data.iteritems()])
 	return info
+
+
+def get_field_human(field):
+	if field == '__title':
+		return _('Title')
+	elif field.startswith('__'):
+		field = field[2:]
+	return field.capitalize()
 
 
 # vim: encoding=utf8: ff=unix:
