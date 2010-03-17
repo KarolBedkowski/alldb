@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alldb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-21 21:21+0100\n"
-"PO-Revision-Date: 2010-02-21 21:30+0100\n"
+"POT-Creation-Date: 2010-03-17 19:00+0100\n"
+"PO-Revision-Date: 2010-03-17 19:02+0100\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,11 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2); \n"
 
-#: .././alldb/gui/DlgClassesWx.py:20
+#: .././alldb/gui/DlgClasses.py:79
+msgid "selected class and ALL items"
+msgstr "zaznaczone klasy i wszystkie elementy"
+
+#: .././alldb/gui/DlgClassesWx.py:20 .././alldb/gui/FrameMainWx.py:39
 msgid "&Edit"
 msgstr "&Edytuj"
 
@@ -26,50 +30,61 @@ msgstr "&Edytuj"
 msgid "Classes"
 msgstr "Klasy"
 
-#: .././alldb/gui/DlgEditClass.py:31 .././alldb/gui/FrameMain.py:109
+#: .././alldb/gui/DlgEditClass.py:32 .././alldb/gui/FrameMain.py:110
 msgid "No"
 msgstr "Lp"
 
-#: .././alldb/gui/DlgEditClass.py:32
+#: .././alldb/gui/DlgEditClass.py:33
 msgid "Name"
 msgstr "Nazwa"
 
-#: .././alldb/gui/DlgEditClass.py:33
+#: .././alldb/gui/DlgEditClass.py:34
 msgid "Type"
 msgstr "Typ"
 
-#: .././alldb/gui/DlgEditClass.py:34
+#: .././alldb/gui/DlgEditClass.py:35
 msgid "Default value"
 msgstr "Wartość domyślna"
 
-#: .././alldb/gui/DlgEditClass.py:35
+#: .././alldb/gui/DlgEditClass.py:36
 msgid "Options"
 msgstr "Opcje"
 
-#: .././alldb/gui/DlgEditClass.py:126
+#: .././alldb/gui/DlgEditClass.py:127
 msgid "Delete field?"
 msgstr "Usunąć pole?"
 
 #. begin wxGlade: DlgEditClassWx.__set_properties
-#: .././alldb/gui/DlgEditClass.py:126 .././alldb/gui/DlgEditClass.py:161
-#: .././alldb/gui/DlgEditClass.py:168 .././alldb/gui/DlgEditClassWx.py:46
-#: .././alldb/gui/DlgEditField.py:61 .././alldb/gui/DlgEditField.py:68
+#: .././alldb/gui/DlgEditClass.py:127 .././alldb/gui/DlgEditClassWx.py:48
+#: .././alldb/gui/DlgEditField.py:63
 msgid "Class"
 msgstr "Klasa"
 
-#: .././alldb/gui/DlgEditClass.py:160
-msgid "Enter name and title expresion"
-msgstr "Wprowadź nazwę i wyrażenie tytułu"
+#: .././alldb/gui/DlgEditClass.py:161
+msgid "Name and title fields are empty."
+msgstr "Pola nazwa i tytuł są puste."
 
-#: .././alldb/gui/DlgEditClass.py:167
-msgid "Class with this name alreaty exists"
-msgstr "Klasa o tej nazwie już istnieje"
+#: .././alldb/gui/DlgEditClass.py:162
+msgid "Both fields must have defined values."
+msgstr "Oba pola muszą posiadać określoną wartość."
 
-#: .././alldb/gui/DlgEditClass.py:195
+#: .././alldb/gui/DlgEditClass.py:165
+msgid "Cannot save class"
+msgstr "Nie można zapisać klasy"
+
+#: .././alldb/gui/DlgEditClass.py:166
+msgid ""
+"Class with this name already exists.\n"
+"Please specify other name."
+msgstr ""
+"Klasa o tej nazwie już istnieje.\n"
+"Proszę określić inną nazwę."
+
+#: .././alldb/gui/DlgEditClass.py:191
 msgid "in title"
 msgstr "w tytule"
 
-#: .././alldb/gui/DlgEditClass.py:197
+#: .././alldb/gui/DlgEditClass.py:193
 msgid "show in list"
 msgstr "pokaż na liście"
 
@@ -78,28 +93,44 @@ msgid "Name:"
 msgstr "Nazwa"
 
 #: .././alldb/gui/DlgEditClassWx.py:20
-msgid "Item have title"
-msgstr "Element ma tytuł"
+msgid "Items title"
+msgstr "Tytuły elementów"
 
 #: .././alldb/gui/DlgEditClassWx.py:21
-msgid "Auto"
-msgstr "Auto"
+msgid "Items have title"
+msgstr "Elementy posiadają tytuł"
+
+#: .././alldb/gui/DlgEditClassWx.py:22
+msgid "Create title expresion:"
+msgstr "Utwórz wyrażenie tytułu"
 
 #: .././alldb/gui/DlgEditClassWx.py:23
+msgid "Title expression:"
+msgstr "Wyrażenie tytułu:"
+
+#: .././alldb/gui/DlgEditClassWx.py:25
 msgid "Show title in items list"
 msgstr "Pokaż tytuł na liście elementów"
 
-#: .././alldb/gui/DlgEditClassWx.py:24
-msgid "Fields:"
+#: .././alldb/gui/DlgEditClassWx.py:26
+msgid "Fields"
 msgstr "Pola"
 
-#: .././alldb/gui/DlgEditField.py:60
+#: .././alldb/gui/DlgEditField.py:62
 msgid "Enter name"
 msgstr "Wprowadź nazwę"
 
-#: .././alldb/gui/DlgEditField.py:67
-msgid "Field with this name alreaty exists"
-msgstr "Pole o tej nazwie już istnieje"
+#: .././alldb/gui/DlgEditField.py:69
+msgid "Cannot add this field"
+msgstr "Nie można dodać tego pola"
+
+#: .././alldb/gui/DlgEditField.py:70
+msgid ""
+"Field with this name alreaty exists.\n"
+"Please enter other name."
+msgstr ""
+"Pole o tej nazwie już istnieje.\n"
+"Proszę wprowadzić inną nazwę."
 
 #: .././alldb/gui/DlgEditFieldWx.py:20
 msgid "Type:"
@@ -154,48 +185,43 @@ msgstr "Określ wartości"
 msgid "Field"
 msgstr "Pole"
 
-#: .././alldb/gui/DlgEditValues.py:9
+#: .././alldb/gui/DlgEditValues.py:10
 msgid "Values"
 msgstr "Wartość"
 
-#: .././alldb/gui/FrameMain.py:113
-msgid "Title"
-msgstr "Tytuł"
-
-#: .././alldb/gui/FrameMain.py:163
+#: .././alldb/gui/FrameMain.py:160
 #, python-format
 msgid "Items: %d"
 msgstr "Elementy: %d"
 
-#: .././alldb/gui/FrameMain.py:180
+#: .././alldb/gui/FrameMain.py:177
 #, python-format
 msgid "%(tag)s (%(items)d)"
 msgstr "%(tag)s (%(items)d)"
 
-#: .././alldb/gui/FrameMain.py:202
+#: .././alldb/gui/FrameMain.py:199
 msgid "Save changes?"
 msgstr "Zapisać zmiany?"
 
-#: .././alldb/gui/FrameMain.py:203
-msgid "AllDb"
-msgstr "AllDb"
-
-#: .././alldb/gui/FrameMain.py:291
+#: .././alldb/gui/FrameMain.py:286
 #, python-format
-msgid "Delete %d object/s?"
-msgstr "Usunąć %d obiektów?"
+msgid "one object"
+msgid_plural "%(count)d objects"
+msgstr[0] "jeden obiekt"
+msgstr[1] "%(count)d obiekty"
+msgstr[2] "%(count)d obiektów"
 
-#: .././alldb/gui/FrameMain.py:292 .././alldb/gui/FrameMainWx.py:32
-msgid "Delete"
-msgstr "Usuń"
-
-#: .././alldb/gui/FrameMain.py:327 .././alldb/gui/FrameMain.py:341
+#: .././alldb/gui/FrameMain.py:322 .././alldb/gui/FrameMain.py:336
 msgid "Choice a file"
 msgstr "Wybór pliku"
 
-#: .././alldb/gui/FrameMain.py:328 .././alldb/gui/FrameMain.py:342
+#: .././alldb/gui/FrameMain.py:323 .././alldb/gui/FrameMain.py:337
 msgid "CSV files (*.csv)|*.csv|All files|*.*"
 msgstr "Pliki CSV (*.csv)|*.csv|Wszystkie pliki|*.*"
+
+#: .././alldb/gui/FrameMain.py:374
+msgid "Title"
+msgstr "Tytuł"
 
 #: .././alldb/gui/FrameMainWx.py:26
 msgid "Export to &csv..."
@@ -205,52 +231,52 @@ msgstr "Eksport do &csv..."
 msgid "&Import from csv"
 msgstr "&Import z csv"
 
-#: .././alldb/gui/FrameMainWx.py:28
-msgid "&Exit\tAlt-F4"
-msgstr "&Wyjście\tAlt-F4"
-
 #: .././alldb/gui/FrameMainWx.py:29
+msgid "&Exit\tCtrl+Q"
+msgstr "&Zakończ\tCtrl+Q"
+
+#: .././alldb/gui/FrameMainWx.py:30
 msgid "&File"
 msgstr "&Plik"
 
-#: .././alldb/gui/FrameMainWx.py:31
-msgid "New"
-msgstr "Nowy"
+#: .././alldb/gui/FrameMainWx.py:32
+msgid "&New"
+msgstr "&Nowy"
 
 #: .././alldb/gui/FrameMainWx.py:33
-msgid "Duplicate"
-msgstr "Duplikuj"
+msgid "&Delete"
+msgstr "&Usuń"
 
 #: .././alldb/gui/FrameMainWx.py:34
-msgid "&Item"
-msgstr "&Element"
+msgid "Duplicate &Item"
+msgstr "&Powiel element"
 
 #: .././alldb/gui/FrameMainWx.py:36
-msgid "Manage"
-msgstr "Zarządzaj"
+msgid "Manage &Categories"
+msgstr "Zarządzaj &kategoriami"
 
-#: .././alldb/gui/FrameMainWx.py:37
-msgid "&Categories"
-msgstr "&Kategorie"
+#: .././alldb/gui/FrameMainWx.py:38
+msgid "&Preferences"
+msgstr "&Preferencje"
 
-#: .././alldb/gui/FrameMainWx.py:42
+#: .././alldb/gui/FrameMainWx.py:44
 msgid "Items: 0"
 msgstr "Elementy: 0"
 
 #. begin wxGlade: FrameMainWx.__set_properties
-#: .././alldb/gui/FrameMainWx.py:68
+#: .././alldb/gui/FrameMainWx.py:70
 msgid "AllDB"
 msgstr "AllDB"
 
-#: .././alldb/gui/FrameMainWx.py:71
+#: .././alldb/gui/FrameMainWx.py:73
 msgid "Category"
 msgstr "Kateogria"
 
-#: .././alldb/gui/FrameMainWx.py:73
+#: .././alldb/gui/FrameMainWx.py:75
 msgid "Tags defined in all items this category"
-msgstr "Tagi zdefiniowane we wszystkich elementach tej klasy"
+msgstr "Etykiety zdefiniowane we wszystkich elementach tej klasy"
 
-#: .././alldb/gui/FrameMainWx.py:74
+#: .././alldb/gui/FrameMainWx.py:76
 msgid "Items"
 msgstr "Elementy"
 
@@ -272,7 +298,7 @@ msgstr "ID:"
 
 #: .././alldb/gui/PanelInfo.py:141
 msgid "Tags:"
-msgstr "Tagi:"
+msgstr "Etykiety:"
 
 #: .././alldb/gui/PanelInfo.py:153
 msgid "Select"
@@ -284,8 +310,78 @@ msgstr "new"
 
 #: .././alldb/gui/PanelInfo.py:226
 msgid "Select tags"
-msgstr "Wybierz tagi"
+msgstr "Wybierz etykiety"
 
 #: .././alldb/gui/PanelInfo.py:227
 msgid "Tags"
-msgstr "Tagi"
+msgstr "Etykiety"
+
+#: .././alldb/gui/dialogs/message_boxes.py:82
+#, python-format
+msgid ""
+"Save the changes to\n"
+"%(doc_name)s before closing?"
+msgstr ""
+"Zapisać zmiany w\n"
+"%(doc_name)s przed zamknięciem?"
+
+#: .././alldb/gui/dialogs/message_boxes.py:85
+msgid "If you close without saving, changes will be discarded"
+msgstr "Zamknięcie bez zapisu spowoduje utracenie wszystkich zmian."
+
+#: .././alldb/gui/dialogs/message_boxes.py:87
+#, python-format
+msgid ""
+"If you close without saving, changes from the last\n"
+"%(time)s will be discarded"
+msgstr ""
+"Zamknięcie bez zapisania spowoduje utratę zmian\n"
+"z ostatnich %(time)s."
+
+#: .././alldb/gui/dialogs/message_boxes.py:95
+msgid "Close &without Saving"
+msgstr "Zapisz bez zapisywania"
+
+#: .././alldb/gui/dialogs/message_boxes.py:99
+msgid "Save &As"
+msgstr "Zapisz jako"
+
+#: .././alldb/gui/dialogs/message_boxes.py:99
+msgid "Save"
+msgstr "Zapisz"
+
+#: .././alldb/gui/dialogs/message_boxes.py:127
+#, python-format
+msgid "Delete %s?"
+msgstr "Usunąć %s?"
+
+#: .././alldb/gui/dialogs/message_boxes.py:128
+msgid "After removal, it cannot be recovered."
+msgstr "Po usunięciu, nie będzie możliwe przywrócenie."
+
+#: .././alldb/gui/dialogs/message_boxes.py:136
+msgid "Delete"
+msgstr "Usuń"
+
+#: .././alldb/gui/dialogs/message_boxes.py:237
+msgid "Ok"
+msgstr "Ok"
+
+#: .././alldb/gui/dialogs/message_boxes.py:238
+msgid "Cancel"
+msgstr "Anuluj"
+
+#~ msgid "Auto"
+#~ msgstr "Auto"
+
+#~ msgid "AllDb"
+#~ msgstr "AllDb"
+
+#~ msgid "&Exit\tAlt-F4"
+#~ msgstr "&Wyjście\tAlt-F4"
+
+#~ msgid "&Item"
+#~ msgstr "&Element"
+
+#~ msgid "Manage"
+#~ msgstr "Zarządzaj"

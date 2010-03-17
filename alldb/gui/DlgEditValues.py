@@ -2,6 +2,7 @@
 import wx
 import wx.gizmos as gizmos
 
+
 class DlgEditValues(wx.Dialog):
 	def __init__(self, parent, data):
 		wx.Dialog.__init__(self, parent, -1, 

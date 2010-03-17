@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Podstawowe obiekty 
+Podstawowe obiekty
 """
 
 __author__ = 'Karol Będkowski'
@@ -48,6 +48,12 @@ class BaseObject(object):
 		if context:
 			self.sldb_context = context
 		self.updated = time.time()
+
+	def duplicate(self):
+		obj = self.__class__()
+		obj.sldb_context = self.sldb_context
+		obj.data = self.data.copy()
+		return obj
 
 
 class ObjectClass(BaseObject):
@@ -104,6 +110,11 @@ class Object(BaseObject):
 		if not self.sldb_context:
 			raise RuntimeError('No context')
 		self.sldb_context.delete_object(self)
+
+	def duplicate(self):
+		obj = super(Object, self).duplicate()
+		obj.class_id = self.class_id
+		return obj
 
 
 class Index(BaseObject):

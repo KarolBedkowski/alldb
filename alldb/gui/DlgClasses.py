@@ -12,6 +12,7 @@ __release__ = '2009-12-20'
 import wx
 
 from alldb.model import objects
+from alldb.gui.dialogs import message_boxes as msgbox
 
 from .DlgClassesWx import DlgClassesWx
 from .DlgEditClass import DlgEditClass
@@ -22,7 +23,7 @@ class DlgClasses(DlgClassesWx):
 		self._db = db
 		self._current_cls = None
 
-		self.GetSizer().Add(self.CreateStdDialogButtonSizer(wx.OK), 0,
+		self.GetSizer().Add(self.CreateStdDialogButtonSizer(wx.CANCEL), 0,
 				wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 6)
 		self.Fit()
 		self.fill_classes()
@@ -74,15 +75,14 @@ class DlgClasses(DlgClassesWx):
 	def _on_btn_delete(self, event):
 		if self.lc_classes.GetSelectedItemCount() == 0:
 			return
-		dlg = wx.MessageDialog(self, _('Delete selected class and ALL items?'),
-				_('Delete class'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_HAND)
-		if dlg.ShowModal() == wx.ID_YES:
+		res = msgbox.message_box_delete_confirm(self,
+				_('selected class and ALL items'))
+		if res:
 			item_idx = self.lc_classes.GetNextItem(-1, wx.LIST_NEXT_ALL,
 					wx.LIST_STATE_SELECTED)
 			oid = self.lc_classes.GetItemData(item_idx)
 			self._db.del_class(oid)
 			self.fill_classes()
-		dlg.Destroy()
 
 	def _set_buttons_state(self):
 		item_selected = self.lc_classes.GetSelectedItemCount() > 0

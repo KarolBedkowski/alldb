@@ -107,6 +107,13 @@ class ADObject(sldb.Object):
 		if not self.title:
 			self.title = ':'.join(self.data.items()[0])
 
+	def duplicate(self):
+		obj = super(ADObject, self).duplicate()
+		obj.tags = self.tags[:]
+		obj.title = self.title
+		return obj
+
+
 
 class SearchResult(object):
 	"""docstring for SearchResult"""

@@ -3,16 +3,19 @@
 """
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2009'
-__version__		= '0.1'
-__release__		= '2009-12-20'
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2009'
+__version__ = '0.1'
+__release__ = '2009-12-20'
 
 
 import wx
 
+from alldb.gui.dialogs import message_boxes as msgbox
+
 from .DlgEditFieldWx import DlgEditFieldWx
 from .DlgEditValues import DlgEditValues
+
 
 class DlgEditField(DlgEditFieldWx):
 	def __init__(self, parent, data):
@@ -36,7 +39,6 @@ class DlgEditField(DlgEditFieldWx):
 				0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 6)
 
 		self.Fit()
-
 		self.Bind(wx.EVT_BUTTON, self._on_ok, id=wx.ID_OK)
 
 		self.fill()
@@ -64,10 +66,8 @@ class DlgEditField(DlgEditFieldWx):
 			return
 
 		if name in self._data.get('_fields_names', []):
-			dlg = wx.MessageDialog(self, _('Field with this name alreaty exists'),
-					_('Class'), wx.OK|wx.ICON_ERROR)
-			dlg.ShowModal()
-			dlg.Destroy()
+			msgbox.message_box_error_ex(self, _('Cannot add this field'),
+					_('Field with this name alreaty exists.\nPlease enter other name.'))
 			return
 
 		self._data['name'] = name
@@ -95,8 +95,6 @@ class DlgEditField(DlgEditFieldWx):
 		if dlg.ShowModal() == wx.ID_OK:
 			self._data['options']['values'] = data['values']
 		dlg.Destroy()
-
-
 
 
 # vim: encoding=utf8: ff=unix:

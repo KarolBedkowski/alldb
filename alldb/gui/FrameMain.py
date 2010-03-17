@@ -13,6 +13,7 @@ import wx
 
 from alldb.libs.appconfig import AppConfig
 from alldb.filetypes.csv_support import export2csv, import_csv
+from alldb.gui.dialogs import message_boxes as msgbox
 
 from .FrameMainWx import FrameMainWx
 from .PanelInfo import PanelInfo
@@ -195,11 +196,7 @@ class FrameMain(FrameMainWx):
 		curr_obj = self._curr_obj
 		if curr_obj.check_for_changes(data, tags):
 			if ask_for_save:
-				dlg = wx.MessageDialog(self, _('Save changes?'),
-						_('AllDb'), wx.YES_NO|wx.YES_DEFAULT|wx.ICON_WARNING)
-				dont_save = dlg.ShowModal() == wx.ID_NO
-				dlg.Destroy()
-				if dont_save:
+				if not msgbox.message_box_save_confirm(self, _('Save changes?')):
 					return
 
 			curr_obj.data.update(data)
@@ -217,7 +214,7 @@ class FrameMain(FrameMainWx):
 						for col, val in enumerate(info[1]):
 							self.list_items.SetStringItem(indx, col+1, str(val))
 						reload_items = False
-			
+
 			self._result = self._db.load_class(self._result.cls.oid)
 			self._fill_tags()
 			if reload_items:
@@ -286,9 +283,8 @@ class FrameMain(FrameMainWx):
 		if cnt == 0:
 			return
 
-		dlg = wx.MessageDialog(self, _('Delete %d object/s?') % cnt, _('Delete'),
-				wx.YES_NO | wx.NO_DEFAULT | wx.ICON_HAND)
-		if dlg.ShowModal() == wx.ID_YES:
+		msg = ngettext('one object', '%(count)d objects', cnt)
+		if msgbox.message_box_delete_confirm(self, msg % dict(count=cnt)):
 			items_to_delete = []
 			itemid = -1
 			while True:
@@ -303,7 +299,6 @@ class FrameMain(FrameMainWx):
 			self._result = self._db.load_class(self._result.cls.oid)
 			self._fill_tags()
 			self._fill_items()
-		dlg.Destroy()
 
 	def _on_menu_item_duplicate(self, event):
 		if self._curr_obj:
@@ -346,21 +341,18 @@ class FrameMain(FrameMainWx):
 			cls = self._result.cls
 			items = self._result.items
 			export2csv(filepath, cls, items)
-
 		dlg.Destroy()
 
 	@property
 	def selected_tags(self):
 		cbl = self.clb_tags
 		if wx.Platform == '__WXMSW__':
-			checked =  [ cbl.GetString(num)
-					for num in xrange(cbl.GetCount())
-					if cbl.IsChecked(num) ]
-			checked = [ text[:text.rfind(' (')] for text in checked ]
+			checked = [cbl.GetString(num) for num in xrange(cbl.GetCount())
+					if cbl.IsChecked(num)]
+			checked = [text[:text.rfind(' (')] for text in checked]
 		else:
-			checked =  [ cbl.GetClientData(num)
-					for num in xrange(cbl.GetCount())
-					if cbl.IsChecked(num) ]
+			checked = [cbl.GetClientData(num) for num in xrange(cbl.GetCount())
+					if cbl.IsChecked(num)]
 		return checked
 
 
@@ -372,7 +364,7 @@ def get_object_info(self, cls, item, cols=None):
 		if cls.title_show:
 			info = (item.oid, [item.title])
 		else:
-			info = (item.oid, ['='.join((key, str(val))) 
+			info = (item.oid, ['='.join((key, str(val)))
 				for key, val in item.data.iteritems()])
 	return info
 

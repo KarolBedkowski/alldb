@@ -11,6 +11,8 @@ __release__		= '2009-12-20'
 
 import wx
 
+from alldb.gui.dialogs import message_boxes as msgbox
+
 from .DlgEditClassWx import DlgEditClassWx
 from .DlgEditField	import DlgEditField
 
@@ -24,7 +26,6 @@ class DlgEditClass(DlgEditClassWx):
 		self.GetSizer().Add(
 				self.CreateStdDialogButtonSizer(wx.OK|wx.CANCEL),
 				0, wx.EXPAND|wx.LEFT|wx.RIGHT|wx.BOTTOM, 6)
-
 		self.Fit()
 
 		lc_fields = self.lc_fields
@@ -36,9 +37,9 @@ class DlgEditClass(DlgEditClassWx):
 
 		self.show_class(cls)
 		self._set_buttons_status()
+		self.Centre(wx.BOTH)
 
 		self.Bind(wx.EVT_BUTTON, self._on_ok, id=wx.ID_OK)
-		self.Centre(wx.BOTH)
 
 	def show_class(self, cls):
 		self.tc_name.SetValue(str(cls.name or ''))
@@ -157,17 +158,12 @@ class DlgEditClass(DlgEditClassWx):
 		name = self.tc_name.GetValue()
 		title_expr = self.tc_title.GetValue()
 		if not (name and title_expr):
-			dlg = wx.MessageDialog(self, _('Enter name and title expresion'),
-					_('Class'), wx.OK|wx.ICON_ERROR)
-			dlg.ShowModal()
-			dlg.Destroy()
-			return
+			msgbox.message_box_error_ex(self, _('Name and title fields are empty.'),
+					_('Both fields must have defined values.'))
 
 		if name in self._cls_names:
-			dlg = wx.MessageDialog(self, _('Class with this name alreaty exists'),
-					_('Class'), wx.OK|wx.ICON_ERROR)
-			dlg.ShowModal()
-			dlg.Destroy()
+			msgbox.message_box_error_ex(self, _('Cannot save class'),
+					_('Class with this name already exists.\nPlease specify other name.'))
 			return
 
 		self._cls.name = name

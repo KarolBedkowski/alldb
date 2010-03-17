@@ -1,3 +1,4 @@
+./alldb/filetypes/csv_support.py
 ./alldb/gui/DlgClasses.py
 ./alldb/gui/DlgClassesWx.py
 ./alldb/gui/DlgEditClass.py
@@ -8,4 +9,19 @@
 ./alldb/gui/FrameMain.py
 ./alldb/gui/FrameMainWx.py
 ./alldb/gui/PanelInfo.py
+./alldb/gui/app.py
+./alldb/gui/dialogs/__init__.py
+./alldb/gui/dialogs/dialogs.py
+./alldb/gui/dialogs/message_boxes.py
+./alldb/icons/icons.py
+./alldb/libs/appconfig.py
+./alldb/libs/logging_setup.py
+./alldb/libs/singleton.py
 ./alldb/main.py
+./alldb/model/db.py
+./alldb/model/dbtest.py
+./alldb/model/objects.py
+./alldb/model/sldb/sldb.py
+./alldb/model/sldb/sldb_objects.py
+./alldb/model/sldb/sldb_test.py
+./alldb/model/sldb/sqlite_engine.py
