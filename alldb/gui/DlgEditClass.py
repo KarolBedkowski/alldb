@@ -48,6 +48,9 @@ class DlgEditClass(DlgEditClassWx):
 		self.show_title(cls)
 		self.cb_show_title.SetValue(cls.title_show)
 		self.cb_title_auto.SetValue(cls.title_auto)
+		self.cb_title_auto.Enable(cls.title_show)
+		self.cb_title_in_list.Enable(cls.title_show)
+		self.tc_title.Enable(not cls.title_auto and cls.title_show)
 
 	def show_title(self, cls):
 		if cls['title_auto']:
@@ -73,6 +76,16 @@ class DlgEditClass(DlgEditClassWx):
 		lc_fields.SetColumnWidth(2, wx.LIST_AUTOSIZE)
 		lc_fields.SetColumnWidth(3, wx.LIST_AUTOSIZE)
 		lc_fields.SetColumnWidth(4, wx.LIST_AUTOSIZE)
+
+	def _on_item_have_title_checkbox(self, event):
+		have_title = self.cb_show_title.IsChecked()
+		self.cb_title_auto.Enable(have_title)
+		self.cb_title_in_list.Enable(have_title)
+		if have_title:
+			title_auto = self.cb_title_auto.IsChecked()
+			self.tc_title.Enable(not title_auto)
+		else:
+			self.tc_title.Enable(False)
 
 	def _on_btn_title_refresh(self, event):
 		if self._cls.fields:
