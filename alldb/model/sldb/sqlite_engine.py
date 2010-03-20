@@ -12,6 +12,8 @@ __release__ = '2010-02-21'
 
 import logging
 import sqlite3
+import os
+import os.path
 try:
 	import cjson
 	_DECODER = cjson.decode
@@ -72,6 +74,9 @@ class SqliteEngine(object):
 
 	def open(self):
 		_LOG.info('SchemaLessDatabase.open(); filename=%s', self.filename)
+		bdir = os.path.dirname(self.filename)
+		if not os.path.exists(bdir):
+			os.mkdir(bdir)
 		self.database = sqlite3.connect(self.filename)
 		self._after_open()
 

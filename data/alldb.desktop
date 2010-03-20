@@ -3,10 +3,10 @@ Encoding=UTF-8
 Icon=/usr/share/alldb/data/alldb.svg
 Name=AllDB
 Comment=All-kind of data database
-Comment[pl]=Baza danych wszystkich rzeczy
+Comment[pl]=Baza danych o różnych rzeczach
 Exec=alldb
 Terminal=false
 Type=Application
-Categories=GNOME;GTK;Database;
+Categories=GNOME;GTK;Utility;
 StartupNotify=true
 
