@@ -26,6 +26,7 @@ import imp
 import logging
 import ConfigParser
 
+from alldb import configuration
 from .singleton import Singleton
 
 _LOG = logging.getLogger(__name__)
@@ -38,13 +39,14 @@ class AppConfig(Singleton):
 			app_name=None):
 		_LOG.debug('__init__(%s)' % filename)
 
+		self.app_name = app_name
 		self.main_is_frozen = is_frozen()
 		self.main_dir = self._main_dir()
 		self.main_file_path = main_file_path
 
 		if use_home_dir and app_name is not None:
-			user_home = os.path.expanduser('~')
-			self.config_path = os.path.join(user_home, '.config', app_name)
+			self.config_path = os.path.join(os.path.expanduser('~'), '.config',
+					app_name)
 			if not os.path.exists(self.config_path):
 				try:
 					os.makedirs(self.config_path)
@@ -52,10 +54,8 @@ class AppConfig(Singleton):
 					_LOG.exception('Error creating config directory: %s' \
 							% self.config_path)
 					self.config_path = self.main_dir
-			self.path_share = os.path.join(user_home, '.local/share', app_name)
 		else:
 			self.config_path = self.main_dir
-			self.path_share = self.main_dir
 
 		self._filename = os.path.join(self.config_path, filename)
 		self._config = ConfigParser.SafeConfigParser()
@@ -134,25 +134,32 @@ class AppConfig(Singleton):
 
 	@property
 	def locales_dir(self):
-		locales_dir = None
 		if self.main_is_frozen:
-			locales_dir = os.path.join(self.main_dir, 'locale')
-		else:
-			if os.path.isdir('./locale'):
-				locales_dir = './locale'
+			if self.main_dir == configuration.LINUX_INSTALL_DIR:
+				return configuration.LINUX_LOCALES_DIR
+		return os.path.join(self.main_dir, configuration.LOCALES_DIR)
 
-		if not locales_dir or not os.path.isdir(locales_dir):
-			if os.path.isdir('/usr/share/locale/'):
-				locales_dir = '/usr/share/locale'
-		return locales_dir
+	@property
+	def data_dir(self):
+		return os.path.join(self.main_dir, configuration.DATA_DIR)
+
+	@property
+	def user_share_dir(self):
+		return os.path.join(os.path.expanduser('~'), '.local', 'share',
+				self.app_name)
 
 	def _main_dir(self):
 		if self.main_is_frozen:
+			if os.path.abspath(os.path.dirname(__file__)).startswith(
+					configuration.LINUX_INSTALL_DIR):
+				return configuration.LINUX_INSTALL_DIR
 			return os.path.abspath(os.path.dirname(sys.executable))
 		return os.path.abspath(os.path.dirname(sys.argv[0]))
 
 	def _after_load(self, config):
-		self.last_open_files = [val[1] for val in sorted(config.items('last_files'))]
+		if config.has_section('last_files'):
+			self.last_open_files = [val[1] for val
+					in sorted(config.items('last_files'))]
 
 	def _before_save(self, config):
 		if config.has_section('last_files'):
@@ -196,7 +203,7 @@ class AppConfig(Singleton):
 
 
 def is_frozen():
-	if __file__.startswith('/usr/share/'):
+	if __file__.startswith(configuration.LINUX_INSTALL_DIR):
 		return True
 	return (hasattr(sys, "frozen")		# new py2exe
 			or hasattr(sys, "importers")	# old py2exe

@@ -11,6 +11,7 @@ __revision__ = '2009-11-12'
 import os
 import gettext
 import locale
+import optparse
 
 import logging
 _LOG = logging.getLogger(__name__)
@@ -19,6 +20,7 @@ from alldb.gui.FrameMain import FrameMain
 from alldb.libs import appconfig
 from alldb.libs.logging_setup import logging_setup
 from alldb.model.db import Db
+from alldb.libs.iconprovider import IconProvider
 
 import sys
 reload(sys)
@@ -27,11 +29,22 @@ try:
 except Exception, _:
 	sys.setdefaultencoding("utf-8")
 
+
+def show_version(ption, opt_str, value, parser, *args, **kwargs):
+	from alldb import version
+	print version.INFO
+	exit(0)
+
+
+p = optparse.OptionParser()
+p.add_option('--debug', '-d', action="store_true", default=False,
+		help='enable debug messages')
+p.add_option('--version', action="callback", callback=show_version,
+		help='show information about application version')
+options, arguments = p.parse_args()
+
 # logowanie
-DEBUG = sys.argv.count('-d') > 0
-if DEBUG:
-	sys.argv.remove('-d')
-logging_setup('alldb.log', DEBUG)
+logging_setup('alldb.log', options.debug)
 
 
 def _setup_locale():
@@ -77,10 +90,12 @@ import wx
 def run():
 	config = appconfig.AppConfig(__file__, 'alldb')
 	config.load()
-	config.debug = DEBUG
-	db_filename = os.path.join(config.path_share, 'alldb.db')
+	config.debug = options.debug
+	db_filename = os.path.join(config.user_share_dir, 'alldb.db')
 
 	app = wx.PySimpleApp(0)
+
+	IconProvider(None, config.data_dir)
 
 	db = Db(db_filename)
 	db.open()

@@ -12,12 +12,14 @@ __release__ = '2009-12-20'
 import wx
 
 from alldb.libs.appconfig import AppConfig
+from alldb.libs.iconprovider import IconProvider
 from alldb.filetypes.csv_support import export2csv, import_csv
 from alldb.gui.dialogs import message_boxes as msgbox
 
 from .FrameMainWx import FrameMainWx
 from .PanelInfo import PanelInfo
 from .DlgClasses import DlgClasses
+from ._dlgabout import show_about_box
 
 
 class FrameMain(FrameMainWx):
@@ -35,6 +37,10 @@ class FrameMain(FrameMainWx):
 		self._cols = []
 		self._current_sorting_col = 0
 		self._items = None
+
+		self._icon_provider = IconProvider()
+		self._icon_provider.load_icons(['alldb'])
+		self.SetIcon(self._icon_provider.get_icon('alldb'))
 
 		self.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self._on_search, self.searchbox)
 		self.Bind(wx.EVT_TEXT_ENTER, self._on_search, self.searchbox)
@@ -342,6 +348,9 @@ class FrameMain(FrameMainWx):
 			items = self._result.items
 			export2csv(filepath, cls, items)
 		dlg.Destroy()
+
+	def _on_menu_about(self, event):
+		show_about_box(self)
 
 	@property
 	def selected_tags(self):

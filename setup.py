@@ -2,6 +2,7 @@
 # -*- coding: utf8 -*-
 
 import os
+import os.path
 import time
 import sys
 
@@ -10,48 +11,15 @@ try:
 except:
 	from distutils.core import setup
 
-from distutils.command.install_data import install_data
-
 if sys.platform == 'win32':
 	try:
 		import py2exe
 	except:
 		pass
 
-import alldb
+from alldb import version, configuration
 
-version = alldb.__version__
-release = alldb.__release__
 build = time.asctime()
-data_files_extenstions = ('.mo', )# '.po')
-
-
-class smart_install_data(install_data):
-
-	def run(self):
-		#need to change self.install_dir to the library dir
-		install_cmd = self.get_finalized_command('install')
-		self.install_dir = getattr(install_cmd, 'install_lib')
-		return install_data.run(self)
-
-
-def np_files_for(dirname):
-	"""Return all non-python-file filenames in dir"""
-	result = []
-	all_results = []
-	for name in os.listdir(dirname):
-		path = os.path.join(dirname, name)
-		if (os.path.isfile(path) \
-				and os.path.splitext(name)[1] in data_files_extenstions):
-			result.append(path)
-		elif os.path.isdir(path) and name.lower() != 'cvs' \
-				and not name.startswith('.'):
-			all_results.extend(np_files_for(path))
-
-	if result:
-		all_results.append((dirname, result))
-
-	return all_results
 
 
 def is_package(filename):
@@ -61,7 +29,7 @@ def is_package(filename):
 
 def packages_for(filename, basePackage=""):
 	"""Find all packages in filename"""
-	set = {}
+	packages = {}
 	for item in os.listdir(filename):
 		dir = os.path.join(filename, item)
 		if is_package(dir):
@@ -69,34 +37,57 @@ def packages_for(filename, basePackage=""):
 				moduleName = basePackage + '.' + item
 			else:
 				moduleName = item
-			set[moduleName] = dir
-			set.update(packages_for(dir, moduleName))
-	return set
+			packages[moduleName] = dir
+			packages.update(packages_for(dir, moduleName))
+	return packages
+
+
+def find_files(directory, base):
+	for name, subdirs, files in os.walk(directory):
+		if files:
+			yield (os.path.join(base, name), \
+					[os.path.join(name, fname) for fname in files])
 
 
 packages = packages_for(".")
-data_files = [(a[3:], b) for a, b in np_files_for('alldb')]
-data_files.append(('', ['README', "TODO", "LICENCE.txt", "LICENCE_EXIFpy.txt",
-		"LICENCE_python.txt", "LICENCE_wxPython.txt", 'CHANGELOG']))
+
+def get_data_files():
+	if sys.platform == 'win32':
+		doc_dir = locales_dir = data_dir = '.'
+	else:
+		doc_dir = configuration.LINUX_DOC_DIR
+		locales_dir = configuration.LINUX_LOCALES_DIR
+		data_dir = configuration.LINUX_DATA_DIR
+
+	yield (doc_dir, ['AUTHORS', 'README', "TODO", "COPYING", "LICENCE_EXIFpy.txt",
+			"LICENCE_python.txt", "LICENCE_wxPython.txt", 'ChangeLog',
+			'LICENCE_ICONS.txt'])
+
+	for x in find_files('data', data_dir):
+		yield x
+
+	for x in find_files('locale', locales_dir):
+		yield x
 
 
-pctarget = dict(
-	script="alldb.py",
-	name="alldb",
-	version=version,
-	description="alldb %s (%s) (build: %s)"  % (version, release, build),
-	company_name="Karol Będkowski",
-	copyright="Copyright (C) Karol Będkowski 2010",
-	icon_resources=[(0, "alldb/icons/icon.ico")],
-	other_resources=[("VERSIONTAG", 1, build)], )
+target = {
+	'script': "alldb.py",
+	'name': "alldb",
+	'version': version.VERSION,
+	'description': "%s - %s (%s, build: %s)" \
+			% (version.NAME, version.DESCRIPTION, version.RELEASE, build),
+	'company_name': "Karol Będkowski",
+	'copyright': version.COPYRIGHT,
+	'icon_resources': [(0, "data/art/icon.ico")],
+	'other_resources': [("VERSIONTAG", 1, build)] }
 
 
 setup(
 	name='alldb',
-	version=version,
-	author=pctarget['company_name'],
-	author_email='-',
-	description=pctarget['description'],
+	version=version.VERSION,
+	author=target['company_name'],
+	author_email='karol.bedkowski@gmail.com',
+	description=target['description'],
 	long_description='-',
 	license='GPL v2',
 	url='-',
@@ -108,25 +99,21 @@ setup(
 		'License :: OSI Approved :: GNU General Public License (GPL)',
 		'Operating System :: OS Independent',
 		'Programming Language :: Python',
-		'Topic :: Multimedia :: Graphics',
+		'Topic :: Database :: Desktop',
 	],
 	packages=packages.keys(),
 	package_dir=packages,
-	#package_data={'alldb.templates': ['*.kid', '*.js', '*.css']},
-	data_files=data_files,
-	#	cmdclass = {'install_data': smart_install_data},
+	data_files=list(get_data_files()),
 	include_package_data=True,
 	scripts=['alldb.py'],
-	install_requires=['wxPython>=2.6.0'],
+	install_requires=['wxPython>=2.6.0', ],
 	options={"py2exe": {
 		"compressed": 1,
 		"optimize": 2,
 		"ascii": 0,
-		"bundle_files": 2,
-		"packages": "PngImagePlugin, JpegImagePlugin, _rl_accel", }},
+		"bundle_files": 2}},
 	zipfile=r"modules.dat",
-	#windows = [pctarget],
-	console=[pctarget],
+	windows = [target],
 )
 
 

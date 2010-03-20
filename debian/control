@@ -1,0 +1,22 @@
+Source: alldb
+Section: database
+Priority: extra
+Maintainer: Karol Będkowski <karol.bedkowski@gmail.com>
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.7.3
+
+Package: alldb
+Architecture: all
+Depends: python (>=2.5), python-wxgtk2.8, python-wxversion (>=2.8), ${python:Depends}
+Suggests: 
+Description: An application for storing information about everything
+ Very simple application for storing various information organised in 
+ some categories. Each category has own set of fields.
+ .
+ Main features:
+  - small, fast
+  - store all information in one, sqlite database
+  - import and export to the CSV files
+  - quick search by filter items list
+  - tagging items
+

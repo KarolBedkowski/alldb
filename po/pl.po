@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alldb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-20 17:08+0100\n"
-"PO-Revision-Date: 2010-03-20 17:08+0100\n"
+"POT-Creation-Date: 2010-03-20 18:29+0100\n"
+"PO-Revision-Date: 2010-03-20 17:46+0100\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -17,56 +17,43 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2); \n"
 
-#: .././alldb/gui/DlgClasses.py:79
 msgid "selected category and ALL items"
 msgstr "zaznaczone kategorie i wszystkie elementy"
 
-#: .././alldb/gui/DlgClassesWx.py:20 .././alldb/gui/FrameMainWx.py:33
 msgid "&Edit"
 msgstr "&Edytuj"
 
 #. begin wxGlade: DlgClassesWx.__set_properties
-#: .././alldb/gui/DlgClassesWx.py:36
 msgid "Categories"
 msgstr "Kateogrie"
 
-#: .././alldb/gui/DlgEditClass.py:32 .././alldb/gui/FrameMain.py:110
 msgid "No"
 msgstr "Lp"
 
-#: .././alldb/gui/DlgEditClass.py:33
 msgid "Name"
 msgstr "Nazwa"
 
-#: .././alldb/gui/DlgEditClass.py:34
 msgid "Type"
 msgstr "Typ"
 
-#: .././alldb/gui/DlgEditClass.py:35
 msgid "Default value"
 msgstr "Wartość domyślna"
 
-#: .././alldb/gui/DlgEditClass.py:36
 msgid "Options"
 msgstr "Opcje"
 
-#: .././alldb/gui/DlgEditClass.py:140
 msgid "field"
 msgstr "pole"
 
-#: .././alldb/gui/DlgEditClass.py:171
 msgid "Name and title fields are empty."
 msgstr "Pola nazwa i tytuł są puste."
 
-#: .././alldb/gui/DlgEditClass.py:172
 msgid "Both fields must have defined values."
 msgstr "Oba pola muszą posiadać określoną wartość."
 
-#: .././alldb/gui/DlgEditClass.py:175
 msgid "Cannot save class"
 msgstr "Nie można zapisać klasy"
 
-#: .././alldb/gui/DlgEditClass.py:176
 msgid ""
 "Category with this name already exists.\n"
 "Please specify other name."
@@ -74,60 +61,46 @@ msgstr ""
 "Kategoria o tej nazwie już istnieje.\n"
 "Proszę wprowadzić inną nazwę."
 
-#: .././alldb/gui/DlgEditClass.py:201
 msgid "in title"
 msgstr "w tytule"
 
-#: .././alldb/gui/DlgEditClass.py:203
 msgid "show in list"
 msgstr "pokaż na liście"
 
-#: .././alldb/gui/DlgEditClassWx.py:18 .././alldb/gui/DlgEditFieldWx.py:18
 msgid "Name:"
 msgstr "Nazwa:"
 
-#: .././alldb/gui/DlgEditClassWx.py:20
 msgid "Items title"
 msgstr "Tytuły elementów"
 
-#: .././alldb/gui/DlgEditClassWx.py:21
 msgid "Items have title"
 msgstr "Elementy posiadają tytuł"
 
-#: .././alldb/gui/DlgEditClassWx.py:22
 msgid "Create title expresion automatically"
 msgstr "Utwórz wyrażenie tytułu automatycznie"
 
-#: .././alldb/gui/DlgEditClassWx.py:23
 msgid "Title expression:"
 msgstr "Wyrażenie tytułu:"
 
-#: .././alldb/gui/DlgEditClassWx.py:25
 msgid "Show title in list"
 msgstr "Wyświetlaj tytuł na liście"
 
-#: .././alldb/gui/DlgEditClassWx.py:26
 msgid "Fields"
 msgstr "Pola"
 
 #. begin wxGlade: DlgEditClassWx.__set_properties
-#: .././alldb/gui/DlgEditClassWx.py:49 .././alldb/gui/FrameMainWx.py:71
 msgid "Category"
 msgstr "Kateogria"
 
-#: .././alldb/gui/DlgEditField.py:62
 msgid "Enter name"
 msgstr "Wprowadź nazwę"
 
-#: .././alldb/gui/DlgEditField.py:63
 msgid "Class"
 msgstr "Klasa"
 
-#: .././alldb/gui/DlgEditField.py:69
 msgid "Cannot add this field"
 msgstr "Nie można dodać tego pola"
 
-#: .././alldb/gui/DlgEditField.py:70
 msgid ""
 "Field with this name alreaty exists.\n"
 "Please enter other name."
@@ -135,78 +108,60 @@ msgstr ""
 "Pole o tej nazwie już istnieje.\n"
 "Proszę wprowadzić inną nazwę."
 
-#: .././alldb/gui/DlgEditFieldWx.py:20
 msgid "Type:"
 msgstr "Typ:"
 
-#: .././alldb/gui/DlgEditFieldWx.py:21
 msgid "text"
 msgstr "tekst"
 
-#: .././alldb/gui/DlgEditFieldWx.py:22
 msgid "checkbox"
 msgstr "zaznaczenie"
 
-#: .././alldb/gui/DlgEditFieldWx.py:23
 msgid "multiline"
 msgstr "wieloliniowe"
 
-#: .././alldb/gui/DlgEditFieldWx.py:24
 msgid "date"
 msgstr "data"
 
-#: .././alldb/gui/DlgEditFieldWx.py:25
 msgid "list"
 msgstr "lista"
 
-#: .././alldb/gui/DlgEditFieldWx.py:26
 msgid "choice"
 msgstr "wybór"
 
-#: .././alldb/gui/DlgEditFieldWx.py:27
 msgid "Default"
 msgstr "Domyślne"
 
-#: .././alldb/gui/DlgEditFieldWx.py:29
 msgid "Options:"
 msgstr "Opcje"
 
-#: .././alldb/gui/DlgEditFieldWx.py:30
 msgid "Show in title"
 msgstr "Pokaż w tytule"
 
-#: .././alldb/gui/DlgEditFieldWx.py:31
 msgid "Show column in items list"
 msgstr "Pokaż kolumnę na liscie"
 
-#: .././alldb/gui/DlgEditFieldWx.py:32
 msgid "Define values"
 msgstr "Określ wartości"
 
 #. begin wxGlade: DlgEditFieldWx.__set_properties
-#: .././alldb/gui/DlgEditFieldWx.py:43
 msgid "Field"
 msgstr "Pole"
 
-#: .././alldb/gui/DlgEditValues.py:10
 msgid "Values"
 msgstr "Wartość"
 
-#: .././alldb/gui/FrameMain.py:160
 #, python-format
 msgid "Items: %d"
 msgstr "Elementy: %d"
 
-#: .././alldb/gui/FrameMain.py:177
 #, python-format
 msgid "%(tag)s (%(items)d)"
 msgstr "%(tag)s (%(items)d)"
 
-#: .././alldb/gui/FrameMain.py:199
 msgid "Save changes?"
 msgstr "Zapisać zmiany?"
 
-#: .././alldb/gui/FrameMain.py:286
 #, python-format
 msgid "one object"
 msgid_plural "%(count)d objects"
@@ -214,108 +169,88 @@ msgstr[0] "jeden obiekt"
 msgstr[1] "%(count)d obiekty"
 msgstr[2] "%(count)d obiektów"
 
-#: .././alldb/gui/FrameMain.py:322 .././alldb/gui/FrameMain.py:336
 msgid "Choice a file"
 msgstr "Wybór pliku"
 
-#: .././alldb/gui/FrameMain.py:323 .././alldb/gui/FrameMain.py:337
 msgid "CSV files (*.csv)|*.csv|All files|*.*"
 msgstr "Pliki CSV (*.csv)|*.csv|Wszystkie pliki|*.*"
 
-#: .././alldb/gui/FrameMain.py:374
 msgid "Title"
 msgstr "Tytuł"
 
-#: .././alldb/gui/FrameMainWx.py:22
 msgid "Export to &CSV..."
 msgstr "Eksport do &CSV..."
 
-#: .././alldb/gui/FrameMainWx.py:23
 msgid "&Import from CSV..."
 msgstr "&Import z CSV..."
 
-#: .././alldb/gui/FrameMainWx.py:25
 msgid "&Exit\tCtrl+Q"
 msgstr "&Zakończ\tCtrl+Q"
 
-#: .././alldb/gui/FrameMainWx.py:26
 msgid "&File"
 msgstr "&Plik"
 
-#: .././alldb/gui/FrameMainWx.py:28
 msgid "&New"
 msgstr "&Nowy"
 
-#: .././alldb/gui/FrameMainWx.py:29
 msgid "&Delete"
 msgstr "&Usuń"
 
-#: .././alldb/gui/FrameMainWx.py:30
 msgid "Duplicate &Item"
 msgstr "&Powiel element"
 
-#: .././alldb/gui/FrameMainWx.py:32
 msgid "Manage &Categories"
 msgstr "Zarządzaj &kategoriami"
 
-#: .././alldb/gui/FrameMainWx.py:38
+msgid "&About"
+msgstr "O &programie"
+
+msgid "&Help"
+msgstr "&Pomoc"
+
 msgid "Items: 0"
 msgstr "Elementy: 0"
 
 #. begin wxGlade: FrameMainWx.__set_properties
-#: .././alldb/gui/FrameMainWx.py:68
 msgid "AllDB"
 msgstr "AllDB"
 
-#: .././alldb/gui/FrameMainWx.py:73
 msgid "Tags defined in all items this category"
 msgstr "Etykiety zdefiniowane we wszystkich elementach tej klasy"
 
-#: .././alldb/gui/FrameMainWx.py:74
 msgid "Items"
 msgstr "Elementy"
 
-#: .././alldb/gui/PanelInfo.py:76
 msgid "Title:"
 msgstr "Tytuł:"
 
-#: .././alldb/gui/PanelInfo.py:101
 msgid "Created:"
 msgstr "Utworzony:"
 
-#: .././alldb/gui/PanelInfo.py:102
 msgid "Modified:"
 msgstr "Zmodyfikowany:"
 
-#: .././alldb/gui/PanelInfo.py:103
 msgid "ID:"
 msgstr "ID:"
 
-#: .././alldb/gui/PanelInfo.py:141
 msgid "Tags:"
 msgstr "Etykiety:"
 
-#: .././alldb/gui/PanelInfo.py:153
 msgid "Select"
 msgstr "Wybierz"
 
-#: .././alldb/gui/PanelInfo.py:185
 msgid "not saved"
 msgstr "nie zapisany"
 
-#: .././alldb/gui/PanelInfo.py:187
 msgid "new"
 msgstr "new"
 
-#: .././alldb/gui/PanelInfo.py:229
 msgid "Select tags"
 msgstr "Wybierz etykiety"
 
-#: .././alldb/gui/PanelInfo.py:230
 msgid "Tags"
 msgstr "Etykiety"
 
-#: .././alldb/gui/dialogs/message_boxes.py:82
 #, python-format
 msgid ""
 "Save the changes to\n"
@@ -324,11 +259,9 @@ msgstr ""
 "Zapisać zmiany w\n"
 "%(doc_name)s przed zamknięciem?"
 
-#: .././alldb/gui/dialogs/message_boxes.py:85
 msgid "If you close without saving, changes will be discarded"
 msgstr "Zamknięcie bez zapisu spowoduje utracenie wszystkich zmian."
 
-#: .././alldb/gui/dialogs/message_boxes.py:87
 #, python-format
 msgid ""
 "If you close without saving, changes from the last\n"
@@ -337,38 +270,86 @@ msgstr ""
 "Zamknięcie bez zapisania spowoduje utratę zmian\n"
 "z ostatnich %(time)s."
 
-#: .././alldb/gui/dialogs/message_boxes.py:95
 msgid "Close &without Saving"
 msgstr "Zapisz bez zapisywania"
 
-#: .././alldb/gui/dialogs/message_boxes.py:99
 msgid "Save &As"
 msgstr "Zapisz jako"
 
-#: .././alldb/gui/dialogs/message_boxes.py:99
 msgid "Save"
 msgstr "Zapisz"
 
-#: .././alldb/gui/dialogs/message_boxes.py:127
 #, python-format
 msgid "Delete %s?"
 msgstr "Usunąć %s?"
 
-#: .././alldb/gui/dialogs/message_boxes.py:128
 msgid "After removal, it cannot be recovered."
 msgstr "Po usunięciu, nie będzie możliwe przywrócenie."
 
-#: .././alldb/gui/dialogs/message_boxes.py:136
 msgid "Delete"
 msgstr "Usuń"
 
-#: .././alldb/gui/dialogs/message_boxes.py:237
 msgid "Ok"
 msgstr "Ok"
 
-#: .././alldb/gui/dialogs/message_boxes.py:238
 msgid "Cancel"
 msgstr "Anuluj"
+
+msgid "All-kind of data database"
+msgstr "Baza danych dla każdego rodzaju danych"
+
+msgid ""
+"This program is free software: you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation, either version 2 of the License, or\n"
+"(at your option) any later version.\n"
+"\n"
+"This program is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n"
+"GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License\n"
+"along with this program. If not, see <http://www.gnu.org/licenses/>.\n"
+msgstr ""
+"Niniejszy program jest wolnym oprogramowaniem; możesz go\n"
+"rozprowadzać dalej i/lub modyfikować na warunkach Powszechnej\n"
+"Licencji Publicznej GNU, wydanej przez Fundację Wolnego\n"
+"Oprogramowania - według wersji 2 tej Licencji lub (według twojego\n"
+"wyboru) którejś z późniejszych wersji.\n"
+"\n"
+"Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on\n"
+"użyteczny - jednak BEZ JAKIEJKOLWIEK GWARANCJI, nawet domyślnej\n"
+"gwarancji PRZYDATNOŚCI HANDLOWEJ albo PRZYDATNOŚCI DO OKREŚLONYCH\n"
+"ZASTOSOWAŃ. W celu uzyskania bliższych informacji sięgnij do\n"
+"Powszechnej Licencji Publicznej GNU.\n"
+"\n"
+"Z pewnością wraz z niniejszym programem otrzymałeś też egzemplarz\n"
+"Powszechnej Licencji Publicznej GNU (GNU General Public License);\n"
+"jeśli nie - wejdź na <http://www.gnu.org/licenses/>.\n"
+
+#, python-format
+msgid ""
+"%(name)s version %(version)s (%(release)s)\n"
+"%(copyright)s\n"
+"\n"
+"This program is free software: you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation, either version 2 of the License, or\n"
+"(at your option) any later version.\n"
+"\n"
+"For details please see COPYING file.\n"
+msgstr ""
+"%(name)s wersja %(version)s (%(release)s)\n"
+"%(copyright)s\n"
+"\n"
+"Niniejszy program jest wolnym oprogramowaniem; możesz go\n"
+"rozprowadzać dalej i/lub modyfikować na warunkach Powszechnej\n"
+"Licencji Publicznej GNU, wydanej przez Fundację Wolnego\n"
+"Oprogramowania - według wersji 2 tej Licencji lub (według twojego\\\n"
+"wyboru) którejś z późniejszych wersji.\n"
+"\n"
+"Szczegóły opisano w pliku COPYING.\n"
 
 #~ msgid "Classes"
 #~ msgstr "Klasy"
@@ -378,9 +359,6 @@ msgstr "Anuluj"
 
 #~ msgid "&Preferences"
 #~ msgstr "&Preferencje"
-
-#~ msgid "Auto"
-#~ msgstr "Auto"
 
 #~ msgid "AllDb"
 #~ msgstr "AllDb"

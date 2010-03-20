@@ -1,0 +1,16 @@
+include TODO
+include ChangeLog
+include COPYING
+include MANIFEST*
+include LICENCE*
+include alldb*
+include setup.*
+recursive-include alldb *
+recursive-include po *.in *.po *.pot
+recursive-include locale *
+recursive-include debian *
+recursive-include data *
+recursive-include bin *
+recursive-include man *
+recursive-include doc *
+global-exclude *~ *.swp \.* *.pyc *.pyo *.log *.cfg

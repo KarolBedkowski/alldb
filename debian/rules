@@ -1,0 +1,74 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	# Add here commands to configure the package.
+
+	touch configure-stamp
+	cd debian && sed "2s/on .*$$/on `date -R`/" copyright > copyright.tmp && mv copyright.tmp copyright
+
+
+build: build-stamp
+
+build-stamp: configure-stamp  
+	dh_testdir
+	touch build-stamp
+
+clean: 
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp configure-stamp
+	rm -rf $(CURDIR)/debian/alldb
+
+	find . -type f \( -name '*.pyc' -or -name '*.pyo' -or -name '*~' \) -exec rm {} ';'
+
+	dh_clean 
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k 
+	dh_installdirs
+
+	# Add here commands to install the package into debian/alldb.
+	cp -r alldb $(CURDIR)/debian/alldb/usr/share/alldb/src/
+	cp -r alldb.py $(CURDIR)/debian/alldb/usr/share/alldb/src/
+	cp data/alldb.desktop $(CURDIR)/debian/alldb/usr/share/applications/
+	cp bin/alldb $(CURDIR)/debian/alldb/usr/bin/
+	cp -r locale/* $(CURDIR)/debian/alldb/usr/share/locale
+	cp -r data $(CURDIR)/debian/alldb/usr/share/alldb/
+
+
+# Build architecture-dependent files here.
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs ChangeLog
+	dh_installdocs
+	dh_install
+	dh_pysupport
+	dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep 
+.PHONY: build clean binary-indep binary install configure
