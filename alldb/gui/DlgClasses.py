@@ -67,7 +67,7 @@ class DlgClasses(DlgClassesWx):
 	def _on_btn_edit(self, event):
 		if self.lc_classes.GetSelectedItemCount() == 0:
 			return
-		item_idx = self.lc_classes.GetNextItem(-1, wx.LIST_NEXT_ALL, 
+		item_idx = self.lc_classes.GetNextItem(-1, wx.LIST_NEXT_ALL,
 				wx.LIST_STATE_SELECTED)
 		oid = self.lc_classes.GetItemData(item_idx)
 		self._edit_class(oid)
@@ -76,7 +76,7 @@ class DlgClasses(DlgClassesWx):
 		if self.lc_classes.GetSelectedItemCount() == 0:
 			return
 		res = msgbox.message_box_delete_confirm(self,
-				_('selected class and ALL items'))
+				_('selected category and ALL items'))
 		if res:
 			item_idx = self.lc_classes.GetNextItem(-1, wx.LIST_NEXT_ALL,
 					wx.LIST_STATE_SELECTED)

@@ -137,13 +137,10 @@ class DlgEditClass(DlgEditClassWx):
 		item_idx = self._get_selected_field_idx()
 		if item_idx < 1:
 			return
-		dlg = wx.MessageDialog(self, _('Delete field?'), _('Class'),
-				wx.ICON_QUESTION|wx.YES_NO|wx.NO_DEFAULT)
-		if dlg.ShowModal() == wx.ID_YES:
+		if msgbox.message_box_delete_confirm(self, _('field')):
 			self._cls.fields.pop(item_idx)
 			self._refresh_list(self._cls)
 			self._on_title_auto(None)
-		dlg.Destroy()
 
 	def _on_button_up(self, event):
 		item_idx = self._get_selected_field_idx()
@@ -176,7 +173,7 @@ class DlgEditClass(DlgEditClassWx):
 
 		if name in self._cls_names:
 			msgbox.message_box_error_ex(self, _('Cannot save class'),
-					_('Class with this name already exists.\nPlease specify other name.'))
+					_('Category with this name already exists.\nPlease specify other name.'))
 			return
 
 		self._cls.name = name

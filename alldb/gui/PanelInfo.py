@@ -179,7 +179,10 @@ class PanelInfo(scrolled.ScrolledPanel):
 				field.SetValue(unicode(value or ''))
 		self.tc_title.SetLabel(obj.title or '')
 		self.tc_tags.SetValue(obj.tags_str)
-		self.lb_created.SetLabel(format_date(obj.created))
+		if obj.oid:
+			self.lb_created.SetLabel(format_date(obj.created))
+		else:
+			self.lb_created.SetLabel(_('not saved'))
 		self.lb_modified.SetLabel(format_date(obj.updated))
 		self.lb_id.SetLabel(str(obj.oid or _("new")))
 
