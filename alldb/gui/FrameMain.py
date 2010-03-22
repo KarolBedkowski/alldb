@@ -282,7 +282,7 @@ class FrameMain(object):
 		appconfig.set('frame_main','position', self.wnd.GetPositionTuple())
 		appconfig.set('frame_main','win1', self.window_1.GetSashPosition())
 		appconfig.set('frame_main','win2', self.window_2.GetSashPosition())
-		evt.Skip()
+		self.wnd.Destroy()
 
 	def _on_class_select(self, evt):
 		oid = evt.GetClientData()
@@ -365,9 +365,7 @@ class FrameMain(object):
 
 	def _on_menu_categories(self, event):
 		current_class_oid = self.current_class_id
-		dlg = DlgClasses(self.wnd, self._db)
-		dlg.ShowModal()
-		dlg.Destroy()
+		DlgClasses(self.wnd, self._db).run()
 		if self._curr_info_panel:
 			self._curr_info_panel.Destroy()
 			self._curr_info_panel = None

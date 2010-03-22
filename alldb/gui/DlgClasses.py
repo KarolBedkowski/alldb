@@ -10,22 +10,52 @@ __release__ = '2009-12-20'
 
 
 import wx
+from wx import xrc
 
 from alldb.model import objects
+from alldb.libs.appconfig import AppConfig
 from alldb.gui.dialogs import message_boxes as msgbox
 
-from .DlgClassesWx import DlgClassesWx
 from .DlgEditClass import DlgEditClass
 
-class DlgClasses(DlgClassesWx):
+class DlgClasses(object):
 	def __init__(self, parent, db):
-		DlgClassesWx.__init__(self, None, -1)
+		xrcfile = AppConfig().get_data_file('alldb.xrc')
+		assert xrcfile is not None
+		self.res = xrc.XmlResource(xrcfile)
+
+		self._load_controls(parent)
+		self._create_bindings()
+		self._setup(db)
+
+	def run(self):
+		res = self.wnd.ShowModal()
+		self.wnd.Destroy()
+		return res
+
+	def _load_controls(self, parent):
+		self.wnd = self.res.LoadDialog(parent, 'dlg_classes')
+		assert self.wnd is not None
+		self.lc_classes = xrc.XRCCTRL(self.wnd, 'lc_classes')
+		self.button_delete = xrc.XRCCTRL(self.wnd, 'wxID_DELETE')
+		self.button_edit = xrc.XRCCTRL(self.wnd, 'button_edit')
+
+	def _create_bindings(self):
+		wnd = self.wnd
+		wnd.Bind(wx.EVT_BUTTON, self._on_btn_close, id=wx.ID_CLOSE)
+		wnd.Bind(wx.EVT_BUTTON, self._on_btn_new, id=wx.ID_ADD)
+		wnd.Bind(wx.EVT_BUTTON, self._on_btn_delete, id=wx.ID_DELETE)
+		wnd.Bind(wx.EVT_BUTTON, self._on_btn_edit, id=xrc.XRCID('button_edit'))
+		wnd.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_list_classes_deselect,
+				self.lc_classes)
+		wnd.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_list_classes_selected,
+				self.lc_classes)
+		wnd.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._on_list_classes_activate,
+				self.lc_classes)
+
+	def _setup(self, db):
 		self._db = db
 		self._current_cls = None
-
-		self.GetSizer().Add(self.CreateStdDialogButtonSizer(wx.CANCEL), 0,
-				wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 6)
-		self.Fit()
 		self.fill_classes()
 		self._set_buttons_state()
 
@@ -83,6 +113,9 @@ class DlgClasses(DlgClassesWx):
 			oid = self.lc_classes.GetItemData(item_idx)
 			self._db.del_class(oid)
 			self.fill_classes()
+
+	def _on_btn_close(self, event):
+		self.wnd.EndModal(wx.ID_CLOSE)
 
 	def _set_buttons_state(self):
 		item_selected = self.lc_classes.GetSelectedItemCount() > 0
