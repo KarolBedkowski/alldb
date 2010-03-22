@@ -10,27 +10,34 @@ __version__ = '0.1'
 __release__ = '2009-12-20'
 
 import wx
+from wx import xrc
 
 from alldb.libs.appconfig import AppConfig
 from alldb.libs.iconprovider import IconProvider
 from alldb.filetypes.csv_support import export2csv, import_csv
 from alldb.gui.dialogs import message_boxes as msgbox
 
-from .FrameMainWx import FrameMainWx
 from .PanelInfo import PanelInfo
 from .DlgClasses import DlgClasses
 from ._dlgabout import show_about_box
 
 
-class FrameMain(FrameMainWx):
+class FrameMain(object):
 	''' Klasa głównego okna programu'''
 	def __init__(self, db):
-		FrameMainWx.__init__(self, None, -1)
-		self.SetBackgroundColour(wx.SystemSettings.GetColour(
-			wx.SYS_COLOUR_ACTIVEBORDER))
-		self.SetAutoLayout(True)
-
 		self._db = db
+		xrcfile = AppConfig().get_data_file('alldb.xrc')
+		assert xrcfile is not None
+		self.res = xrc.XmlResource(xrcfile)
+		self._load_controls()
+		self._create_bindings()
+		self._setup()
+
+	def _setup(self):
+		self.wnd.SetBackgroundColour(wx.SystemSettings.GetColour(
+			wx.SYS_COLOUR_ACTIVEBORDER))
+		self.wnd.SetAutoLayout(True)
+
 		self._curr_obj = None
 		self._curr_info_panel = None
 		self._result = None
@@ -40,13 +47,7 @@ class FrameMain(FrameMainWx):
 
 		self._icon_provider = IconProvider()
 		self._icon_provider.load_icons(['alldb'])
-		self.SetIcon(self._icon_provider.get_icon('alldb'))
-
-		self.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self._on_search, self.searchbox)
-		self.Bind(wx.EVT_TEXT_ENTER, self._on_search, self.searchbox)
-		self.Bind(wx.EVT_TEXT, self._on_search, self.searchbox)
-		self.Bind(wx.EVT_CHECKLISTBOX, self._on_clb_tags, self.clb_tags)
-		self.Bind(wx.EVT_CLOSE, self._on_close)
+		self.wnd.SetIcon(self._icon_provider.get_icon('alldb'))
 
 		self._set_buttons_status()
 		fclass_oid = self._fill_classes()
@@ -55,6 +56,55 @@ class FrameMain(FrameMainWx):
 			self._show_class(fclass_oid)
 
 		self._set_size_pos()
+
+	def _load_controls(self):
+		self.wnd = self.res.LoadFrame(None, 'frame_main')
+		assert self.wnd is not None
+		self.window_1 = xrc.XRCCTRL(self.wnd, 'window_1')
+		self.window_2 = xrc.XRCCTRL(self.wnd, 'window_2')
+		self.list_items = xrc.XRCCTRL(self.wnd, 'list_items')
+		self.label_info = xrc.XRCCTRL(self.wnd, 'label_info')
+		panel = xrc.XRCCTRL(self.wnd, 'panel_details_back')
+		self.button_apply = xrc.XRCCTRL(panel, 'wxID_SAVE')
+		self.clb_tags = xrc.XRCCTRL(self.wnd, 'clb_tags')
+		self.choice_klasa = xrc.XRCCTRL(self.wnd, 'choice_klasa')
+		self.button_new_item = xrc.XRCCTRL(self.wnd, 'wxID_ADD')
+		self.panel_info = xrc.XRCCTRL(self.wnd, 'panel_info')
+
+		panel_searchbox = xrc.XRCCTRL(self.wnd, 'panel_searchctrl')
+		box = wx.BoxSizer(wx.HORIZONTAL)
+		self.searchbox = wx.SearchCtrl(panel_searchbox, -1)
+		box.Add(self.searchbox, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
+		panel_searchbox.SetSizerAndFit(box)
+		panel_searchbox.SetBackgroundColour(wx.SystemSettings.GetColour(
+			wx.SYS_COLOUR_ACTIVEBORDER))
+
+	def _create_bindings(self):
+		wnd = self.wnd
+		wnd.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self._on_search, self.searchbox)
+		wnd.Bind(wx.EVT_TEXT_ENTER, self._on_search, self.searchbox)
+		wnd.Bind(wx.EVT_TEXT, self._on_search, self.searchbox)
+		wnd.Bind(wx.EVT_CHECKLISTBOX, self._on_clb_tags, self.clb_tags)
+		wnd.Bind(wx.EVT_CLOSE, self._on_close)
+		wnd.Bind(wx.EVT_MENU, self._on_menu_export_csv,
+				id=xrc.XRCID('menu_export_csv'))
+		wnd.Bind(wx.EVT_MENU, self._on_menu_import_csv,
+				id=xrc.XRCID('menu_import_csv'))
+		wnd.Bind(wx.EVT_MENU, self._on_menu_exit, id=xrc.XRCID('menu_exit'))
+		wnd.Bind(wx.EVT_MENU, self._on_menu_item_new, id=xrc.XRCID('menu_item_new'))
+		wnd.Bind(wx.EVT_MENU, self._on_menu_item_delete,
+				id=xrc.XRCID('menu_item_delete'))
+		wnd.Bind(wx.EVT_MENU, self._on_menu_item_duplicate,
+				id=xrc.XRCID('menu_item_duplicate'))
+		wnd.Bind(wx.EVT_MENU, self._on_menu_categories,
+				id=xrc.XRCID('menu_categories'))
+		wnd.Bind(wx.EVT_MENU, self._on_menu_about, id=xrc.XRCID('menu_about'))
+		wnd.Bind(wx.EVT_CHOICE, self._on_class_select, self.choice_klasa)
+		wnd.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_item_deselect, self.list_items)
+		wnd.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_item_select, self.list_items)
+		wnd.Bind(wx.EVT_LIST_COL_CLICK, self._on_items_col_click, self.list_items)
+		wnd.Bind(wx.EVT_BUTTON, self._on_btn_new, self.button_new_item)
+		wnd.Bind(wx.EVT_BUTTON, self._on_btn_apply, self.button_apply)
 
 	@property
 	def current_class_id(self):
@@ -72,11 +122,11 @@ class FrameMain(FrameMainWx):
 		appconfig = AppConfig()
 		size = appconfig.get('frame_main', 'size', (800, 600))
 		if size:
-			self.SetSize(size)
+			self.wnd.SetSize(size)
 
 		position = appconfig.get('frame_main', 'position')
 		if position:
-			self.Move(position)
+			self.wnd.Move(position)
 
 		self.window_1.SetSashPosition(appconfig.get('frame_main', 'win1', 200))
 		self.window_2.SetSashPosition(appconfig.get('frame_main', 'win2', -200))
@@ -202,7 +252,7 @@ class FrameMain(FrameMainWx):
 		curr_obj = self._curr_obj
 		if curr_obj.check_for_changes(data, tags):
 			if ask_for_save:
-				if not msgbox.message_box_save_confirm(self, _('Save changes?')):
+				if not msgbox.message_box_save_confirm(self.wnd, _('Save changes?')):
 					return
 
 			curr_obj.data.update(data)
@@ -228,8 +278,8 @@ class FrameMain(FrameMainWx):
 
 	def _on_close(self, evt):
 		appconfig = AppConfig()
-		appconfig.set('frame_main','size', self.GetSizeTuple())
-		appconfig.set('frame_main','position', self.GetPositionTuple())
+		appconfig.set('frame_main','size', self.wnd.GetSizeTuple())
+		appconfig.set('frame_main','position', self.wnd.GetPositionTuple())
 		appconfig.set('frame_main','win1', self.window_1.GetSashPosition())
 		appconfig.set('frame_main','win2', self.window_2.GetSashPosition())
 		evt.Skip()
@@ -276,7 +326,7 @@ class FrameMain(FrameMainWx):
 
 	def _on_menu_exit(self, event):
 		self._save_object(True, False)
-		self.Close()
+		self.wnd.Close()
 		event.Skip()
 
 	def _on_menu_item_new(self, event):
@@ -290,7 +340,7 @@ class FrameMain(FrameMainWx):
 			return
 
 		msg = ngettext('one object', '%(count)d objects', cnt)
-		if msgbox.message_box_delete_confirm(self, msg % dict(count=cnt)):
+		if msgbox.message_box_delete_confirm(self.wnd, msg % dict(count=cnt)):
 			items_to_delete = []
 			itemid = -1
 			while True:
@@ -315,7 +365,7 @@ class FrameMain(FrameMainWx):
 
 	def _on_menu_categories(self, event):
 		current_class_oid = self.current_class_id
-		dlg = DlgClasses(self, self._db)
+		dlg = DlgClasses(self.wnd, self._db)
 		dlg.ShowModal()
 		dlg.Destroy()
 		if self._curr_info_panel:
@@ -325,7 +375,7 @@ class FrameMain(FrameMainWx):
 		self._show_class(current_class_oid)
 
 	def _on_menu_import_csv(self, event):
-		dlg = wx.FileDialog(self, _('Choice a file'),
+		dlg = wx.FileDialog(self.wnd, _('Choice a file'),
 				wildcard=_('CSV files (*.csv)|*.csv|All files|*.*'),
 				style=wx.FD_OPEN|wx.FD_FILE_MUST_EXIST)
 		if dlg.ShowModal() == wx.ID_OK:
@@ -339,7 +389,7 @@ class FrameMain(FrameMainWx):
 		self._show_class(current_class_oid)
 
 	def _on_menu_export_csv(self, event):
-		dlg = wx.FileDialog(self, _('Choice a file'),
+		dlg = wx.FileDialog(self.wnd, _('Choice a file'),
 				wildcard=_('CSV files (*.csv)|*.csv|All files|*.*'),
 				style=wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT)
 		if dlg.ShowModal() == wx.ID_OK:
@@ -350,7 +400,7 @@ class FrameMain(FrameMainWx):
 		dlg.Destroy()
 
 	def _on_menu_about(self, event):
-		show_about_box(self)
+		show_about_box(self.wnd)
 
 	@property
 	def selected_tags(self):

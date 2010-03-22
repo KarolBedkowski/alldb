@@ -104,8 +104,8 @@ def run():
 
 	wx.InitAllImageHandlers()
 	main_frame = FrameMain(db)
-	app.SetTopWindow(main_frame)
-	main_frame.Show()
+	app.SetTopWindow(main_frame.wnd)
+	main_frame.wnd.Show()
 	app.MainLoop()
 
 	db.close()

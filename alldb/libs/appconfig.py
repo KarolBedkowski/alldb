@@ -26,7 +26,7 @@ import imp
 import logging
 import ConfigParser
 
-from alldb import configuration
+from .. import configuration
 from .singleton import Singleton
 
 _LOG = logging.getLogger(__name__)
@@ -57,6 +57,7 @@ class AppConfig(Singleton):
 		else:
 			self.config_path = self.main_dir
 
+		self.data_dir = os.path.join(self.main_dir, configuration.DATA_DIR)
 		self._filename = os.path.join(self.config_path, filename)
 		self._config = ConfigParser.SafeConfigParser()
 		self.clear()
@@ -140,13 +141,17 @@ class AppConfig(Singleton):
 		return os.path.join(self.main_dir, configuration.LOCALES_DIR)
 
 	@property
-	def data_dir(self):
-		return os.path.join(self.main_dir, configuration.DATA_DIR)
-
-	@property
 	def user_share_dir(self):
 		return os.path.join(os.path.expanduser('~'), '.local', 'share',
 				self.app_name)
+
+	def get_data_file(self, filename):
+		path = os.path.join(self.data_dir, filename)
+		if os.path.exists(path):
+			return path
+		_LOG.warn('AppConfig.get_data_file(%s) not found', filename)
+		return None
+
 
 	def _main_dir(self):
 		if self.main_is_frozen:

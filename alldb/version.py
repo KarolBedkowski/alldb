@@ -17,9 +17,9 @@ VERSION = '1.0'
 VERSION_INFO = (1, 0, 0, 'beta', 0)
 RELEASE = '2010-03-20'
 DESCRIPTION = _('''All-kind of data database''')
-DEVELOPERS = '''Karol Będkowski'''
-TRANSLATORS = '''Karol Będkowski'''
-COPYRIGHT = 'Copyright (C) Karol Będkowski, 2004-2010'
+DEVELOPERS = u'''Karol Będkowski'''
+TRANSLATORS = u'''Karol Będkowski'''
+COPYRIGHT = u'Copyright (C) Karol Będkowski, 2004-2010'
 LICENSE = _('''\
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
