@@ -9,9 +9,11 @@ __copyright__ = 'Copyright (C) Karol Będkowski 2009,2010'
 __version__ = '0.1'
 __release__ = '2009-12-20'
 
+
 import wx
 from wx import xrc
 
+from alldb.libs import wxresources
 from alldb.libs.appconfig import AppConfig
 from alldb.libs.iconprovider import IconProvider
 from alldb.filetypes.csv_support import export2csv, import_csv
@@ -26,9 +28,9 @@ class FrameMain(object):
 	''' Klasa głównego okna programu'''
 	def __init__(self, db):
 		self._db = db
-		xrcfile = AppConfig().get_data_file('alldb.xrc')
-		assert xrcfile is not None
-		self.res = xrc.XmlResource(xrcfile)
+		self.res = wxresources.load_xrc_resource('alldb.xrc')
+		assert self.res is not None
+
 		self._load_controls()
 		self._create_bindings()
 		self._setup()

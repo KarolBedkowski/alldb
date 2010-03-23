@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alldb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-20 18:29+0100\n"
-"PO-Revision-Date: 2010-03-20 17:46+0100\n"
+"POT-Creation-Date: 2010-03-23 13:32+0100\n"
+"PO-Revision-Date: 2010-03-23 13:36+0100\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -19,13 +19,6 @@ msgstr ""
 
 msgid "selected category and ALL items"
 msgstr "zaznaczone kategorie i wszystkie elementy"
-
-msgid "&Edit"
-msgstr "&Edytuj"
-
-#. begin wxGlade: DlgClassesWx.__set_properties
-msgid "Categories"
-msgstr "Kateogrie"
 
 msgid "No"
 msgstr "Lp"
@@ -67,31 +60,6 @@ msgstr "w tytule"
 msgid "show in list"
 msgstr "pokaż na liście"
 
-msgid "Name:"
-msgstr "Nazwa:"
-
-msgid "Items title"
-msgstr "Tytuły elementów"
-
-msgid "Items have title"
-msgstr "Elementy posiadają tytuł"
-
-msgid "Create title expresion automatically"
-msgstr "Utwórz wyrażenie tytułu automatycznie"
-
-msgid "Title expression:"
-msgstr "Wyrażenie tytułu:"
-
-msgid "Show title in list"
-msgstr "Wyświetlaj tytuł na liście"
-
-msgid "Fields"
-msgstr "Pola"
-
-#. begin wxGlade: DlgEditClassWx.__set_properties
-msgid "Category"
-msgstr "Kateogria"
-
 msgid "Enter name"
 msgstr "Wprowadź nazwę"
 
@@ -107,46 +75,6 @@ msgid ""
 msgstr ""
 "Pole o tej nazwie już istnieje.\n"
 "Proszę wprowadzić inną nazwę."
-
-msgid "Type:"
-msgstr "Typ:"
-
-msgid "text"
-msgstr "tekst"
-
-msgid "checkbox"
-msgstr "zaznaczenie"
-
-msgid "multiline"
-msgstr "wieloliniowe"
-
-msgid "date"
-msgstr "data"
-
-msgid "list"
-msgstr "lista"
-
-msgid "choice"
-msgstr "wybór"
-
-msgid "Default"
-msgstr "Domyślne"
-
-msgid "Options:"
-msgstr "Opcje"
-
-msgid "Show in title"
-msgstr "Pokaż w tytule"
-
-msgid "Show column in items list"
-msgstr "Pokaż kolumnę na liscie"
-
-msgid "Define values"
-msgstr "Określ wartości"
-
-#. begin wxGlade: DlgEditFieldWx.__set_properties
-msgid "Field"
-msgstr "Pole"
 
 msgid "Values"
 msgstr "Wartość"
@@ -177,49 +105,6 @@ msgstr "Pliki CSV (*.csv)|*.csv|Wszystkie pliki|*.*"
 
 msgid "Title"
 msgstr "Tytuł"
-
-msgid "Export to &CSV..."
-msgstr "Eksport do &CSV..."
-
-msgid "&Import from CSV..."
-msgstr "&Import z CSV..."
-
-msgid "&Exit\tCtrl+Q"
-msgstr "&Zakończ\tCtrl+Q"
-
-msgid "&File"
-msgstr "&Plik"
-
-msgid "&New"
-msgstr "&Nowy"
-
-msgid "&Delete"
-msgstr "&Usuń"
-
-msgid "Duplicate &Item"
-msgstr "&Powiel element"
-
-msgid "Manage &Categories"
-msgstr "Zarządzaj &kategoriami"
-
-msgid "&About"
-msgstr "O &programie"
-
-msgid "&Help"
-msgstr "&Pomoc"
-
-msgid "Items: 0"
-msgstr "Elementy: 0"
-
-#. begin wxGlade: FrameMainWx.__set_properties
-msgid "AllDB"
-msgstr "AllDB"
-
-msgid "Tags defined in all items this category"
-msgstr "Etykiety zdefiniowane we wszystkich elementach tej klasy"
-
-msgid "Items"
-msgstr "Elementy"
 
 msgid "Title:"
 msgstr "Tytuł:"
@@ -295,6 +180,13 @@ msgstr "Ok"
 msgid "Cancel"
 msgstr "Anuluj"
 
+msgid "alldb"
+msgstr "alldb"
+
+#. vim: encoding=utf8: ff=unix:
+msgid "AllDB"
+msgstr "AllDB"
+
 msgid "All-kind of data database"
 msgstr "Baza danych dla każdego rodzaju danych"
 
@@ -351,6 +243,120 @@ msgstr ""
 "\n"
 "Szczegóły opisano w pliku COPYING.\n"
 
+msgid "Categories"
+msgstr "Kateogrie"
+
+msgid "Category"
+msgstr "Kateogria"
+
+msgid "Create title expresion automatically"
+msgstr "Utwórz wyrażenie tytułu automatycznie"
+
+msgid "Default"
+msgstr "Domyślne"
+
+msgid "Define values"
+msgstr "Określ wartości"
+
+msgid "Duplicate _Item"
+msgstr "_Powiel element"
+
+msgid "Export to _CSV..."
+msgstr "Eksport do _CSV..."
+
+msgid "Field"
+msgstr "Pole"
+
+msgid "Fields"
+msgstr "Pola"
+
+msgid "Items"
+msgstr "Elementy"
+
+msgid "Items have title"
+msgstr "Elementy posiadają tytuł"
+
+msgid "Items title"
+msgstr "Tytuły elementów"
+
+msgid "Items: 0"
+msgstr "Elementy: 0"
+
+msgid "Manage _Categories"
+msgstr "Zarządzaj _kategoriami"
+
+msgid "Name:"
+msgstr "Nazwa:"
+
+msgid "Options:"
+msgstr "Opcje"
+
+msgid "Show column in items list"
+msgstr "Pokaż kolumnę na liscie"
+
+msgid "Show in title"
+msgstr "Pokaż w tytule"
+
+msgid "Show title in list"
+msgstr "Wyświetlaj tytuł na liście"
+
+msgid "Tags defined in all items this category"
+msgstr "Etykiety zdefiniowane we wszystkich elementach tej klasy"
+
+msgid "Title expression:"
+msgstr "Wyrażenie tytułu:"
+
+msgid "Type:"
+msgstr "Typ:"
+
+msgid "_About"
+msgstr "O _programie"
+
+msgid "_Delete"
+msgstr "_Usuń"
+
+msgid "_Edit"
+msgstr "_Edytuj"
+
+msgid "_Exit\\tCtrl+Q"
+msgstr "_Zakończ\tCtrl+Q"
+
+msgid "_File"
+msgstr "_Plik"
+
+msgid "_Help"
+msgstr "_Pomoc"
+
+msgid "_Import from CSV..."
+msgstr "_Import z CSV..."
+
+msgid "_New Item"
+msgstr "_Nowy element"
+
+msgid "checkbox"
+msgstr "zaznaczenie"
+
+msgid "choice"
+msgstr "wybór"
+
+msgid "date"
+msgstr "data"
+
+msgid "list"
+msgstr "lista"
+
+msgid "multiline"
+msgstr "wieloliniowe"
+
+msgid "text"
+msgstr "tekst"
+
+#~ msgid "&New"
+#~ msgstr "&Nowy"
+
+#~ msgid "&Delete"
+#~ msgstr "&Usuń"
+
 #~ msgid "Classes"
 #~ msgstr "Klasy"
 
@@ -359,9 +365,6 @@ msgstr ""
 
 #~ msgid "&Preferences"
 #~ msgstr "&Preferencje"
-
-#~ msgid "AllDb"
-#~ msgstr "AllDb"
 
 #~ msgid "&Exit\tAlt-F4"
 #~ msgstr "&Wyjście\tAlt-F4"

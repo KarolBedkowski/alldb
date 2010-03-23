@@ -13,16 +13,15 @@ import wx
 from wx import xrc
 
 from alldb.model import objects
-from alldb.libs.appconfig import AppConfig
+from alldb.libs import wxresources
 from alldb.gui.dialogs import message_boxes as msgbox
 
 from .DlgEditClass import DlgEditClass
 
+
 class DlgClasses(object):
 	def __init__(self, parent, db):
-		xrcfile = AppConfig().get_data_file('alldb.xrc')
-		assert xrcfile is not None
-		self.res = xrc.XmlResource(xrcfile)
+		self.res = wxresources.load_xrc_resource('alldb.xrc')
 
 		self._load_controls(parent)
 		self._create_bindings()
@@ -68,11 +67,11 @@ class DlgClasses(object):
 	def _edit_class(self, cls_oid):
 		cls = self._db.get_class(cls_oid) if cls_oid else objects.ADObjectClass()
 		cls_names = [c.name for c in self._db.classes if c.oid != cls_oid]
-		dlg = DlgEditClass(self, cls, cls_names)
-		if dlg.ShowModal() == wx.ID_OK:
+		dlg = DlgEditClass(self.wnd, cls, cls_names)
+		if dlg.wnd.ShowModal() == wx.ID_OK:
 			self._db.put_class(cls)
 			self.fill_classes()
-		dlg.Destroy()
+		dlg.wnd.Destroy()
 
 	def _on_class_choice(self, event):
 		oid = event.GetClientData()
