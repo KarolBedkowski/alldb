@@ -26,7 +26,7 @@ class DlgEditClass(object):
 		self._setup(cls, cls_names)
 
 	def run(self):
-		res = self.wnd.ShowModal() == wx.ID_APPLY
+		res = self.wnd.ShowModal() == wx.ID_OK
 		self.wnd.Destroy()
 		return res
 
