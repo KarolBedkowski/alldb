@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alldb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-23 13:32+0100\n"
-"PO-Revision-Date: 2010-03-23 13:36+0100\n"
+"POT-Creation-Date: 2010-03-24 17:40+0100\n"
+"PO-Revision-Date: 2010-03-24 17:40+0100\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -17,231 +17,8 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2); \n"
 
-msgid "selected category and ALL items"
-msgstr "zaznaczone kategorie i wszystkie elementy"
-
-msgid "No"
-msgstr "Lp"
-
-msgid "Name"
-msgstr "Nazwa"
-
-msgid "Type"
-msgstr "Typ"
-
-msgid "Default value"
-msgstr "Wartość domyślna"
-
-msgid "Options"
-msgstr "Opcje"
-
-msgid "field"
-msgstr "pole"
-
-msgid "Name and title fields are empty."
-msgstr "Pola nazwa i tytuł są puste."
-
-msgid "Both fields must have defined values."
-msgstr "Oba pola muszą posiadać określoną wartość."
-
-msgid "Cannot save class"
-msgstr "Nie można zapisać klasy"
-
-msgid ""
-"Category with this name already exists.\n"
-"Please specify other name."
-msgstr ""
-"Kategoria o tej nazwie już istnieje.\n"
-"Proszę wprowadzić inną nazwę."
-
-msgid "in title"
-msgstr "w tytule"
-
-msgid "show in list"
-msgstr "pokaż na liście"
-
-msgid "Enter name"
-msgstr "Wprowadź nazwę"
-
-msgid "Class"
-msgstr "Klasa"
-
-msgid "Cannot add this field"
-msgstr "Nie można dodać tego pola"
-
-msgid ""
-"Field with this name alreaty exists.\n"
-"Please enter other name."
-msgstr ""
-"Pole o tej nazwie już istnieje.\n"
-"Proszę wprowadzić inną nazwę."
-
-msgid "Values"
-msgstr "Wartość"
-
-#, python-format
-msgid "Items: %d"
-msgstr "Elementy: %d"
-
-#, python-format
-msgid "%(tag)s (%(items)d)"
-msgstr "%(tag)s (%(items)d)"
-
-msgid "Save changes?"
-msgstr "Zapisać zmiany?"
-
-#, python-format
-msgid "one object"
-msgid_plural "%(count)d objects"
-msgstr[0] "jeden obiekt"
-msgstr[1] "%(count)d obiekty"
-msgstr[2] "%(count)d obiektów"
-
-msgid "Choice a file"
-msgstr "Wybór pliku"
-
-msgid "CSV files (*.csv)|*.csv|All files|*.*"
-msgstr "Pliki CSV (*.csv)|*.csv|Wszystkie pliki|*.*"
-
-msgid "Title"
-msgstr "Tytuł"
-
-msgid "Title:"
-msgstr "Tytuł:"
-
-msgid "Created:"
-msgstr "Utworzony:"
-
-msgid "Modified:"
-msgstr "Zmodyfikowany:"
-
-msgid "ID:"
-msgstr "ID:"
-
-msgid "Tags:"
-msgstr "Etykiety:"
-
-msgid "Select"
-msgstr "Wybierz"
-
-msgid "not saved"
-msgstr "nie zapisany"
-
-msgid "new"
-msgstr "new"
-
-msgid "Select tags"
-msgstr "Wybierz etykiety"
-
-msgid "Tags"
-msgstr "Etykiety"
-
-#, python-format
-msgid ""
-"Save the changes to\n"
-"%(doc_name)s before closing?"
-msgstr ""
-"Zapisać zmiany w\n"
-"%(doc_name)s przed zamknięciem?"
-
-msgid "If you close without saving, changes will be discarded"
-msgstr "Zamknięcie bez zapisu spowoduje utracenie wszystkich zmian."
-
-#, python-format
-msgid ""
-"If you close without saving, changes from the last\n"
-"%(time)s will be discarded"
-msgstr ""
-"Zamknięcie bez zapisania spowoduje utratę zmian\n"
-"z ostatnich %(time)s."
-
-msgid "Close &without Saving"
-msgstr "Zapisz bez zapisywania"
-
-msgid "Save &As"
-msgstr "Zapisz jako"
-
-msgid "Save"
-msgstr "Zapisz"
-
-#, python-format
-msgid "Delete %s?"
-msgstr "Usunąć %s?"
-
-msgid "After removal, it cannot be recovered."
-msgstr "Po usunięciu, nie będzie możliwe przywrócenie."
-
-msgid "Delete"
-msgstr "Usuń"
-
-msgid "Ok"
-msgstr "Ok"
-
-msgid "Cancel"
-msgstr "Anuluj"
-
-msgid "alldb"
-msgstr "alldb"
-
-#. vim: encoding=utf8: ff=unix:
 msgid "AllDB"
 msgstr "AllDB"
-
-msgid "All-kind of data database"
-msgstr "Baza danych dla każdego rodzaju danych"
-
-msgid ""
-"This program is free software: you can redistribute it and/or modify\n"
-"it under the terms of the GNU General Public License as published by\n"
-"the Free Software Foundation, either version 2 of the License, or\n"
-"(at your option) any later version.\n"
-"\n"
-"This program is distributed in the hope that it will be useful,\n"
-"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n"
-"GNU General Public License for more details.\n"
-"\n"
-"You should have received a copy of the GNU General Public License\n"
-"along with this program. If not, see <http://www.gnu.org/licenses/>.\n"
-msgstr ""
-"Niniejszy program jest wolnym oprogramowaniem; możesz go\n"
-"rozprowadzać dalej i/lub modyfikować na warunkach Powszechnej\n"
-"Licencji Publicznej GNU, wydanej przez Fundację Wolnego\n"
-"Oprogramowania - według wersji 2 tej Licencji lub (według twojego\n"
-"wyboru) którejś z późniejszych wersji.\n"
-"\n"
-"Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on\n"
-"użyteczny - jednak BEZ JAKIEJKOLWIEK GWARANCJI, nawet domyślnej\n"
-"gwarancji PRZYDATNOŚCI HANDLOWEJ albo PRZYDATNOŚCI DO OKREŚLONYCH\n"
-"ZASTOSOWAŃ. W celu uzyskania bliższych informacji sięgnij do\n"
-"Powszechnej Licencji Publicznej GNU.\n"
-"\n"
-"Z pewnością wraz z niniejszym programem otrzymałeś też egzemplarz\n"
-"Powszechnej Licencji Publicznej GNU (GNU General Public License);\n"
-"jeśli nie - wejdź na <http://www.gnu.org/licenses/>.\n"
-
-#, python-format
-msgid ""
-"%(name)s version %(version)s (%(release)s)\n"
-"%(copyright)s\n"
-"\n"
-"This program is free software: you can redistribute it and/or modify\n"
-"it under the terms of the GNU General Public License as published by\n"
-"the Free Software Foundation, either version 2 of the License, or\n"
-"(at your option) any later version.\n"
-"\n"
-"For details please see COPYING file.\n"
-msgstr ""
-"%(name)s wersja %(version)s (%(release)s)\n"
-"%(copyright)s\n"
-"\n"
-"Niniejszy program jest wolnym oprogramowaniem; możesz go\n"
-"rozprowadzać dalej i/lub modyfikować na warunkach Powszechnej\n"
-"Licencji Publicznej GNU, wydanej przez Fundację Wolnego\n"
-"Oprogramowania - według wersji 2 tej Licencji lub (według twojego\\\n"
-"wyboru) którejś z późniejszych wersji.\n"
-"\n"
-"Szczegóły opisano w pliku COPYING.\n"
 
 msgid "Categories"
 msgstr "Kateogrie"
@@ -350,6 +127,235 @@ msgstr "wieloliniowe"
 
 msgid "text"
 msgstr "tekst"
+
+msgid "selected category and ALL items"
+msgstr "zaznaczone kategorie i wszystkie elementy"
+
+msgid "No"
+msgstr "Lp"
+
+msgid "Name"
+msgstr "Nazwa"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Default value"
+msgstr "Wartość domyślna"
+
+msgid "Options"
+msgstr "Opcje"
+
+msgid "field"
+msgstr "pole"
+
+msgid "Name and title fields are empty."
+msgstr "Pola nazwa i tytuł są puste."
+
+msgid "Both fields must have defined values."
+msgstr "Oba pola muszą posiadać określoną wartość."
+
+msgid "Cannot save class"
+msgstr "Nie można zapisać klasy"
+
+msgid ""
+"Category with this name already exists.\n"
+"Please specify other name."
+msgstr ""
+"Kategoria o tej nazwie już istnieje.\n"
+"Proszę wprowadzić inną nazwę."
+
+msgid "in title"
+msgstr "w tytule"
+
+msgid "show in list"
+msgstr "pokaż na liście"
+
+#. FIXME: zmineic
+msgid "Enter name"
+msgstr "Wprowadź nazwę"
+
+msgid "Class"
+msgstr "Klasa"
+
+msgid "Cannot add this field"
+msgstr "Nie można dodać tego pola"
+
+msgid ""
+"Field with this name alreaty exists.\n"
+"Please enter other name."
+msgstr ""
+"Pole o tej nazwie już istnieje.\n"
+"Proszę wprowadzić inną nazwę."
+
+msgid "Values"
+msgstr "Wartość"
+
+msgid "True"
+msgstr "Prawda"
+
+msgid "False"
+msgstr "Fałsz"
+
+#, python-format
+msgid "Items: %d"
+msgstr "Elementy: %d"
+
+msgid "Tags"
+msgstr "Etykiety"
+
+#, python-format
+msgid "%(tag)s (%(items)d)"
+msgstr "%(tag)s (%(items)d)"
+
+msgid "Save changes?"
+msgstr "Zapisać zmiany?"
+
+#, python-format
+msgid "one object"
+msgid_plural "%(count)d objects"
+msgstr[0] "jeden obiekt"
+msgstr[1] "%(count)d obiekty"
+msgstr[2] "%(count)d obiektów"
+
+msgid "Choice a file"
+msgstr "Wybór pliku"
+
+msgid "CSV files (*.csv)|*.csv|All files|*.*"
+msgstr "Pliki CSV (*.csv)|*.csv|Wszystkie pliki|*.*"
+
+msgid "Title"
+msgstr "Tytuł"
+
+msgid "Title:"
+msgstr "Tytuł:"
+
+msgid "Created:"
+msgstr "Utworzony:"
+
+msgid "Modified:"
+msgstr "Zmodyfikowany:"
+
+msgid "ID:"
+msgstr "ID:"
+
+msgid "Tags:"
+msgstr "Etykiety:"
+
+msgid "Select"
+msgstr "Wybierz"
+
+msgid "not saved"
+msgstr "nie zapisany"
+
+msgid "new"
+msgstr "new"
+
+msgid "Select tags"
+msgstr "Wybierz etykiety"
+
+#, python-format
+msgid ""
+"Save the changes to\n"
+"%(doc_name)s before closing?"
+msgstr ""
+"Zapisać zmiany w\n"
+"%(doc_name)s przed zamknięciem?"
+
+msgid "If you close without saving, changes will be discarded"
+msgstr "Zamknięcie bez zapisu spowoduje utracenie wszystkich zmian."
+
+#, python-format
+msgid ""
+"If you close without saving, changes from the last\n"
+"%(time)s will be discarded"
+msgstr ""
+"Zamknięcie bez zapisania spowoduje utratę zmian\n"
+"z ostatnich %(time)s."
+
+msgid "Close &without Saving"
+msgstr "Zapisz bez zapisywania"
+
+msgid "Save &As"
+msgstr "Zapisz jako"
+
+msgid "Save"
+msgstr "Zapisz"
+
+#, python-format
+msgid "Delete %s?"
+msgstr "Usunąć %s?"
+
+msgid "After removal, it cannot be recovered."
+msgstr "Po usunięciu, nie będzie możliwe przywrócenie."
+
+msgid "Delete"
+msgstr "Usuń"
+
+msgid "Ok"
+msgstr "Ok"
+
+msgid "Cancel"
+msgstr "Anuluj"
+
+msgid "alldb"
+msgstr "alldb"
+
+msgid "All-kind of data database"
+msgstr "Baza danych dla każdego rodzaju danych"
+
+msgid ""
+"This program is free software: you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation, either version 2 of the License, or\n"
+"(at your option) any later version.\n"
+"\n"
+"This program is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n"
+"GNU General Public License for more details.\n"
+"\n"
+"You should have received a copy of the GNU General Public License\n"
+"along with this program. If not, see <http://www.gnu.org/licenses/>.\n"
+msgstr ""
+"Niniejszy program jest wolnym oprogramowaniem; możesz go\n"
+"rozprowadzać dalej i/lub modyfikować na warunkach Powszechnej\n"
+"Licencji Publicznej GNU, wydanej przez Fundację Wolnego\n"
+"Oprogramowania - według wersji 2 tej Licencji lub (według twojego\n"
+"wyboru) którejś z późniejszych wersji.\n"
+"\n"
+"Niniejszy program rozpowszechniany jest z nadzieją, iż będzie on\n"
+"użyteczny - jednak BEZ JAKIEJKOLWIEK GWARANCJI, nawet domyślnej\n"
+"gwarancji PRZYDATNOŚCI HANDLOWEJ albo PRZYDATNOŚCI DO OKREŚLONYCH\n"
+"ZASTOSOWAŃ. W celu uzyskania bliższych informacji sięgnij do\n"
+"Powszechnej Licencji Publicznej GNU.\n"
+"\n"
+"Z pewnością wraz z niniejszym programem otrzymałeś też egzemplarz\n"
+"Powszechnej Licencji Publicznej GNU (GNU General Public License);\n"
+"jeśli nie - wejdź na <http://www.gnu.org/licenses/>.\n"
+
+#, python-format
+msgid ""
+"%(name)s version %(version)s (%(release)s)\n"
+"%(copyright)s\n"
+"\n"
+"This program is free software: you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation, either version 2 of the License, or\n"
+"(at your option) any later version.\n"
+"\n"
+"For details please see COPYING file.\n"
+msgstr ""
+"%(name)s wersja %(version)s (%(release)s)\n"
+"%(copyright)s\n"
+"\n"
+"Niniejszy program jest wolnym oprogramowaniem; możesz go\n"
+"rozprowadzać dalej i/lub modyfikować na warunkach Powszechnej\n"
+"Licencji Publicznej GNU, wydanej przez Fundację Wolnego\n"
+"Oprogramowania - według wersji 2 tej Licencji lub (według twojego\\\n"
+"wyboru) którejś z późniejszych wersji.\n"
+"\n"
+"Szczegóły opisano w pliku COPYING.\n"
 
 #~ msgid "&New"
 #~ msgstr "&Nowy"

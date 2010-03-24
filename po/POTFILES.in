@@ -1,3 +1,8 @@
+[type: gettext/glade] data/alldb.xrc
+
+alldb/__init__.py
+alldb/configuration.py
+alldb/filetypes/__init__.py
 alldb/filetypes/csv_support.py
 alldb/gui/DlgClasses.py
 alldb/gui/DlgEditClass.py
@@ -12,17 +17,20 @@ alldb/gui/dialogs/dialogs.py
 alldb/gui/dialogs/message_boxes.py
 alldb/libs/__init__.py
 alldb/libs/appconfig.py
+alldb/libs/iconprovider.py
 alldb/libs/logging_setup.py
 alldb/libs/singleton.py
+alldb/libs/wxresources.py
 alldb/main.py
 alldb/model/__init__.py
 alldb/model/db.py
 alldb/model/dbtest.py
 alldb/model/objects.py
+alldb/model/sldb/__init__.py
 alldb/model/sldb/sldb.py
 alldb/model/sldb/sldb_objects.py
 alldb/model/sldb/sldb_test.py
 alldb/model/sldb/sqlite_engine.py
 alldb/version.py
+alldb.py
 
-[type: gettext/glade] data/alldb.xrc

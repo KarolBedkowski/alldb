@@ -54,6 +54,12 @@ class ADObjectClass(sldb.ObjectClass):
 		obj.data = self.default_data or {}
 		return obj
 
+	def get_field(self, field):
+		for fld in self.fields:
+			if fld[0] == field:
+				return fld
+		return None
+
 
 class ADObject(sldb.Object):
 	__persistattr__ = sldb.Object.__persistattr__ + ('tags', 'title')
@@ -127,6 +133,22 @@ class SearchResult(object):
 		self_items = self._items
 		return (self_items[oid] for oid, _data in self.filtered_items)
 
+	@property
+	def fields(self):
+		fields = []
+		for field in self.cls.fields:
+			fields.append(field[0])
+		fields.sort()
+		fields.insert(0, _('Tags'))
+		return fields
+
+	def get_filter_for_field(self, field):
+		filters = {}
+		for item in self._items.itervalues():
+			val = item.data[field]
+			filters[val] = filters.get(val, 0) + 1
+		return filters
+
 	def reset(self):
 		self.tags = {}
 		self._items = {}
@@ -142,7 +164,7 @@ class SearchResult(object):
 		self._items = dict((item.oid, item) for item in items)
 		self._update_tags()
 
-	def filter_items(self, name_filter, tags, cols):
+	def filter_items(self, name_filter, tags, cols, key):
 		if (name_filter, tags, cols) == self._last_filter:
 			return self.filter_items
 
@@ -162,7 +184,10 @@ class SearchResult(object):
 			items = (item for item in items if check(item))
 
 		if tags:
-			items = (item for item in items if item.has_tags(tags))
+			if key == _('Tags'):
+				items = (item for item in items if item.has_tags(tags))
+			else:
+				items = (item for item in items if item.data[key] in tags)
 
 		self.filtered_items = [(item.oid, [item.get_value(col) for col in cols])
 				for item in items]
@@ -189,6 +214,7 @@ class SearchResult(object):
 		for item in self._items.itervalues():
 			for tag in item.tags:
 				tags[tag] = tags.get(tag, 0) + 1
+
 		self.tags = tags
 
 

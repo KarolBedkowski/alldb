@@ -36,9 +36,9 @@ class FrameMain(object):
 		self._setup()
 
 	def _setup(self):
-		self.wnd.SetBackgroundColour(wx.SystemSettings.GetColour(
-			wx.SYS_COLOUR_ACTIVEBORDER))
-		self.wnd.SetAutoLayout(True)
+		#self.wnd.SetBackgroundColour(wx.SystemSettings.GetColour(
+		#	wx.SYS_COLOUR_ACTIVEBORDER))
+		#self.wnd.SetAutoLayout(True)
 
 		self._curr_obj = None
 		self._curr_info_panel = None
@@ -46,6 +46,7 @@ class FrameMain(object):
 		self._cols = []
 		self._current_sorting_col = 0
 		self._items = None
+		self._tagslist = []
 
 		self._icon_provider = IconProvider()
 		self._icon_provider.load_icons(['alldb'])
@@ -60,6 +61,7 @@ class FrameMain(object):
 		self._set_size_pos()
 
 	def _load_controls(self):
+
 		self.wnd = self.res.LoadFrame(None, 'frame_main')
 		assert self.wnd is not None
 		self.window_1 = xrc.XRCCTRL(self.wnd, 'window_1')
@@ -72,14 +74,10 @@ class FrameMain(object):
 		self.choice_klasa = xrc.XRCCTRL(self.wnd, 'choice_klasa')
 		self.button_new_item = xrc.XRCCTRL(self.wnd, 'wxID_ADD')
 		self.panel_info = xrc.XRCCTRL(self.wnd, 'panel_info')
+		self.choice_filter = xrc.XRCCTRL(self.wnd, 'choice_filter')
 
-		panel_searchbox = xrc.XRCCTRL(self.wnd, 'panel_searchctrl')
-		box = wx.BoxSizer(wx.HORIZONTAL)
-		self.searchbox = wx.SearchCtrl(panel_searchbox, -1)
-		box.Add(self.searchbox, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 6)
-		panel_searchbox.SetSizerAndFit(box)
-		panel_searchbox.SetBackgroundColour(wx.SystemSettings.GetColour(
-			wx.SYS_COLOUR_ACTIVEBORDER))
+		self.searchbox = wx.SearchCtrl(self.wnd, -1)
+		self.res.AttachUnknownControl('searchbox', self.searchbox, self.wnd)
 
 	def _create_bindings(self):
 		wnd = self.wnd
@@ -102,6 +100,7 @@ class FrameMain(object):
 				id=xrc.XRCID('menu_categories'))
 		wnd.Bind(wx.EVT_MENU, self._on_menu_about, id=xrc.XRCID('menu_about'))
 		wnd.Bind(wx.EVT_CHOICE, self._on_class_select, self.choice_klasa)
+		wnd.Bind(wx.EVT_CHOICE, self._on_filter_select, self.choice_filter)
 		wnd.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_item_deselect, self.list_items)
 		wnd.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_item_select, self.list_items)
 		wnd.Bind(wx.EVT_LIST_COL_CLICK, self._on_items_col_click, self.list_items)
@@ -183,9 +182,13 @@ class FrameMain(object):
 			self._curr_obj = None
 		self._result = result
 		self._create_columns_in_list(result.cls)
-		self._fill_tags((curr_class_oid != class_oid))
 		self._fill_items()
 		self._set_buttons_status()
+		self.choice_filter.Clear()
+		for field in result.fields:
+			self.choice_filter.Append(field, field)
+		self.choice_filter.SetSelection(0)
+		self._fill_tags((curr_class_oid != class_oid))
 
 	def _fill_items(self, select=None, do_filter=True, do_sort=True):
 		''' wyświetlenie listy elemtów aktualnej klasy, opcjonalne zaznaczenie
@@ -196,8 +199,13 @@ class FrameMain(object):
 		search = self.searchbox.GetValue()
 		selected_tags = self.selected_tags
 
+		keyidx = self.choice_filter.GetCurrentSelection()
+		key = None
+		if keyidx >= 0:
+			key = self.choice_filter.GetString(keyidx)
+
 		if do_filter:
-			items = self._result.filter_items(search, selected_tags, self._cols)
+			items = self._result.filter_items(search, selected_tags, self._cols, key)
 		if do_sort:
 			items = self._result.sort_items(self._current_sorting_col)
 
@@ -230,10 +238,25 @@ class FrameMain(object):
 		'''
 		selected_tags = [] if clear_selection else self.selected_tags
 		self.clb_tags.Clear()
-		for tag, count in sorted(self._result.tags.iteritems()):
+		keyidx = self.choice_filter.GetCurrentSelection()
+		if keyidx < 0:
+			return
+		key = self.choice_filter.GetString(keyidx)
+		if key == _('Tags'):
+			tags = self._result.tags.iteritems()
+		else:
+			tags = self._result.get_filter_for_field(key).iteritems()
+		if wx.Platform == '__WXMSW__':
+			self._tagslist = []
+		for tag, count in sorted(tags):
+			tagname = tag
+			if tag != '':
+				tagname = _(str(tag))
 			num = self.clb_tags.Append(
-					_('%(tag)s (%(items)d)') % dict(tag=tag, items=count))
-			if wx.Platform != '__WXMSW__':
+					_('%(tag)s (%(items)d)') % dict(tag=tagname, items=count))
+			if wx.Platform == '__WXMSW__':
+				self._tagslist.append(tag)
+			else:
 				self.clb_tags.SetClientData(num, tag)
 			if tag in selected_tags:
 				self.clb_tags.Check(num, True)
@@ -291,6 +314,9 @@ class FrameMain(object):
 		if oid != self.current_class_id:
 			self._save_object(True, False)
 			self._show_class(oid)
+
+	def _on_filter_select(self, evt):
+		self._fill_tags()
 
 	def _on_item_deselect(self, event):
 		pass
@@ -406,9 +432,8 @@ class FrameMain(object):
 	def selected_tags(self):
 		cbl = self.clb_tags
 		if wx.Platform == '__WXMSW__':
-			checked = [cbl.GetString(num) for num in xrange(cbl.GetCount())
+			checked = [self._tagslist[num] for num in xrange(cbl.GetCount())
 					if cbl.IsChecked(num)]
-			checked = [text[:text.rfind(' (')] for text in checked]
 		else:
 			checked = [cbl.GetClientData(num) for num in xrange(cbl.GetCount())
 					if cbl.IsChecked(num)]
