@@ -21,16 +21,21 @@ def _localize(match_object):
 			match_object.group(3)))
 
 
+_CACHE = {}
+
 def load_xrc_resource(filename):
 	xrcfile_path = AppConfig().get_data_file('alldb.xrc')
-	res = xrc.EmptyXmlResource()
-	with open(xrcfile_path) as xrc_file:
-		data = xrc_file.read()
+	data = _CACHE.get(xrcfile_path)
+	if data is None:
+		with open(xrcfile_path) as xrc_file:
+			data = xrc_file.read()
+		data = data.decode('UTF-8')
+		re_gettext = re.compile(r'(\<label\>)(.*?)(\<\/label\>)')
+		data = re_gettext.sub(_localize, data)
+		data = data.encode('UTF-8')
+		_CACHE[xrcfile_path] = data
 
-	data = data.decode('UTF-8')
-	re_gettext = re.compile(r'(\<label\>)(.*?)(\<\/label\>)')
-	data = re_gettext.sub(_localize, data)
-	data = data.encode('UTF-8')
+	res = xrc.EmptyXmlResource()
 	res.LoadFromString(data)
 	return res
 
