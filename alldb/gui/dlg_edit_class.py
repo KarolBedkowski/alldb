@@ -15,7 +15,7 @@ from wx import xrc
 from alldb.libs import wxresources
 from alldb.gui.dialogs import message_boxes as msgbox
 
-from .DlgEditField	import DlgEditField
+from .dlg_edit_field import DlgEditField
 
 
 class DlgEditClass(object):

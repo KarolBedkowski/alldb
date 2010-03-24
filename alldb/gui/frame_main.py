@@ -19,9 +19,9 @@ from alldb.libs.iconprovider import IconProvider
 from alldb.filetypes.csv_support import export2csv, import_csv
 from alldb.gui.dialogs import message_boxes as msgbox
 
-from .PanelInfo import PanelInfo
-from .DlgClasses import DlgClasses
-from ._dlgabout import show_about_box
+from .panel_info import PanelInfo
+from .dlg_classes import DlgClasses
+from .dlg_about import show_about_box
 
 
 class FrameMain(object):

@@ -16,7 +16,7 @@ from alldb.model import objects
 from alldb.libs import wxresources
 from alldb.gui.dialogs import message_boxes as msgbox
 
-from .DlgEditClass import DlgEditClass
+from .dlg_edit_class import DlgEditClass
 
 
 class DlgClasses(object):

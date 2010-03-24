@@ -16,7 +16,7 @@ import optparse
 import logging
 _LOG = logging.getLogger(__name__)
 
-from alldb.gui.FrameMain import FrameMain
+from alldb.gui.frame_main import FrameMain
 from alldb.libs import appconfig
 from alldb.libs.logging_setup import logging_setup
 from alldb.model.db import Db
