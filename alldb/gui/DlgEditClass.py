@@ -143,23 +143,23 @@ class DlgEditClass(object):
 		data['_fields_names'] = [ field[0] for field in self._cls.fields
 				if field[0] != name]
 		dlg = DlgEditField(self.wnd, data)
-		if dlg.ShowModal() == wx.ID_OK:
+		if dlg.wnd.ShowModal() == wx.ID_OK:
 			field = (data['name'], data['type'], data['default'], data['options'])
 			self._cls.fields[item_idx] = field
 			self._refresh_list(self._cls)
 			self._on_title_auto(None)
-		dlg.Destroy()
+		dlg.wnd.Destroy()
 
 	def _on_btn_add_field(self, event):
 		data = {}
 		data['_fields_names'] = [ field[0] for field in self._cls.fields ]
 		dlg = DlgEditField(self.wnd, data)
-		if dlg.ShowModal() == wx.ID_OK:
+		if dlg.wnd.ShowModal() == wx.ID_OK:
 			field = (data['name'], data['type'], data['default'], data['options'])
 			self._cls.fields.append(field)
 			self._refresh_list(self._cls)
 			self._on_title_auto(None)
-		dlg.Destroy()
+		dlg.wnd.Destroy()
 
 	def _on_btn_del_field(self, event):
 		item_idx = self._get_selected_field_idx()
