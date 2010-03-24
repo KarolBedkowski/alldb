@@ -3,10 +3,10 @@
 """
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2009'
-__version__		= '0.1'
-__release__		= '2009-12-20'
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2009'
+__version__ = '0.1'
+__release__ = '2009-12-20'
 
 
 import wx
@@ -98,7 +98,7 @@ class DlgEditClass(object):
 		lc_fields = self.lc_fields
 		lc_fields.DeleteAllItems()
 		for no, (name, ftype, default, options) in enumerate(cls.fields):
-			lc_fields.InsertStringItem(no, str(no+1))
+			lc_fields.InsertStringItem(no, str(no + 1))
 			lc_fields.SetStringItem(no, 1, str(name))
 			lc_fields.SetStringItem(no, 2, str(ftype))
 			lc_fields.SetStringItem(no, 3, str(default))
@@ -145,7 +145,7 @@ class DlgEditClass(object):
 		field = self._cls.fields[item_idx]
 		name = field[0]
 		data = dict(name=name, type=field[1], default=field[2], options=field[3])
-		data['_fields_names'] = [ field[0] for field in self._cls.fields
+		data['_fields_names'] = [field[0] for field in self._cls.fields
 				if field[0] != name]
 		dlg = DlgEditField(self.wnd, data)
 		if dlg.run():
@@ -156,7 +156,7 @@ class DlgEditClass(object):
 
 	def _on_btn_add_field(self, event):
 		data = {}
-		data['_fields_names'] = [ field[0] for field in self._cls.fields ]
+		data['_fields_names'] = [field[0] for field in self._cls.fields]
 		dlg = DlgEditField(self.wnd, data)
 		if dlg.run():
 			field = (data['name'], data['type'], data['default'], data['options'])
@@ -178,9 +178,10 @@ class DlgEditClass(object):
 		if item_idx < 1:
 			return
 		fields = self._cls.fields
-		fields[item_idx], fields[item_idx-1] = fields[item_idx-1], fields[item_idx]
+		fields[item_idx], fields[item_idx - 1] = (fields[item_idx - 1],
+				fields[item_idx])
 		self._refresh_list(self._cls)
-		self.lc_fields.SetItemState(item_idx-1, wx.LIST_STATE_SELECTED,
+		self.lc_fields.SetItemState(item_idx - 1, wx.LIST_STATE_SELECTED,
 				wx.LIST_STATE_SELECTED)
 		self._on_title_auto(None)
 
@@ -189,9 +190,10 @@ class DlgEditClass(object):
 		if item_idx < 0 or item_idx == self.lc_fields.GetItemCount() - 1:
 			return
 		fields = self._cls.fields
-		fields[item_idx], fields[item_idx+1] = fields[item_idx+1], fields[item_idx]
+		fields[item_idx], fields[item_idx + 1] = (fields[item_idx + 1],
+				fields[item_idx])
 		self._refresh_list(self._cls)
-		self.lc_fields.SetItemState(item_idx+1, wx.LIST_STATE_SELECTED,
+		self.lc_fields.SetItemState(item_idx + 1, wx.LIST_STATE_SELECTED,
 				wx.LIST_STATE_SELECTED)
 		self._on_title_auto(None)
 

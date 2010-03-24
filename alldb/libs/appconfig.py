@@ -152,7 +152,6 @@ class AppConfig(Singleton):
 		_LOG.warn('AppConfig.get_data_file(%s) not found', filename)
 		return None
 
-
 	def _main_dir(self):
 		if self.main_is_frozen:
 			if os.path.abspath(os.path.dirname(__file__)).startswith(
@@ -211,8 +210,8 @@ def is_frozen():
 	if __file__.startswith(configuration.LINUX_INSTALL_DIR):
 		return True
 	return (hasattr(sys, "frozen")		# new py2exe
-			or hasattr(sys, "importers")	# old py2exe
-			or imp.is_frozen("__main__"))	# tools/freeze
+			or hasattr(sys, "importers")		# old py2exe
+			or imp.is_frozen("__main__"))		# tools/freeze
 
 
 if __name__ == '__main__':

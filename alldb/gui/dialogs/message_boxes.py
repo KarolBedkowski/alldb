@@ -129,7 +129,8 @@ class DialogConfirmDelete(MyMessageDialog):
 	"""docstring for DialogConfirmSave"""
 	def __init__(self, parent, name, secondary_text=None):
 		primary_text = _("Delete %s?") % name
-		secondary_text = secondary_text or _('After removal, it cannot be recovered.')
+		secondary_text = secondary_text or \
+				_('After removal, it cannot be recovered.')
 		MyMessageDialog.__init__(self, parent, primary_text, secondary_text, None,
 				wx.ART_QUESTION)
 
@@ -245,7 +246,6 @@ def message_box_question(parent, primary_text, secondary_text,
 	res = dlg.ShowModal()
 	dlg.Destroy()
 	return res == wx.ID_YES
-
 
 
 # vim: encoding=utf8:

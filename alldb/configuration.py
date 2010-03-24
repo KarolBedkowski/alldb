@@ -9,3 +9,5 @@ LINUX_DATA_DIR = '/usr/share/doc/alldb/data/'
 LOCALES_DIR = './locale/'
 DATA_DIR = './data/'
 
+
+# vim: encoding=utf8: ff=unix:

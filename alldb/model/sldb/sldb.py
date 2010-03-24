@@ -5,15 +5,18 @@ Baza danych bez-schematowa
 """
 from __future__ import with_statement
 
+
 __author__ = 'Karol Będkowski'
 __copyright__ = 'Copyright (C) Karol Będkowski 2009'
 __version__ = '0.1'
 __release__ = '2009-12-17'
 
+
 import logging
 import time
 
 from . import sldb_objects
+
 
 _LOG = logging.getLogger(__name__)
 
@@ -129,7 +132,6 @@ if __name__ == '__main__':
 
 		print '\nget_objects_by_class'
 		print '\n'.join(str(_obj) for _obj in storage.get_objects_by_class(cls.oid))
-
 
 		storage.close()
 

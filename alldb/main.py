@@ -12,9 +12,7 @@ import os
 import gettext
 import locale
 import optparse
-
 import logging
-_LOG = logging.getLogger(__name__)
 
 from alldb.gui.frame_main import FrameMain
 from alldb.libs import appconfig
@@ -28,6 +26,9 @@ try:
 	sys.setappdefaultencoding("utf-8")
 except Exception, _:
 	sys.setdefaultencoding("utf-8")
+
+
+_LOG = logging.getLogger(__name__)
 
 
 def show_version(ption, opt_str, value, parser, *args, **kwargs):
@@ -50,8 +51,8 @@ logging_setup('alldb.log', options.debug)
 def _setup_locale():
 	''' setup locales and gettext '''
 	use_home_dir = sys.platform != 'winnt'
-	app_config = appconfig.AppConfig('alldb.cfg', __file__, use_home_dir=use_home_dir,
-			app_name='alldb')
+	app_config = appconfig.AppConfig('alldb.cfg', __file__,
+			use_home_dir=use_home_dir, app_name='alldb')
 	locales_dir = app_config.locales_dir
 	package_name = 'alldb'
 	_LOG.info('run: locale dir: %s' % locales_dir)
@@ -84,6 +85,7 @@ if not appconfig.is_frozen():
 	except ImportError, err:
 		print 'No wxversion.... (%s)' % str(err)
 
+
 import wx
 
 
@@ -97,10 +99,8 @@ def run():
 
 	IconProvider(None, config.data_dir)
 
-	db = Db(db_filename)
+	config['_DB'] = db = Db(db_filename)
 	db.open()
-
-	config['_DB'] = db
 
 	wx.InitAllImageHandlers()
 	main_frame = FrameMain(db)
@@ -110,10 +110,6 @@ def run():
 
 	db.close()
 	config.save()
-
-
-
-
 
 
 # vim: encoding=utf8: ff=unix:

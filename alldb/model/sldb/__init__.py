@@ -4,10 +4,10 @@
 """
 from __future__ import with_statement
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2009'
-__version__		= '0.1'
-__release__		= '2009-12-17'
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2009'
+__version__ = '0.1'
+__release__ = '2009-12-17'
 
 
 from sldb import SchemaLessDatabase

@@ -6,10 +6,10 @@ Eksportowanie danych do pliku csv
 """
 from __future__ import with_statement
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2009'
-__version__		= '0.1'
-__release__		= '2009-11-12'
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2009'
+__version__ = '0.1'
+__release__ = '2009-11-12'
 
 
 import csv
@@ -26,9 +26,8 @@ def export2csv(filename, cls, items):
 	itemsdata = (i.data for i in items)
 	with open(filename, 'wt') as fcsv:
 		writer = csv.DictWriter(fcsv, fields, extrasaction='ignore')
-		writer.writerow(dict((f,f) for f in fields))
+		writer.writerow(dict((f, f) for f in fields))
 		writer.writerows(itemsdata)
-
 
 
 def import_csv(filename, cls):
@@ -42,7 +41,6 @@ def import_csv(filename, cls):
 			item = cls.create_object()
 			item.data.update(row)
 			yield item
-
 
 
 # vim: encoding=utf8: ff=unix:

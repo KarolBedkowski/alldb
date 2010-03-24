@@ -120,7 +120,6 @@ class ADObject(sldb.Object):
 		return obj
 
 
-
 class SearchResult(object):
 	"""docstring for SearchResult"""
 

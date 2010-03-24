@@ -94,7 +94,8 @@ class FrameMain(object):
 		wnd.Bind(wx.EVT_MENU, self._on_menu_about, id=xrc.XRCID('menu_about'))
 		wnd.Bind(wx.EVT_CHOICE, self._on_class_select, self.choice_klasa)
 		wnd.Bind(wx.EVT_CHOICE, self._on_filter_select, self.choice_filter)
-		wnd.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_item_deselect, self.list_items)
+		wnd.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_item_deselect,
+				self.list_items)
 		wnd.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_item_select, self.list_items)
 		wnd.Bind(wx.EVT_LIST_COL_CLICK, self._on_items_col_click, self.list_items)
 		wnd.Bind(wx.EVT_BUTTON, self._on_btn_new, self.button_new_item)
@@ -157,7 +158,7 @@ class FrameMain(object):
 		self._cols = cls.fields_in_list
 		for col, field in enumerate(self._cols):
 			field_name = get_field_human(field)
-			self.list_items.InsertColumn(col+1, field_name)
+			self.list_items.InsertColumn(col + 1, field_name)
 		self._current_sorting_col = 1
 
 	def _show_class(self, class_oid):
@@ -200,9 +201,9 @@ class FrameMain(object):
 		item2select = None
 		for num, item in enumerate(items):
 			oid, cols = item
-			list_items.InsertStringItem(num, str(num+1))
+			list_items.InsertStringItem(num, str(num + 1))
 			for colnum, col in enumerate(cols):
-				list_items.SetStringItem(num, colnum+1, unicode(col))
+				list_items.SetStringItem(num, colnum + 1, unicode(col))
 			list_items.SetItemData(num, int(oid))
 			if oid == select:
 				item2select = num
@@ -252,8 +253,7 @@ class FrameMain(object):
 				self.clb_tags.Check(num, True)
 
 	def _set_buttons_status(self, new_record=False):
-		record_showed =  (self.list_items.GetSelectedItemCount() > 0) or \
-				new_record
+		record_showed = (self.list_items.GetSelectedItemCount() > 0) or new_record
 		self.button_apply.Enable(record_showed)
 		self.button_new_item.Enable(self._result is not None)
 		if self._curr_info_panel:
@@ -283,7 +283,7 @@ class FrameMain(object):
 						info = get_object_info(self._result.cls, curr_obj, self._cols)
 						self._items[ind[0]] = info
 						for col, val in enumerate(info[1]):
-							self.list_items.SetStringItem(indx, col+1, str(val))
+							self.list_items.SetStringItem(indx, col + 1, str(val))
 						reload_items = False
 
 			self._result = self._db.load_class(self._result.cls.oid)
@@ -293,10 +293,10 @@ class FrameMain(object):
 
 	def _on_close(self, evt):
 		appconfig = AppConfig()
-		appconfig.set('frame_main','size', self.wnd.GetSizeTuple())
-		appconfig.set('frame_main','position', self.wnd.GetPositionTuple())
-		appconfig.set('frame_main','win1', self.window_1.GetSashPosition())
-		appconfig.set('frame_main','win2', self.window_2.GetSashPosition())
+		appconfig.set('frame_main', 'size', self.wnd.GetSizeTuple())
+		appconfig.set('frame_main', 'position', self.wnd.GetPositionTuple())
+		appconfig.set('frame_main', 'win1', self.window_1.GetSashPosition())
+		appconfig.set('frame_main', 'win2', self.window_2.GetSashPosition())
 		self.wnd.Destroy()
 
 	def _on_class_select(self, evt):
@@ -393,7 +393,7 @@ class FrameMain(object):
 	def _on_menu_import_csv(self, event):
 		dlg = wx.FileDialog(self.wnd, _('Choice a file'),
 				wildcard=_('CSV files (*.csv)|*.csv|All files|*.*'),
-				style=wx.FD_OPEN|wx.FD_FILE_MUST_EXIST)
+				style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
 		if dlg.ShowModal() == wx.ID_OK:
 			filepath = dlg.GetPath()
 			cls = self._result.cls
@@ -407,7 +407,7 @@ class FrameMain(object):
 	def _on_menu_export_csv(self, event):
 		dlg = wx.FileDialog(self.wnd, _('Choice a file'),
 				wildcard=_('CSV files (*.csv)|*.csv|All files|*.*'),
-				style=wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT)
+				style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
 		if dlg.ShowModal() == wx.ID_OK:
 			filepath = dlg.GetPath()
 			cls = self._result.cls

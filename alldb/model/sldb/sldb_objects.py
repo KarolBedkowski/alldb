@@ -126,8 +126,12 @@ class Index(BaseObject):
 		self.class_id = class_id
 		self.name = name
 
-	def _set_fields(self, fields): self.data['fields'] = fields
-	def _get_fields(self): return self.data.get('fields')
+	def _set_fields(self, fields):
+		self.data['fields'] = fields
+
+	def _get_fields(self):
+		return self.data.get('fields')
+
 	fields = property(_get_fields, _set_fields)
 
 

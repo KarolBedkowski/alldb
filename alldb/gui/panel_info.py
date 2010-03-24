@@ -3,10 +3,10 @@
 """
 """
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2009'
-__version__		= '0.1'
-__release__		= '2009-12-20'
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2009'
+__version__ = '0.1'
+__release__ = '2009-12-20'
 
 
 import time
@@ -33,7 +33,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_fields_head(), 0, wx.EXPAND)
 		grid = self._create_fields()
-		main_grid.Add(grid, 0, wx.EXPAND|wx.ALL, 6)
+		main_grid.Add(grid, 0, wx.EXPAND | wx.ALL, 6)
 		main_grid.Add(self._create_fields_tail(), 0, wx.EXPAND)
 
 		self.SetSizer(main_grid)
@@ -73,11 +73,11 @@ class PanelInfo(scrolled.ScrolledPanel):
 
 		grid = wx.BoxSizer(wx.HORIZONTAL)
 		label = _create_label(panel, _('Title:'), self._COLOR_HIGHLIGHT_FG)
-		grid.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 6)
+		grid.Add(label, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 6)
 
 		self.tc_title = wx.StaticText(panel, -1, ' ')
 		self.tc_title.SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
-		grid.Add(self.tc_title, 1, wx.EXPAND|wx.ALL, 6)
+		grid.Add(self.tc_title, 1, wx.EXPAND | wx.ALL, 6)
 
 		panel.SetSizer(grid)
 		panel.Show(self._obj_cls.title_show)
@@ -90,10 +90,10 @@ class PanelInfo(scrolled.ScrolledPanel):
 
 		def create(label):
 			label = _create_label(panel, label, self._COLOR_HIGHLIGHT_FG)
-			grid.Add(label, 0, 	wx.EXPAND|wx.ALL, 6)
+			grid.Add(label, 0, wx.EXPAND | wx.ALL, 6)
 			field = wx.StaticText(panel, -1, '          ')
 			field .SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
-			grid.Add(field, 1, wx.EXPAND|wx.RIGHT|wx.TOP|wx.BOTTOM, 6)
+			grid.Add(field, 1, wx.EXPAND | wx.RIGHT | wx.TOP | wx.BOTTOM, 6)
 			return field
 
 		self.lb_created = create(_('Created:'))
@@ -118,14 +118,14 @@ class PanelInfo(scrolled.ScrolledPanel):
 				self.Bind(EVT_ETC_LAYOUT_NEEDED, self._on_expand_text, ctrl)
 			elif ftype == 'date':
 				ctrl = wx.DatePickerCtrl(self, -1,
-						style=wx.DP_DROPDOWN|wx.DP_SHOWCENTURY|wx.DP_ALLOWNONE)
+						style=wx.DP_DROPDOWN | wx.DP_SHOWCENTURY | wx.DP_ALLOWNONE)
 			elif ftype == 'list':
 				ctrl = gizmos.EditableListBox(self, -1)
 			elif ftype == 'choice':
 				values = options.get('values') or []
 				ctrl = wx.Choice(self, -1, choices=values)
 			else:
-				ctrl = wx.TextCtrl(self,  -1)
+				ctrl = wx.TextCtrl(self, -1)
 			self._fields[name] = (ctrl, ftype, _default, options)
 
 			if ctrl:
@@ -210,20 +210,18 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self.SetupScrolling()
 
 	def _on_btn_choice_tags(self, evt):
-		cls_tags = self._window.current_tags.copy()#self._obj_cls.get_all_items_tags()
+		cls_tags = self._window.current_tags.copy()
 		item_tags_str = self.tc_tags.GetValue()
 		item_tags = []
 		if item_tags_str:
-			item_tags = [ t.strip() for t in item_tags_str.split(',') ]
+			item_tags = [t.strip() for t in item_tags_str.split(',')]
 			for tag in item_tags:
 				cls_tags[tag] = None
 
 		if cls_tags:
 			tag_list = sorted(cls_tags.iterkeys())
-			dlg = wx.MultiChoiceDialog(self, _("Select tags"),
-					_("Tags"), tag_list)
-			selected = [ idx for idx, key in enumerate(tag_list)
-					if key in item_tags ]
+			dlg = wx.MultiChoiceDialog(self, _("Select tags"), _("Tags"), tag_list)
+			selected = [idx for idx, key in enumerate(tag_list) if key in item_tags]
 			dlg.SetSelections(selected)
 			if dlg.ShowModal() == wx.ID_OK:
 				selections = dlg.GetSelections()

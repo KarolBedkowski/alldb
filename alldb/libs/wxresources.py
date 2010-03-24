@@ -4,10 +4,12 @@
 """
 from __future__ import with_statement
 
+
 __author__ = 'Karol Będkowski'
 __copyright__ = 'Copyright (C) Karol Będkowski 2009,2010'
 __version__ = '0.1'
 __release__ = '2009-12-20'
+
 
 import re
 
@@ -22,6 +24,7 @@ def _localize(match_object):
 
 
 _CACHE = {}
+
 
 def load_xrc_resource(filename):
 	xrcfile_path = AppConfig().get_data_file('alldb.xrc')

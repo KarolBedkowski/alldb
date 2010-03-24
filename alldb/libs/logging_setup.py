@@ -22,8 +22,8 @@ import time
 
 def _is_frozen():
 	return (hasattr(sys, "frozen")		# new py2exe
-			or hasattr(sys, "importers")	# old py2exe
-			or imp.is_frozen("__main__"))	# tools/freeze
+			or hasattr(sys, "importers")		# old py2exe
+			or imp.is_frozen("__main__"))		# tools/freeze
 
 
 def logging_setup(filename, debug=False):

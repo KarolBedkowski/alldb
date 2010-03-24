@@ -4,12 +4,11 @@
 """
 from __future__ import with_statement
 
-__author__		= 'Karol Będkowski'
-__copyright__	= 'Copyright (C) Karol Będkowski 2009'
-__version__		= '0.1'
-__release__		= '2009-12-17'
+__author__ = 'Karol Będkowski'
+__copyright__ = 'Copyright (C) Karol Będkowski 2009'
+__version__ = '0.1'
+__release__ = '2009-12-17'
 
-import logging
 import time
 
 from sldb import SchemaLessDatabase
@@ -20,7 +19,7 @@ engine = SqliteEngine('test')
 storage = SchemaLessDatabase(engine)
 storage.open()
 
-cls = sldb_objects.ObjectClass(name='test'+time.asctime())
+cls = sldb_objects.ObjectClass(name='test' + time.asctime())
 cls.default_data = [('f1', 'str', '', None), ('f2', 'int', '', None)]
 storage.put_class(cls)
 print cls

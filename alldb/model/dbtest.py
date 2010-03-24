@@ -40,7 +40,7 @@ if '--profile' in sys.argv:
 	import pstats
 	import time
 	with open('profile_result_%d.txt' % int(time.time()), 'w') as out:
-		s=pstats.Stats('profile.tmp', stream=out)
+		s = pstats.Stats('profile.tmp', stream=out)
 #		s.strip_dirs()
 		s.sort_stats('cumulative').print_stats('', 50)
 
@@ -50,4 +50,3 @@ if '--profile' in sys.argv:
 
 else:
 	run()
-

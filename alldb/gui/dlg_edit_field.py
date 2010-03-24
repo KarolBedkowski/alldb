@@ -46,12 +46,12 @@ class DlgEditField(object):
 		self.btn_values = xrc.XRCCTRL(self.wnd, 'btn_values')
 
 		self._radios = {
-			'str':		self.rb_type_text,
-			'bool':		self.rb_type_checkbox,
-			'date':		self.rb_type_date,
-			'multi':	self.rb_type_multiline,
-			'list':		self.rb_type_list,
-			'choice':	self.rb_type_choice, }
+			'str': self.rb_type_text,
+			'bool': self.rb_type_checkbox,
+			'date': self.rb_type_date,
+			'multi': self.rb_type_multiline,
+			'list': self.rb_type_list,
+			'choice': self.rb_type_choice, }
 
 	def _create_bindings(self):
 		wnd = self.wnd
