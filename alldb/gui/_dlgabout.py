@@ -17,10 +17,10 @@ __all__ = ['show_about_box']
 
 import wx
 
+from alldb import version
+
 
 def show_about_box(parent):
-	from alldb import version
-
 	info = wx.AboutDialogInfo()
 	info.SetName(version.NAME)
 	info.SetVersion(version.VERSION)

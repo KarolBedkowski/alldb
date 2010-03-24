@@ -27,19 +27,13 @@ from ._dlgabout import show_about_box
 class FrameMain(object):
 	''' Klasa głównego okna programu'''
 	def __init__(self, db):
-		self._db = db
 		self.res = wxresources.load_xrc_resource('alldb.xrc')
-		assert self.res is not None
-
 		self._load_controls()
 		self._create_bindings()
-		self._setup()
+		self._setup(db)
 
-	def _setup(self):
-		#self.wnd.SetBackgroundColour(wx.SystemSettings.GetColour(
-		#	wx.SYS_COLOUR_ACTIVEBORDER))
-		#self.wnd.SetAutoLayout(True)
-
+	def _setup(self, db):
+		self._db = db
 		self._curr_obj = None
 		self._curr_info_panel = None
 		self._result = None
@@ -61,7 +55,6 @@ class FrameMain(object):
 		self._set_size_pos()
 
 	def _load_controls(self):
-
 		self.wnd = self.res.LoadFrame(None, 'frame_main')
 		assert self.wnd is not None
 		self.window_1 = xrc.XRCCTRL(self.wnd, 'window_1')
@@ -124,11 +117,9 @@ class FrameMain(object):
 		size = appconfig.get('frame_main', 'size', (800, 600))
 		if size:
 			self.wnd.SetSize(size)
-
 		position = appconfig.get('frame_main', 'position')
 		if position:
 			self.wnd.Move(position)
-
 		self.window_1.SetSashPosition(appconfig.get('frame_main', 'win1', 200))
 		self.window_2.SetSashPosition(appconfig.get('frame_main', 'win2', -200))
 
@@ -144,11 +135,9 @@ class FrameMain(object):
 				num = self.choice_klasa.Append(cls.name, cls.oid)
 				if cls.oid == select:
 					cls2select = num
-
 		if cls2select is not None:
 			self.choice_klasa.SetSelection(cls2select)
 			return classes[cls2select].oid
-
 		return classes[0].oid if classes else None
 
 	def _create_info_panel(self, cls):
@@ -174,7 +163,6 @@ class FrameMain(object):
 	def _show_class(self, class_oid):
 		''' wyświetlenie klasy - listy tagów i obiektów '''
 		curr_class_oid = self.current_class_id
-
 		result = self._db.load_class(class_oid)
 		if not curr_class_oid or curr_class_oid != class_oid \
 				or self._curr_info_panel is None:
@@ -246,8 +234,10 @@ class FrameMain(object):
 			tags = self._result.tags.iteritems()
 		else:
 			tags = self._result.get_filter_for_field(key).iteritems()
+
 		if wx.Platform == '__WXMSW__':
 			self._tagslist = []
+
 		for tag, count in sorted(tags):
 			tagname = tag
 			if tag != '':

@@ -25,6 +25,11 @@ class DlgEditField(object):
 		self._create_bindings()
 		self._setup(data)
 
+	def run(self):
+		res = self.wnd.ShowModal() == wx.ID_OK
+		self.wnd.Destroy()
+		return res
+
 	def _load_controls(self, parent):
 		self.wnd = self.res.LoadDialog(parent, 'dlg_edit_field')
 		assert self.wnd is not None
@@ -46,8 +51,7 @@ class DlgEditField(object):
 			'date':		self.rb_type_date,
 			'multi':	self.rb_type_multiline,
 			'list':		self.rb_type_list,
-			'choice':	self.rb_type_choice,
-		}
+			'choice':	self.rb_type_choice, }
 
 	def _create_bindings(self):
 		wnd = self.wnd
@@ -60,10 +64,6 @@ class DlgEditField(object):
 		if not data.get('options'):
 			data['options'] = {}
 		self._data = data
-		self.fill()
-
-	def fill(self):
-		data = self._data
 		self.tc_name.SetValue(data.get('name') or '')
 		self.tc_default.SetValue(data.get('default') or '')
 		options = data.get('options') or {}
@@ -78,16 +78,13 @@ class DlgEditField(object):
 	def _on_ok(self, evt):
 		name = self.tc_name.GetValue().strip()
 		if not name:
-			# FIXME: zmineic
-			dlg = wx.MessageDialog(self.wnd, _('Enter name'),
-					_('Class'), wx.OK|wx.ICON_ERROR)
-			dlg.ShowModal()
-			dlg.Destroy()
+			msgbox.message_box_error_ex(self.wnd, _('Cannot add this field'),
+					_('Name field is required.\nPlease enter name for field.'))
 			return
 
 		if name in self._data.get('_fields_names', []):
 			msgbox.message_box_error_ex(self.wnd, _('Cannot add this field'),
-					_('Field with this name alreaty exists.\nPlease enter other name.'))
+					_('Field with this name already exists.\nPlease enter other name.'))
 			return
 
 		self._data['name'] = name

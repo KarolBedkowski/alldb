@@ -65,12 +65,16 @@ class MyMessageDialog(wx.Dialog):
 
 		self.Bind(wx.EVT_BUTTON, self._on_btn_no, id=wx.ID_NO)
 		self.Bind(wx.EVT_BUTTON, self._on_btn_yes, id=wx.ID_YES)
+		self.Bind(wx.EVT_BUTTON, self._on_btn_save, id=wx.ID_SAVE)
 
 	def _on_btn_no(self, evt):
 		self.EndModal(wx.ID_NO)
 
 	def _on_btn_yes(self, evt):
 		self.EndModal(wx.ID_YES)
+
+	def _on_btn_save(self, evt):
+		self.EndModal(wx.ID_SAVE)
 
 	def _create_buttons(self, buttons):
 		return self.CreateStdDialogButtonSizer(buttons or wx.ID_OK)

@@ -22,7 +22,6 @@ from .DlgEditClass import DlgEditClass
 class DlgClasses(object):
 	def __init__(self, parent, db):
 		self.res = wxresources.load_xrc_resource('alldb.xrc')
-
 		self._load_controls(parent)
 		self._create_bindings()
 		self._setup(db)
@@ -68,10 +67,9 @@ class DlgClasses(object):
 		cls = self._db.get_class(cls_oid) if cls_oid else objects.ADObjectClass()
 		cls_names = [c.name for c in self._db.classes if c.oid != cls_oid]
 		dlg = DlgEditClass(self.wnd, cls, cls_names)
-		if dlg.wnd.ShowModal() == wx.ID_OK:
+		if dlg.run():
 			self._db.put_class(cls)
 			self.fill_classes()
-		dlg.wnd.Destroy()
 
 	def _on_class_choice(self, event):
 		oid = event.GetClientData()

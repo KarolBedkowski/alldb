@@ -5,10 +5,9 @@ Licence and version informations.
 
 __author__ = 'Karol Będkowski'
 
-try:
-	_('alldb')
-except NameError:
-	_ = lambda x: x
+
+import gettext
+_ = gettext.gettext
 
 
 SHORTNAME = 'alldb'

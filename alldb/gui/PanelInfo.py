@@ -31,7 +31,6 @@ class PanelInfo(scrolled.ScrolledPanel):
 				wx.SYS_COLOUR_HIGHLIGHTTEXT)
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
-
 		main_grid.Add(self._create_fields_head(), 0, wx.EXPAND)
 		grid = self._create_fields()
 		main_grid.Add(grid, 0, wx.EXPAND|wx.ALL, 6)
@@ -87,7 +86,6 @@ class PanelInfo(scrolled.ScrolledPanel):
 	def _create_fields_tail(self):
 		panel = wx.Panel(self, -1)
 		panel.SetBackgroundColour(self._COLOR_HIGHLIGHT_BG)
-
 		grid = wx.BoxSizer(wx.HORIZONTAL)
 
 		def create(label):
@@ -147,14 +145,10 @@ class PanelInfo(scrolled.ScrolledPanel):
 		box = wx.BoxSizer(wx.HORIZONTAL)
 		self.tc_tags = wx.TextCtrl(parent, -1)
 		box.Add(self.tc_tags, 1, wx.EXPAND)
-
 		box.Add((6, 6))
-
 		btn_choice_tags = wx.Button(parent, -1, _('Select'))
 		box.Add(btn_choice_tags)
-
 		self.Bind(wx.EVT_BUTTON, self._on_btn_choice_tags, btn_choice_tags)
-
 		return box
 
 	def _fill_fields_from_obj(self):
@@ -257,8 +251,10 @@ def strdate2wxdate(strdate):
 			print err
 	return date
 
+
 def wxdate2strdate(wxdate):
 	return wxdate.Format() if wxdate else None
+
 
 def format_label(label):
 	label = label.strip()
@@ -266,10 +262,12 @@ def format_label(label):
 	label.replace('_', ' ')
 	return label
 
+
 def format_date(date):
 	if date:
 		return time.strftime('%x %X', time.localtime(date))
 	return '-'
+
 
 def find_objs_commons(objs):
 	fields = dict(objs[0].data)

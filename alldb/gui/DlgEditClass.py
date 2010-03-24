@@ -21,10 +21,14 @@ from .DlgEditField	import DlgEditField
 class DlgEditClass(object):
 	def __init__(self, parent, cls, cls_names):
 		self.res = wxresources.load_xrc_resource('alldb.xrc')
-
 		self._load_controls(parent)
 		self._create_bindings()
 		self._setup(cls, cls_names)
+
+	def run(self):
+		res = self.wnd.ShowModal() == wx.ID_APPLY
+		self.wnd.Destroy()
+		return res
 
 	def _load_controls(self, parent):
 		self.wnd = self.res.LoadDialog(parent, 'dlg_edit_class')
@@ -51,7 +55,7 @@ class DlgEditClass(object):
 		lc_fields.InsertColumn(3, _('Default value'))
 		lc_fields.InsertColumn(4, _('Options'))
 
-		self.show_class(cls)
+		self._show_class(cls)
 		self._set_buttons_status()
 		self.wnd.Centre(wx.BOTH)
 
@@ -59,28 +63,31 @@ class DlgEditClass(object):
 		wnd = self.wnd
 		wnd.Bind(wx.EVT_BUTTON, self._on_ok, id=wx.ID_APPLY)
 		wnd.Bind(wx.EVT_BUTTON, self._on_close, id=wx.ID_CLOSE)
-		wnd.Bind(wx.EVT_CHECKBOX, self._on_item_have_title_checkbox, self.cb_show_title)
+		wnd.Bind(wx.EVT_CHECKBOX, self._on_item_have_title_checkbox,
+				self.cb_show_title)
 		wnd.Bind(wx.EVT_CHECKBOX, self._on_title_auto, self.cb_title_auto)
-		wnd.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_fields_deselected, self.lc_fields)
+		wnd.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_fields_deselected,
+				self.lc_fields)
 		wnd.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_fields_selected, self.lc_fields)
-		wnd.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._on_fields_activated, self.lc_fields)
+		wnd.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self._on_fields_activated,
+				self.lc_fields)
 		wnd.Bind(wx.EVT_BUTTON, self._on_btn_add_field, id=wx.ID_ADD)
 		wnd.Bind(wx.EVT_BUTTON, self._on_btn_del_field, id=wx.ID_DELETE)
 		wnd.Bind(wx.EVT_BUTTON, self._on_button_up, id=wx.ID_UP)
 		wnd.Bind(wx.EVT_BUTTON, self._on_button_down, id=wx.ID_DOWN)
 
-	def show_class(self, cls):
+	def _show_class(self, cls):
 		self.tc_name.SetValue(str(cls.name or ''))
 		self.tc_title.SetValue(str(cls.title_expr))
 		self._refresh_list(cls)
-		self.show_title(cls)
+		self._show_title(cls)
 		self.cb_show_title.SetValue(cls.title_show)
 		self.cb_title_auto.SetValue(cls.title_auto)
 		self.cb_title_auto.Enable(cls.title_show)
 		self.cb_title_in_list.Enable(cls.title_show)
 		self.tc_title.Enable(not cls.title_auto and cls.title_show)
 
-	def show_title(self, cls):
+	def _show_title(self, cls):
 		if cls['title_auto']:
 			self.tc_title.Enable(True)
 			self.cb_title_auto.SetValue(cls.title_auto)
@@ -98,7 +105,6 @@ class DlgEditClass(object):
 			if options:
 				opt_str = _options2string(options)
 				lc_fields.SetStringItem(no, 4, opt_str)
-
 		lc_fields.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		lc_fields.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 		lc_fields.SetColumnWidth(2, wx.LIST_AUTOSIZE)
@@ -136,30 +142,27 @@ class DlgEditClass(object):
 		item_idx = self._get_selected_field_idx()
 		if item_idx < 0:
 			return
-
 		field = self._cls.fields[item_idx]
 		name = field[0]
 		data = dict(name=name, type=field[1], default=field[2], options=field[3])
 		data['_fields_names'] = [ field[0] for field in self._cls.fields
 				if field[0] != name]
 		dlg = DlgEditField(self.wnd, data)
-		if dlg.wnd.ShowModal() == wx.ID_OK:
+		if dlg.run():
 			field = (data['name'], data['type'], data['default'], data['options'])
 			self._cls.fields[item_idx] = field
 			self._refresh_list(self._cls)
 			self._on_title_auto(None)
-		dlg.wnd.Destroy()
 
 	def _on_btn_add_field(self, event):
 		data = {}
 		data['_fields_names'] = [ field[0] for field in self._cls.fields ]
 		dlg = DlgEditField(self.wnd, data)
-		if dlg.wnd.ShowModal() == wx.ID_OK:
+		if dlg.run():
 			field = (data['name'], data['type'], data['default'], data['options'])
 			self._cls.fields.append(field)
 			self._refresh_list(self._cls)
 			self._on_title_auto(None)
-		dlg.wnd.Destroy()
 
 	def _on_btn_del_field(self, event):
 		item_idx = self._get_selected_field_idx()
@@ -198,16 +201,13 @@ class DlgEditClass(object):
 		if not (name and title_expr):
 			msgbox.message_box_error_ex(self.wnd, _('Name and title fields are empty.'),
 					_('Both fields must have defined values.'))
-
 		if name in self._cls_names:
 			msgbox.message_box_error_ex(self.wnd, _('Cannot save class'),
 					_('Category with this name already exists.\nPlease specify other name.'))
 			return
-
 		self._cls.name = name
 		self._cls.title_expr = title_expr
 		self._cls.title_show = self.cb_show_title.IsChecked()
-
 		self.wnd.EndModal(wx.ID_OK)
 
 	def _on_close(self, event):
@@ -232,7 +232,6 @@ def _options2string(options):
 		result.append(_('in title'))
 	if options.get('in_list'):
 		result.append(_('show in list'))
-
 	return ', '.join(result)
 
 
