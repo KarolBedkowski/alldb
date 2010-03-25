@@ -59,7 +59,7 @@ def get_data_files():
 		locales_dir = configuration.LINUX_LOCALES_DIR
 		data_dir = configuration.LINUX_DATA_DIR
 
-	yield (doc_dir, ['AUTHORS', 'README', "TODO", "COPYING", "LICENCE_EXIFpy.txt",
+	yield (doc_dir, ['AUTHORS', 'README', "TODO", "COPYING", 
 			"LICENCE_python.txt", "LICENCE_wxPython.txt", 'ChangeLog',
 			'LICENCE_ICONS.txt'])
 
@@ -78,7 +78,7 @@ target = {
 			% (version.NAME, version.DESCRIPTION, version.RELEASE, build),
 	'company_name': "Karol Będkowski",
 	'copyright': version.COPYRIGHT,
-	'icon_resources': [(0, "data/art/icon.ico")],
+	'icon_resources': [(0, "data/alldb.ico")],
 	'other_resources': [("VERSIONTAG", 1, build)] }
 
 
