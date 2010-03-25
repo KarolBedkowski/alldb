@@ -164,11 +164,11 @@ class SearchResult(object):
 		self._update_tags()
 
 	def filter_items(self, name_filter, tags, cols, key):
-		if (name_filter, tags, cols) == self._last_filter:
-			return self.filter_items
+		if (name_filter, tags, cols, key) == self._last_filter:
+			return self.filtered_items
 
 		_LOG.debug('filter_items(%r, %r, %r)', name_filter, tags, cols)
-		self._last_filter = (name_filter, tags, cols)
+		self._last_filter = (name_filter, tags, cols, key)
 
 		items = self._items.itervalues()
 		if name_filter:
