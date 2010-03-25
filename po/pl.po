@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alldb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-25 08:20+0100\n"
-"PO-Revision-Date: 2010-03-25 08:21+0100\n"
+"POT-Creation-Date: 2010-03-25 17:33+0100\n"
+"PO-Revision-Date: 2010-03-25 17:34+0100\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -40,6 +40,9 @@ msgstr "_Powiel element"
 
 msgid "Export to _CSV..."
 msgstr "Eksport do _CSV..."
+
+msgid "Export to _HTML..."
+msgstr "Eksport do _HTML..."
 
 msgid "Field"
 msgstr "Pole"
@@ -265,6 +268,9 @@ msgstr "Wybór pliku"
 msgid "CSV files (*.csv)|*.csv|All files|*.*"
 msgstr "Pliki CSV (*.csv)|*.csv|Wszystkie pliki|*.*"
 
+msgid "HTML files (*.html, *.htm)|*.html;*.htm|All files|*.*"
+msgstr "Pliki HTML (*.html, *.htm)|*.html;*.htm|Wszystkie pliki|*.*"
+
 msgid "Title"
 msgstr "Tytuł"
 
@@ -294,6 +300,15 @@ msgstr "new"
 
 msgid "Select tags"
 msgstr "Wybierz etykiety"
+
+msgid "None"
+msgstr "Nic"
+
+msgid "True"
+msgstr "Prawda"
+
+msgid "False"
+msgstr "Fałsz"
 
 msgid "All-kind of data database"
 msgstr "Baza danych dla każdego rodzaju danych"
@@ -356,12 +371,6 @@ msgstr ""
 
 #~ msgid "Class"
 #~ msgstr "Klasa"
-
-#~ msgid "True"
-#~ msgstr "Prawda"
-
-#~ msgid "False"
-#~ msgstr "Fałsz"
 
 #~ msgid "alldb"
 #~ msgstr "alldb"

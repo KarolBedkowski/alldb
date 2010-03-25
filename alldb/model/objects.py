@@ -144,7 +144,7 @@ class SearchResult(object):
 	def get_filter_for_field(self, field):
 		filters = {}
 		for item in self._items.itervalues():
-			val = item.data[field]
+			val = item.data.get(field)
 			filters[val] = filters.get(val, 0) + 1
 		return filters
 
@@ -186,7 +186,7 @@ class SearchResult(object):
 			if key == _('Tags'):
 				items = (item for item in items if item.has_tags(tags))
 			else:
-				items = (item for item in items if item.data[key] in tags)
+				items = (item for item in items if item.data.get(key) in tags)
 
 		self.filtered_items = [(item.oid, [item.get_value(col) for col in cols])
 				for item in items]
@@ -222,5 +222,16 @@ def tags2str(tagstr):
 	if tagstr:
 		return sorted(tag.strip() for tag in tagstr.split(','))
 	return []
+
+
+def get_field_value_human(value):
+	if value is None:
+		return _('None')
+	if value == True:
+		return _('True')
+	if value == False:
+		return _('False')
+	return value
+
 
 # vim: encoding=utf8: ff=unix:

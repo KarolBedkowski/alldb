@@ -10,6 +10,7 @@ __version__ = '0.1'
 __release__ = '2009-12-20'
 
 
+import os.path
 import wx
 from wx import xrc
 
@@ -17,7 +18,9 @@ from alldb.libs import wxresources
 from alldb.libs.appconfig import AppConfig
 from alldb.libs.iconprovider import IconProvider
 from alldb.filetypes.csv_support import export2csv, import_csv
+from alldb.filetypes.html_support import export_html
 from alldb.gui.dialogs import message_boxes as msgbox
+from alldb.model import objects
 
 from .panel_info import PanelInfo
 from .dlg_classes import DlgClasses
@@ -45,6 +48,10 @@ class FrameMain(object):
 		self._icon_provider = IconProvider()
 		self._icon_provider.load_icons(['alldb'])
 		self.wnd.SetIcon(self._icon_provider.get_icon('alldb'))
+
+		if wx.Platform == '__WXMSW__':
+			self.wnd.SetBackgroundColour(wx.SystemSettings.GetColour(
+					wx.SYS_COLOUR_ACTIVEBORDER))
 
 		self.searchbox.SetDescriptiveText(_('Search'))
 		self.searchbox.ShowCancelButton(True)
@@ -87,6 +94,8 @@ class FrameMain(object):
 		wnd.Bind(wx.EVT_CLOSE, self._on_close)
 		wnd.Bind(wx.EVT_MENU, self._on_menu_export_csv,
 				id=xrc.XRCID('menu_export_csv'))
+		wnd.Bind(wx.EVT_MENU, self._on_menu_export_html,
+				id=xrc.XRCID('menu_export_html'))
 		wnd.Bind(wx.EVT_MENU, self._on_menu_import_csv,
 				id=xrc.XRCID('menu_import_csv'))
 		wnd.Bind(wx.EVT_MENU, self._on_menu_exit, id=xrc.XRCID('menu_exit'))
@@ -132,8 +141,7 @@ class FrameMain(object):
 
 	def _fill_classes(self, select=None):
 		''' wczytenie listy klas i wypełnienie choicebox-a
-			@select - oid klasy do zaznaczenia lib None
-		'''
+		@select - oid klasy do zaznaczenia lib None'''
 		self.choice_klasa.Clear()
 		cls2select = None
 		classes = self._db.classes
@@ -187,7 +195,7 @@ class FrameMain(object):
 
 	def _fill_items(self, select=None, do_filter=True, do_sort=True):
 		''' wyświetlenie listy elemtów aktualnej klasy, opcjonalne zaznaczenie
-			jednego '''
+		jednego '''
 		list_items = self.list_items
 		list_items.Freeze()
 		list_items.DeleteAllItems()
@@ -198,7 +206,6 @@ class FrameMain(object):
 		key = None
 		if keyidx >= 0:
 			key = self.choice_filter.GetString(keyidx)
-
 		if do_filter:
 			items = self._result.filter_items(search, selected_tags, self._cols, key)
 		if do_sort:
@@ -209,6 +216,7 @@ class FrameMain(object):
 			oid, cols = item
 			list_items.InsertStringItem(num, str(num + 1))
 			for colnum, col in enumerate(cols):
+				col = objects.get_field_value_human(col)
 				list_items.SetStringItem(num, colnum + 1, unicode(col))
 			list_items.SetItemData(num, int(oid))
 			if oid == select:
@@ -227,10 +235,9 @@ class FrameMain(object):
 
 	def _fill_tags(self, clear_selection=False):
 		''' wczytanie tagów dla wszystkich elementów i wyświetlenie
-			ich na liście.
-			@clear_selection - wyczyszczenie zaznaczonych tagów
-			@reload_tags - ponowne wczytanie tagów
-		'''
+		ich na liście.
+		@clear_selection - wyczyszczenie zaznaczonych tagów
+		@reload_tags - ponowne wczytanie tagów'''
 		selected_tags = [] if clear_selection else self.selected_tags
 		self.clb_tags.Clear()
 		keyidx = self.choice_filter.GetCurrentSelection()
@@ -246,11 +253,9 @@ class FrameMain(object):
 			self._tagslist = []
 
 		for tag, count in sorted(tags):
-			tagname = tag
-			if tag != '':
-				tagname = _(str(tag))
-			num = self.clb_tags.Append(
-					_('%(tag)s (%(items)d)') % dict(tag=tagname, items=count))
+			tagname = objects.get_field_value_human(tag)
+			num = self.clb_tags.Append(_('%(tag)s (%(items)d)') % dict(tag=tagname,
+					items=count))
 			if wx.Platform == '__WXMSW__':
 				self._tagslist.append(tag)
 			else:
@@ -289,6 +294,7 @@ class FrameMain(object):
 						info = get_object_info(self._result.cls, curr_obj, self._cols)
 						self._items[ind[0]] = info
 						for col, val in enumerate(info[1]):
+							val = objects.get_field_value_human(val)
 							self.list_items.SetStringItem(indx, col + 1, str(val))
 						reload_items = False
 
@@ -421,9 +427,24 @@ class FrameMain(object):
 				style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
 		if dlg.ShowModal() == wx.ID_OK:
 			filepath = dlg.GetPath()
+			if not os.path.splitext(filepath)[1]:
+				filepath += '.csv'
 			cls = self._result.cls
 			items = self._result.items
 			export2csv(filepath, cls, items)
+		dlg.Destroy()
+
+	def _on_menu_export_html(self, event):
+		dlg = wx.FileDialog(self.wnd, _('Choice a file'),
+				wildcard=_('HTML files (*.html, *.htm)|*.html;*.htm|All files|*.*'),
+				style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+		if dlg.ShowModal() == wx.ID_OK:
+			filepath = dlg.GetPath()
+			if not os.path.splitext(filepath)[1]:
+				filepath += '.html'
+			cls = self._result.cls
+			items = self._result.items
+			export_html(filepath, cls, items)
 		dlg.Destroy()
 
 	def _on_menu_about(self, event):
@@ -460,6 +481,8 @@ def get_field_human(field):
 	elif field.startswith('__'):
 		field = field[2:]
 	return field.capitalize()
+
+
 
 
 # vim: encoding=utf8: ff=unix:

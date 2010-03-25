@@ -15,6 +15,8 @@ __release__ = '2009-11-12'
 import csv
 import codecs
 
+from alldb.model import objects
+
 
 def export2csv(filename, cls, items):
 	''' exportowanie danych
@@ -23,11 +25,13 @@ def export2csv(filename, cls, items):
 		@items lista elementów do eksportu
 	'''
 	fields = [f[0] for f in cls.fields]
-	itemsdata = (i.data for i in items)
 	with open(filename, 'wt') as fcsv:
 		writer = csv.DictWriter(fcsv, fields, extrasaction='ignore')
 		writer.writerow(dict((f, f) for f in fields))
-		writer.writerows(itemsdata)
+		for row in items:
+			row_data = dict((fld, objects.get_field_value_human(val))
+					for fld, val in row.data.iteritems())
+			writer.writerow(row_data)
 
 
 def import_csv(filename, cls):
