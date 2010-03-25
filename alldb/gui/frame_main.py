@@ -46,6 +46,9 @@ class FrameMain(object):
 		self._icon_provider.load_icons(['alldb'])
 		self.wnd.SetIcon(self._icon_provider.get_icon('alldb'))
 
+		self.searchbox.SetDescriptiveText(_('Search'))
+		self.searchbox.ShowCancelButton(True)
+
 		self._set_buttons_status()
 		fclass_oid = self._fill_classes()
 		if fclass_oid is not None:
@@ -77,6 +80,9 @@ class FrameMain(object):
 		wnd.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self._on_search, self.searchbox)
 		wnd.Bind(wx.EVT_TEXT_ENTER, self._on_search, self.searchbox)
 		wnd.Bind(wx.EVT_TEXT, self._on_search, self.searchbox)
+		wnd.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self._on_search, self.searchbox)
+		wnd.Bind(wx.EVT_SEARCHCTRL_CANCEL_BTN, self._on_search_cancel,
+				self.searchbox)
 		wnd.Bind(wx.EVT_CHECKLISTBOX, self._on_clb_tags, self.clb_tags)
 		wnd.Bind(wx.EVT_CLOSE, self._on_close)
 		wnd.Bind(wx.EVT_MENU, self._on_menu_export_csv,
@@ -341,6 +347,11 @@ class FrameMain(object):
 
 	def _on_search(self, evt):
 		self._fill_items(do_sort=False)
+
+	def _on_search_cancel(self, event):
+		if self.searchbox.GetValue():
+			self.searchbox.SetValue('')
+			self._fill_items(do_sort=False)
 
 	def _on_menu_exit(self, event):
 		self._save_object(True, False)

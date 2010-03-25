@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alldb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-24 17:40+0100\n"
-"PO-Revision-Date: 2010-03-24 17:40+0100\n"
+"POT-Creation-Date: 2010-03-25 08:20+0100\n"
+"PO-Revision-Date: 2010-03-25 08:21+0100\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -128,6 +128,50 @@ msgstr "wieloliniowe"
 msgid "text"
 msgstr "tekst"
 
+#, python-format
+msgid ""
+"Save the changes to\n"
+"%(doc_name)s before closing?"
+msgstr ""
+"Zapisać zmiany w\n"
+"%(doc_name)s przed zamknięciem?"
+
+msgid "If you close without saving, changes will be discarded"
+msgstr "Zamknięcie bez zapisu spowoduje utracenie wszystkich zmian."
+
+#, python-format
+msgid ""
+"If you close without saving, changes from the last\n"
+"%(time)s will be discarded"
+msgstr ""
+"Zamknięcie bez zapisania spowoduje utratę zmian\n"
+"z ostatnich %(time)s."
+
+msgid "Close &without Saving"
+msgstr "Zapisz bez zapisywania"
+
+msgid "Save &As"
+msgstr "Zapisz jako"
+
+msgid "Save"
+msgstr "Zapisz"
+
+#, python-format
+msgid "Delete %s?"
+msgstr "Usunąć %s?"
+
+msgid "After removal, it cannot be recovered."
+msgstr "Po usunięciu, nie będzie możliwe przywrócenie."
+
+msgid "Delete"
+msgstr "Usuń"
+
+msgid "Ok"
+msgstr "Ok"
+
+msgid "Cancel"
+msgstr "Anuluj"
+
 msgid "selected category and ALL items"
 msgstr "zaznaczone kategorie i wszystkie elementy"
 
@@ -171,18 +215,18 @@ msgstr "w tytule"
 msgid "show in list"
 msgstr "pokaż na liście"
 
-#. FIXME: zmineic
-msgid "Enter name"
-msgstr "Wprowadź nazwę"
-
-msgid "Class"
-msgstr "Klasa"
-
 msgid "Cannot add this field"
 msgstr "Nie można dodać tego pola"
 
 msgid ""
-"Field with this name alreaty exists.\n"
+"Name field is required.\n"
+"Please enter name for field."
+msgstr ""
+"Nazwa pola jest wymagana.\n"
+"Proszę wprowadzić nazwę dla pola."
+
+msgid ""
+"Field with this name already exists.\n"
 "Please enter other name."
 msgstr ""
 "Pole o tej nazwie już istnieje.\n"
@@ -191,11 +235,8 @@ msgstr ""
 msgid "Values"
 msgstr "Wartość"
 
-msgid "True"
-msgstr "Prawda"
-
-msgid "False"
-msgstr "Fałsz"
+msgid "Search"
+msgstr "Szukaj"
 
 #, python-format
 msgid "Items: %d"
@@ -254,53 +295,6 @@ msgstr "new"
 msgid "Select tags"
 msgstr "Wybierz etykiety"
 
-#, python-format
-msgid ""
-"Save the changes to\n"
-"%(doc_name)s before closing?"
-msgstr ""
-"Zapisać zmiany w\n"
-"%(doc_name)s przed zamknięciem?"
-
-msgid "If you close without saving, changes will be discarded"
-msgstr "Zamknięcie bez zapisu spowoduje utracenie wszystkich zmian."
-
-#, python-format
-msgid ""
-"If you close without saving, changes from the last\n"
-"%(time)s will be discarded"
-msgstr ""
-"Zamknięcie bez zapisania spowoduje utratę zmian\n"
-"z ostatnich %(time)s."
-
-msgid "Close &without Saving"
-msgstr "Zapisz bez zapisywania"
-
-msgid "Save &As"
-msgstr "Zapisz jako"
-
-msgid "Save"
-msgstr "Zapisz"
-
-#, python-format
-msgid "Delete %s?"
-msgstr "Usunąć %s?"
-
-msgid "After removal, it cannot be recovered."
-msgstr "Po usunięciu, nie będzie możliwe przywrócenie."
-
-msgid "Delete"
-msgstr "Usuń"
-
-msgid "Ok"
-msgstr "Ok"
-
-msgid "Cancel"
-msgstr "Anuluj"
-
-msgid "alldb"
-msgstr "alldb"
-
 msgid "All-kind of data database"
 msgstr "Baza danych dla każdego rodzaju danych"
 
@@ -356,6 +350,21 @@ msgstr ""
 "wyboru) którejś z późniejszych wersji.\n"
 "\n"
 "Szczegóły opisano w pliku COPYING.\n"
+
+#~ msgid "Enter name"
+#~ msgstr "Wprowadź nazwę"
+
+#~ msgid "Class"
+#~ msgstr "Klasa"
+
+#~ msgid "True"
+#~ msgstr "Prawda"
+
+#~ msgid "False"
+#~ msgstr "Fałsz"
+
+#~ msgid "alldb"
+#~ msgstr "alldb"
 
 #~ msgid "&New"
 #~ msgstr "&Nowy"
