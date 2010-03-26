@@ -8,8 +8,10 @@ import sys
 
 try:
 	from setuptools import setup
+	from setuptools import Command
 except:
 	from distutils.core import setup
+	from distutils.cmd import Command
 
 if sys.platform == 'win32':
 	try:
@@ -59,7 +61,7 @@ def get_data_files():
 		locales_dir = configuration.LINUX_LOCALES_DIR
 		data_dir = configuration.LINUX_DATA_DIR
 
-	yield (doc_dir, ['AUTHORS', 'README', "TODO", "COPYING", 
+	yield (doc_dir, ['AUTHORS', 'README', "TODO", "COPYING",
 			"LICENCE_python.txt", "LICENCE_wxPython.txt", 'ChangeLog',
 			'LICENCE_ICONS.txt'])
 
@@ -68,6 +70,46 @@ def get_data_files():
 
 	for x in find_files('locale', locales_dir):
 		yield x
+
+
+class CleanupCmd(Command):
+	"""docstring for cleanup"""
+
+	description = "cleanup all files"
+	user_options = []
+
+	def initialize_options(self):
+		pass
+
+	def finalize_options(self):
+		pass
+
+	def run(self):
+		for root, dirs, files in os.walk('.', topdown=False):
+			for name in files:
+				nameext = os.path.splitext(name)[-1]
+				if (name.endswith('~') or name.startswith('profile_result_')
+						or name.startswith('.')
+						or nameext in ('.pyd', '.pyc', '.pyo', '.log', '.tmp', '.swp')):
+					filename = os.path.join(root, name)
+					print 'Delete ', filename
+					os.remove(filename)
+
+		if os.path.exists('build'):
+			for root, dirs, files in os.walk('build', topdown=False):
+				for name in files:
+					filename = os.path.join(root, name)
+					print 'Delete ', filename
+					os.remove(filename)
+				for name in dirs:
+					filename = os.path.join(root, name)
+					print 'Delete dir ', filename
+					os.rmdir(filename)
+
+			os.removedirs('build')
+
+		if os.path.exists('hotshot_edi_stats'):
+			os.remove('hotshot_edi_stats')
 
 
 target = {
@@ -81,6 +123,7 @@ target = {
 	'icon_resources': [(0, "data/alldb.ico")],
 	'other_resources': [("VERSIONTAG", 1, build)] }
 
+cmdclass={'cleanup': CleanupCmd}
 
 setup(
 	name='alldb',
@@ -114,6 +157,7 @@ setup(
 		"bundle_files": 2}},
 	zipfile=r"modules.dat",
 	windows = [target],
+	cmdclass=cmdclass,
 )
 
 
