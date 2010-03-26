@@ -4,6 +4,7 @@
 import wx
 import wx.gizmos as gizmos
 
+
 __author__ = 'Karol Będkowski'
 __copyright__ = 'Copyright (C) Karol Będkowski 2009,2010'
 
@@ -18,9 +19,9 @@ class DlgEditValues(wx.Dialog):
 		grid = wx.BoxSizer(wx.VERTICAL)
 		self._elb = gizmos.EditableListBox(self, -1, size=(100, 300),
 				style=gizmos.EL_ALLOW_NEW | gizmos.EL_ALLOW_EDIT | gizmos.EL_ALLOW_DELETE)
-		grid.Add(self._elb, 1, wx.EXPAND | wx.ALL, 6)
+		grid.Add(self._elb, 1, wx.EXPAND | wx.ALL, 12)
 		grid.Add(self.CreateStdDialogButtonSizer(wx.OK | wx.CANCEL), 0,
-				wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 6)
+				wx.EXPAND | wx.ALL, 12)
 		self.SetSizer(grid)
 		self.Center(wx.BOTH)
 
@@ -31,5 +32,6 @@ class DlgEditValues(wx.Dialog):
 	def _on_ok(self, evt):
 		self._data['values'] = self._elb.GetStrings()
 		self.EndModal(wx.ID_OK)
+
 
 # vim: encoding=utf8: ff=unix:
