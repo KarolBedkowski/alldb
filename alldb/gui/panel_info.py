@@ -15,6 +15,8 @@ import wx.lib.scrolledpanel as scrolled
 import wx.gizmos as gizmos
 from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
 
+from alldb.gui.dlg_select_tags import DlgSelectTags
+
 
 class PanelInfo(scrolled.ScrolledPanel):
 	def __init__(self, window, parent, obj_class, *argv, **kwarg):
@@ -220,14 +222,9 @@ class PanelInfo(scrolled.ScrolledPanel):
 
 		if cls_tags:
 			tag_list = sorted(cls_tags.iterkeys())
-			dlg = wx.MultiChoiceDialog(self, _("Select tags"), _("Tags"), tag_list)
-			selected = [idx for idx, key in enumerate(tag_list) if key in item_tags]
-			dlg.SetSelections(selected)
-			if dlg.ShowModal() == wx.ID_OK:
-				selections = dlg.GetSelections()
-				tags = ', '.join(sorted((tag_list[idx] for idx in selections)))
-				self.tc_tags.SetValue(tags)
-			dlg.Destroy()
+			dlg = DlgSelectTags(self, tag_list, item_tags)
+			if dlg.run():
+				self.tc_tags.SetValue(', '.join(sorted(dlg.selected)))
 
 
 def _create_label(parent, label, colour=None):

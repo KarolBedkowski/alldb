@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alldb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-25 17:33+0100\n"
-"PO-Revision-Date: 2010-03-25 17:34+0100\n"
+"POT-Creation-Date: 2010-03-26 13:44+0100\n"
+"PO-Revision-Date: 2010-03-26 13:45+0100\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -68,8 +68,14 @@ msgstr "Zarządzaj _kategoriami"
 msgid "Name:"
 msgstr "Nazwa:"
 
+msgid "New tag"
+msgstr "Nowa etykieta"
+
 msgid "Options:"
 msgstr "Opcje"
+
+msgid "Select tags"
+msgstr "Wybierz etykiety"
 
 msgid "Show column in items list"
 msgstr "Pokaż kolumnę na liscie"
@@ -238,6 +244,12 @@ msgstr ""
 msgid "Values"
 msgstr "Wartość"
 
+msgid "Can not add this tag"
+msgstr "Nie można dodać tej etykiety"
+
+msgid "Entered tag already exists on the list."
+msgstr "Wprowadzona etykieta znajduje się już na liście."
+
 msgid "Search"
 msgstr "Szukaj"
 
@@ -297,9 +309,6 @@ msgstr "nie zapisany"
 
 msgid "new"
 msgstr "new"
-
-msgid "Select tags"
-msgstr "Wybierz etykiety"
 
 msgid "None"
 msgstr "Nic"
