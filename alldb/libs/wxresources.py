@@ -35,6 +35,8 @@ def load_xrc_resource(filename):
 		data = data.decode('UTF-8')
 		re_gettext = re.compile(r'(\<label\>)(.*?)(\<\/label\>)')
 		data = re_gettext.sub(_localize, data)
+		re_gettext = re.compile(r'(\<title\>)(.*?)(\<\/title\>)')
+		data = re_gettext.sub(_localize, data)
 		data = data.encode('UTF-8')
 		_CACHE[xrcfile_path] = data
 
