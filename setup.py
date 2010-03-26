@@ -94,7 +94,6 @@ class CleanupCmd(Command):
 					filename = os.path.join(root, name)
 					print 'Delete ', filename
 					os.remove(filename)
-
 		if os.path.exists('build'):
 			for root, dirs, files in os.walk('build', topdown=False):
 				for name in files:
@@ -105,11 +104,37 @@ class CleanupCmd(Command):
 					filename = os.path.join(root, name)
 					print 'Delete dir ', filename
 					os.rmdir(filename)
-
 			os.removedirs('build')
-
 		if os.path.exists('hotshot_edi_stats'):
 			os.remove('hotshot_edi_stats')
+
+
+class MakeMoCommand(Command):
+	"""docstring for cleanup"""
+
+	description = "create mo files"
+	user_options = []
+
+	def initialize_options(self):
+		pass
+
+	def finalize_options(self):
+		pass
+
+	def run(self):
+		po_langs = (filename[:-3] for filename in os.listdir('po')
+				if filename.endswith('.po'))
+		for lang in po_langs:
+			print 'creating mo for', lang
+			path = os.path.join('locale', lang, 'LC_MESSAGES')
+			if not os.path.exists(path):
+				os.makedirs(path)
+			os.execl('/usr/bin/msgfmt','/usr/bin/msgfmt', 'po/%s.po' % lang, '-o',
+					os.path.join(path, '%s.mo' % version.SHORTNAME))
+
+
+cmdclass={'cleanup': CleanupCmd,
+		'make_mo': MakeMoCommand}
 
 
 target = {
@@ -123,7 +148,6 @@ target = {
 	'icon_resources': [(0, "data/alldb.ico")],
 	'other_resources': [("VERSIONTAG", 1, build)] }
 
-cmdclass={'cleanup': CleanupCmd}
 
 setup(
 	name='alldb',
