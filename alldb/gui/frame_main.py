@@ -192,6 +192,7 @@ class FrameMain(object):
 			self.choice_filter.Append(field, field)
 		self.choice_filter.SetSelection(0)
 		self._fill_tags((curr_class_oid != class_oid))
+		self.wnd.SetTitle(_('%s - AllDB') % result.cls.name)
 
 	def _fill_items(self, select=None, do_filter=True, do_sort=True):
 		''' wyświetlenie listy elemtów aktualnej klasy, opcjonalne zaznaczenie
