@@ -60,14 +60,15 @@ class BaseObject(object):
 
 
 class ADObjectClass(BaseObject):
-	__persistattr__ = ('data', 'default_data', 'title_expr',
-			'title_show', 'title_auto', 'fields')
+	__persistattr__ = ('data', 'default_data', 'title_expr', 'title_show',
+			'title_auto', 'fields')
+	__slots__ = ('name', 'default_data', 'title_expr', 'title_show', 'title_auto',
+			'fields')
 
 	def __init__(self, class_id=None, name=None, context=None):
 		BaseObject.__init__(self, class_id, context=context)
 		self.name = name
 		self.default_data = None
-		self.sldb_indexes = []
 		self.title_expr = None
 		self.title_show = True
 		self.title_auto = True
@@ -120,6 +121,7 @@ class ADObjectClass(BaseObject):
 
 class ADObject(BaseObject):
 	__persistattr__ = ('data', 'created', 'tags', 'title')
+	__slots__ = ('class_id', 'created', 'tags', 'title', 'blobs')
 
 	def __init__(self, oid=None, class_id=None, context=None):
 		BaseObject.__init__(self, oid, context=context)
