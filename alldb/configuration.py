@@ -1,4 +1,7 @@
 #!/usr/bin/python
+'''
+Standard paths
+'''
 
 LINUX_LOCALES_DIR = '/usr/share/locale/'
 LINUX_INSTALL_DIR = '/usr/share/alldb/'

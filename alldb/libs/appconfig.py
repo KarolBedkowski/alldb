@@ -2,20 +2,12 @@
 # pylint: disable-msg=C0103
 """
 Konfiguracja programu
-
-kPyLibs.appconfig
-Copyright (c) Karol Będkowski, 2007
-
-This file is part of kPyLibs
-
-kPyLibs is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software
-Foundation, version 2.
 """
 
+from __future__ import with_statement
 
 __author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (C) Karol Będkowski 2006'
+__copyright__ = 'Copyright (c) Karol Będkowski, 2006-2010'
 __revision__ = '$Id$'
 __all__ = []
 
@@ -35,28 +27,13 @@ _LOG = logging.getLogger(__name__)
 class AppConfig(Singleton):
 	''' konfiguracja aplikacji '''
 
-	def _init(self, filename, main_file_path=None, use_home_dir=False,
-			app_name=None):
+	def _init(self, filename, app_name):
 		_LOG.debug('__init__(%s)' % filename)
-
+		self._user_home = os.path.expanduser('~')
 		self.app_name = app_name
 		self.main_is_frozen = is_frozen()
-		self.main_dir = self._main_dir()
-		self.main_file_path = main_file_path
-
-		if use_home_dir and app_name is not None:
-			self.config_path = os.path.join(os.path.expanduser('~'), '.config',
-					app_name)
-			if not os.path.exists(self.config_path):
-				try:
-					os.makedirs(self.config_path)
-				except:
-					_LOG.exception('Error creating config directory: %s' \
-							% self.config_path)
-					self.config_path = self.main_dir
-		else:
-			self.config_path = self.main_dir
-
+		self.main_dir = self._get_main_dir()
+		self.config_path = self._get_config_path(app_name)
 		self.data_dir = os.path.join(self.main_dir, configuration.DATA_DIR)
 		self._filename = os.path.join(self.config_path, filename)
 		self._config = ConfigParser.SafeConfigParser()
@@ -64,12 +41,6 @@ class AppConfig(Singleton):
 
 		_LOG.debug('AppConfig.__init__: frozen=%s, main_dir=%s, config=%s' %
 				(self.main_is_frozen, self.main_dir, self._filename))
-
-	def clear(self):
-		self.last_open_files = []
-		for section in self._config.sections():
-			self._config.remove_section(section)
-		self._runtime_params = {}
 
 	###########################################################################
 
@@ -99,40 +70,6 @@ class AppConfig(Singleton):
 
 	###########################################################################
 
-	def load(self):
-		if os.path.exists(self._filename):
-			_LOG.debug('load')
-			cfile = None
-			try:
-				cfile = open(self._filename, 'r')
-				self._config.readfp(cfile)
-			except StandardError:
-				_LOG.exception('load error')
-			else:
-				self._after_load(self._config)
-			if cfile is not None:
-				cfile.close()
-			_LOG.debug('load end')
-
-	def save(self):
-		_LOG.debug('save')
-		self._before_save(self._config)
-		cfile = None
-		try:
-			cfile = open(self._filename, 'w')
-			self._config.write(cfile)
-		except StandardError:
-			_LOG.exception('save error')
-		if cfile is not None:
-			cfile.close()
-		_LOG.debug('save end')
-
-	def add_last_open_file(self, filename):
-		if filename in self.last_open_files:
-			self.last_open_files.remove(filename)
-		self.last_open_files.insert(0, filename)
-		self.last_open_files = self.last_open_files[:7]
-
 	@property
 	def locales_dir(self):
 		if self.main_is_frozen:
@@ -142,8 +79,42 @@ class AppConfig(Singleton):
 
 	@property
 	def user_share_dir(self):
-		return os.path.join(os.path.expanduser('~'), '.local', 'share',
-				self.app_name)
+		return os.path.join(self._user_home, '.local', 'share', self.app_name)
+
+	def clear(self):
+		self.last_open_files = []
+		for section in self._config.sections():
+			self._config.remove_section(section)
+		self._runtime_params = {}
+
+	def load(self):
+		if os.path.exists(self._filename):
+			_LOG.debug('load: %s', self._filename)
+			try:
+				with open(self._filename, 'r') as cfile:
+					self._config.readfp(cfile)
+			except StandardError:
+				_LOG.exception('load error')
+			else:
+				self._after_load(self._config)
+			_LOG.debug('load end')
+
+	def save(self):
+		_LOG.debug('save')
+		self._before_save(self._config)
+		cfile = None
+		try:
+			with open(self._filename, 'w') as cfile:
+				self._config.write(cfile)
+		except StandardError:
+			_LOG.exception('save error')
+		_LOG.debug('save end')
+
+	def add_last_open_file(self, filename):
+		if filename in self.last_open_files:
+			self.last_open_files.remove(filename)
+		self.last_open_files.insert(0, filename)
+		self.last_open_files = self.last_open_files[:7]
 
 	def get_data_file(self, filename):
 		path = os.path.join(self.data_dir, filename)
@@ -151,27 +122,6 @@ class AppConfig(Singleton):
 			return path
 		_LOG.warn('AppConfig.get_data_file(%s) not found', filename)
 		return None
-
-	def _main_dir(self):
-		if self.main_is_frozen:
-			if os.path.abspath(os.path.dirname(__file__)).startswith(
-					configuration.LINUX_INSTALL_DIR):
-				return configuration.LINUX_INSTALL_DIR
-			return os.path.abspath(os.path.dirname(sys.executable))
-		return os.path.abspath(os.path.dirname(sys.argv[0]))
-
-	def _after_load(self, config):
-		if config.has_section('last_files'):
-			self.last_open_files = [val[1] for val
-					in sorted(config.items('last_files'))]
-
-	def _before_save(self, config):
-		if config.has_section('last_files'):
-			config.remove_section('last_files')
-		config.add_section('last_files')
-		last_open_files = self.last_open_files[:7]
-		for fidn, fname in enumerate(last_open_files):
-			config.set('last_files', 'file%d' % fidn, fname)
 
 	def get(self, section, key, default=None):
 		if self._config.has_section(section) \
@@ -186,7 +136,8 @@ class AppConfig(Singleton):
 		if self._config.has_section(section):
 			try:
 				items = self._config.items(section)
-				result = tuple((key, eval(val)) for key, val in items)
+				if items:
+					result = tuple((key, eval(val)) for key, val in items)
 				return result
 			except:
 				_LOG.exception('AppConfig.get(%s)' % section)
@@ -204,6 +155,40 @@ class AppConfig(Singleton):
 		config.add_section(section)
 		for idx, item in enumerate(items):
 			config.set(section, '%s%05d' % (key, idx), repr(item))
+
+	def _get_main_dir(self):
+		if self.main_is_frozen:
+			if os.path.abspath(os.path.dirname(__file__)).startswith(
+					configuration.LINUX_INSTALL_DIR):
+				return configuration.LINUX_INSTALL_DIR
+			return os.path.abspath(os.path.dirname(sys.executable))
+		return os.path.abspath(os.path.dirname(sys.argv[0]))
+
+	def _get_config_path(self, app_name):
+		config_path = self.main_dir
+		if not sys.platform.startswith('win'):
+			config_path = os.path.join(self._user_home, '.config', app_name)
+			if not os.path.exists(config_path):
+				try:
+					os.makedirs(config_path)
+				except:
+					_LOG.exception('Error creating config directory: %s' \
+							% self.config_path)
+					config_path = self.main_dir
+		return config_path
+
+	def _after_load(self, config):
+		if config.has_section('last_files'):
+			self.last_open_files = [val[1] for val in config.items('last_files')]
+
+	def _before_save(self, config):
+		if config.has_section('last_files'):
+			config.remove_section('last_files')
+		config.add_section('last_files')
+		last_open_files = self.last_open_files[:7]
+		for fidn, fname in enumerate(last_open_files):
+			config.set('last_files', 'file%d' % fidn, fname)
+
 
 
 def is_frozen():

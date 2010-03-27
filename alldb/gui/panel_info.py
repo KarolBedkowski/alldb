@@ -161,7 +161,6 @@ class PanelInfo(scrolled.ScrolledPanel):
 		box = wx.BoxSizer(wx.HORIZONTAL)
 		box.Add(ctrl, 1, wx.EXPAND)
 		box.Add((6, 6))
-
 		bbox = wx.FlexGridSizer(3, 1, 6, 6)
 		bbox.AddGrowableRow(0)
 		bbox.Add((1, 1))
@@ -268,7 +267,6 @@ class PanelInfo(scrolled.ScrolledPanel):
 			item_tags = [t.strip() for t in item_tags_str.split(',')]
 			for tag in item_tags:
 				cls_tags[tag] = None
-
 		if cls_tags:
 			tag_list = sorted(cls_tags.iterkeys())
 			dlg = DlgSelectTags(self, tag_list, item_tags)
@@ -339,7 +337,6 @@ def find_objs_commons(objs):
 	for obj in objs:
 		if not obj.data:
 			continue
-
 		for key, val in obj.data.iteritems():
 			if fields.get(key) is None:
 				continue

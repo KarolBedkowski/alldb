@@ -63,8 +63,7 @@ class DlgSelectTags(object):
 		tag = self._tc_new_tag.GetValue().strip()
 		if tag:
 			if tag in self._clb_tags.GetItems():
-				msgbox.message_box_info_ex(self.wnd,
-						_('Can not add this tag'),
+				msgbox.message_box_info_ex(self.wnd, _('Can not add this tag'),
 						_('Entered tag already exists on the list.'))
 				return
 			idx = self._clb_tags.Append(tag)

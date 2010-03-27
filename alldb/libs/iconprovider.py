@@ -22,6 +22,7 @@ import wx
 
 from alldb.libs.singleton import Singleton
 
+
 _LOG = logging.getLogger(__name__)
 
 
@@ -128,7 +129,6 @@ class IconProvider:
 		image = self.load_icon(name)
 		if isinstance(image, wx.Icon):
 			icon = image
-
 		elif image is not None:
 			if isinstance(image, wx.Image):
 				image = image.ConvertToBitmap()

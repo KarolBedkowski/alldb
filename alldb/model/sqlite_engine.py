@@ -6,7 +6,7 @@ Engine do zapisywania danych w bazie sqlite.
 from __future__ import with_statement
 
 __author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (C) Karol Będkowski 2010'
+__copyright__ = 'Copyright (c) Karol Będkowski, 2010'
 __version__ = '0.1'
 __release__ = '2010-02-21'
 

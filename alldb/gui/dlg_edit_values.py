@@ -23,10 +23,9 @@ class DlgEditValues(wx.Dialog):
 		grid.Add(self.CreateStdDialogButtonSizer(wx.OK | wx.CANCEL), 0,
 				wx.EXPAND | wx.ALL, 12)
 		self.SetSizer(grid)
+
 		self.Center(wx.BOTH)
-
 		self.Bind(wx.EVT_BUTTON, self._on_ok, id=wx.ID_OK)
-
 		self._elb.SetStrings(data.get('values') or [])
 
 	def _on_ok(self, evt):

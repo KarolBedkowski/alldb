@@ -84,7 +84,6 @@ class DlgEditField(object):
 			msgbox.message_box_error_ex(self.wnd, _('Cannot add this field'),
 					_('Name field is required.\nPlease enter name for field.'))
 			return
-
 		if name in self._data.get('_fields_names', []):
 			msgbox.message_box_error_ex(self.wnd, _('Cannot add this field'),
 					_('Field with this name already exists.\nPlease enter other name.'))
@@ -96,14 +95,12 @@ class DlgEditField(object):
 				break
 
 		blob = self._data['type'] == 'image'
-
 		self._data['name'] = name
 		self._data['default'] = None if blob else self.tc_default.GetValue()
 		options = self._data.get('options') or {}
 		options['in_title'] = self.cb_show_in_title.IsChecked() and not blob
 		options['in_list'] = self.cb_show_in_list.IsChecked() and not blob
 		self._data['options'] = options
-
 		self.wnd.EndModal(wx.ID_OK)
 
 	def _on_rb_type_choice(self, event):

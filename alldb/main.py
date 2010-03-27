@@ -50,9 +50,7 @@ logging_setup('alldb.log', options.debug)
 
 def _setup_locale():
 	''' setup locales and gettext '''
-	use_home_dir = sys.platform != 'winnt'
-	app_config = appconfig.AppConfig('alldb.cfg', __file__,
-			use_home_dir=use_home_dir, app_name='alldb')
+	app_config = appconfig.AppConfig('alldb.cfg', 'alldb')
 	locales_dir = app_config.locales_dir
 	package_name = 'alldb'
 	_LOG.info('run: locale dir: %s' % locales_dir)
@@ -90,7 +88,7 @@ import wx
 
 
 def run():
-	config = appconfig.AppConfig(__file__, 'alldb')
+	config = appconfig.AppConfig()
 	config.load()
 	config.debug = options.debug
 	db_filename = os.path.join(config.user_share_dir, 'alldb.db')
