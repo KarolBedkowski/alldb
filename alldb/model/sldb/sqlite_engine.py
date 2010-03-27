@@ -35,30 +35,30 @@ _INIT_SQLS = (
 	id integer primary key autoincrement,
 	name varchar(100),
 	updated timestamp,
-	data blob)''',
+	data blob);''',
 """create table if not exists objects (
 	id integer primary key autoincrement,
 	class_id integer references classes (id) on delete cascade,
 	updated timestamp,
-	data blob)""",
+	data blob);""",
 """create index if not exists objects_class_idx
-	on objects (class_id)""",
+	on objects (class_id);""",
 """create table if not exists indexes (
 	id integer primary key autoincrement,
 	name varchar(100),
 	updated timestamp,
-	class_id integer references classes (id) on delete cascade)""",
+	class_id integer references classes (id) on delete cascade);""",
 '''create index if not exists indexes_idx1
-	on indexes (class_id, name)''',
+	on indexes (class_id, name);''',
 '''create table if not exists index_objects (
 	idx_id integer not null references indexes (id) on delete cascade,
 	obj_id integer not null references objects (id) on delete cascade,
-	value blob)''',
+	value blob);''',
 '''create table if not exists blobs (
 	object_id integer references objects (id) on delete cascade,
 	field varchar,
 	data blob,
-	primary key (object_id, field))''')
+	primary key (object_id, field));''')
 
 
 class SqliteEngine(object):
@@ -78,7 +78,7 @@ class SqliteEngine(object):
 		return bool(obj)
 
 	def open(self):
-		_LOG.info('SchemaLessDatabase.open(); filename=%s', self.filename)
+		_LOG.info('SqliteEngine.open(); filename=%s', self.filename)
 		bdir = os.path.dirname(self.filename)
 		if not os.path.exists(bdir):
 			os.mkdir(bdir)
@@ -101,9 +101,20 @@ class SqliteEngine(object):
 	def _after_open(self):
 		cur = self.database.cursor()
 		for sql in _INIT_SQLS:
-			cur.execute(sql)
+			cur.executescript(sql)
 		cur.close()
 		self.database.commit()
+
+	def optimize(self):
+		_LOG.info('SqliteEngine.optimize')
+		cur = self.database.cursor()
+		_LOG.debug('SqliteEngine.optimize: vacum')
+		cur.executescript('vacuum;')
+		_LOG.debug('SqliteEngine.optimize: analyze')
+		cur.executescript('analyze;')
+		_LOG.debug('SqliteEngine.optimize: done')
+		cur.close()
+
 
 
 class SqliteEngineTx(object):

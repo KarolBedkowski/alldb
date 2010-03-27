@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alldb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-26 15:02+0100\n"
-"PO-Revision-Date: 2010-03-26 15:02+0100\n"
+"POT-Creation-Date: 2010-03-27 20:25+0100\n"
+"PO-Revision-Date: 2010-03-27 20:25+0100\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -71,6 +71,9 @@ msgstr "Nazwa:"
 msgid "New tag"
 msgstr "Nowa etykieta"
 
+msgid "Optimize Database"
+msgstr "Optymalizuj bazę danych"
+
 msgid "Options:"
 msgstr "Opcje"
 
@@ -127,6 +130,9 @@ msgstr "wybór"
 
 msgid "date"
 msgstr "data"
+
+msgid "image"
+msgstr "obraz"
 
 msgid "list"
 msgstr "lista"
@@ -287,6 +293,9 @@ msgstr "Pliki CSV (*.csv)|*.csv|Wszystkie pliki|*.*"
 msgid "HTML files (*.html, *.htm)|*.html;*.htm|All files|*.*"
 msgstr "Pliki HTML (*.html, *.htm)|*.html;*.htm|Wszystkie pliki|*.*"
 
+msgid "Optimaliz\tation finished."
+msgstr "Zakończono optymalizację."
+
 msgid "Title"
 msgstr "Tytuł"
 
@@ -307,6 +316,9 @@ msgstr "Etykiety:"
 
 msgid "Select"
 msgstr "Wybierz"
+
+msgid "Clear"
+msgstr "Wyczyść"
 
 msgid "not saved"
 msgstr "nie zapisany"
@@ -381,9 +393,6 @@ msgstr ""
 
 #~ msgid "Enter name"
 #~ msgstr "Wprowadź nazwę"
-
-#~ msgid "Class"
-#~ msgstr "Klasa"
 
 #~ msgid "alldb"
 #~ msgstr "alldb"

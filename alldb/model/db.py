@@ -61,5 +61,9 @@ class Db(SchemaLessDatabase):
 					trans.put_blob(iobj.oid, field, blob)
 		self._engine.sync()
 
+	def optimize(self):
+		"""optimize sql database"""
+		self._engine.optimize()
+
 
 # vim: encoding=utf8: ff=unix:

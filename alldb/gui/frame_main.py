@@ -107,6 +107,8 @@ class FrameMain(object):
 		wnd.Bind(wx.EVT_MENU, self._on_menu_categories,
 				id=xrc.XRCID('menu_categories'))
 		wnd.Bind(wx.EVT_MENU, self._on_menu_about, id=xrc.XRCID('menu_about'))
+		wnd.Bind(wx.EVT_MENU, self._on_menu_optimize_database,
+				id=xrc.XRCID('menu_optimize_database'))
 		wnd.Bind(wx.EVT_CHOICE, self._on_class_select, self.choice_klasa)
 		wnd.Bind(wx.EVT_CHOICE, self._on_filter_select, self.choice_filter)
 		wnd.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_item_deselect,
@@ -451,6 +453,10 @@ class FrameMain(object):
 
 	def _on_menu_about(self, event):
 		show_about_box(self.wnd)
+
+	def _on_menu_optimize_database(self, event):
+		self._db.optimize()
+		msgbox.message_box_info_ex(self.wnd, _('Optimaliz	ation finished.'), None)
 
 	@property
 	def selected_tags(self):
