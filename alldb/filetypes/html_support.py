@@ -12,7 +12,7 @@ __version__ = '0.1'
 __release__ = '2009-11-12'
 
 
-from xml.etree.ElementTree import Element, ElementTree
+from xml.etree.ElementTree import Element, ElementTree, SubElement
 
 from alldb.model import objects
 
@@ -23,31 +23,22 @@ def export_html(filename, cls, items):
 		@cls klasa do eksportu
 		@items lista elementów do eksportu'''
 	root = Element('html')
-	head = Element('head')
+	head = SubElement(root, 'head')
 	head.append(Element('meta', {'http-equiv': 'Content-Type',
 		'content': "text/html; charset=UTF-8"}))
-	root.append(head)
-	body = Element('body')
-	root.append(body)
-	table = Element('table', {'border': '1', "cellspacing": '0',
-			"cellpadding": '5'})
-	body.append(table)
-	row = Element('tr')
+	body = SubElement(root, 'body')
+	table = SubElement(body, 'table', border='1', cellspacing='0',
+			cellpadding='5')
+	row = SubElement(SubElement(table, 'thead'), 'tr')
 	for f in cls.fields:
-		td = Element('td')
-		td.text = str(f[0])
-		row.append(td)
-	table.append(row)
+		SubElement(row, 'th').text = str(f[0])
+	tbody = SubElement(table, 'tbody')
 	for item in items:
-		row = Element('tr')
+		row = SubElement(tbody, 'tr')
 		for f in cls.fields:
-			td = Element('td')
-			td.text = str(objects.get_field_value_human(item.get_value(f[0])))
-			row.append(td)
-		table.append(row)
-
-	etree = ElementTree(root)
-	etree.write(filename, 'UTF-8')
+			SubElement(row, 'td').text = str(objects.get_field_value_human(
+					item.get_value(f[0]))) or '-'
+	ElementTree(root).write(filename, 'UTF-8')
 
 
 # vim: encoding=utf8: ff=unix:
