@@ -5,7 +5,7 @@ Obiekty alldb
 """
 
 __author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (C) Karol Będkowski 2009'
+__copyright__ = 'Copyright (c) Karol Będkowski, 2009-2010'
 __version__ = '0.1'
 __release__ = '2009-12-17'
 
@@ -221,8 +221,9 @@ class SearchResult(object):
 	@property
 	def fields(self):
 		fields = []
-		for field in self.cls.fields:
-			fields.append(field[0])
+		for name, ftype, _default, _options in self.cls.fields:
+			if ftype != 'image':
+				fields.append(name)
 		fields.sort()
 		fields.insert(0, _('Tags'))
 		return fields
