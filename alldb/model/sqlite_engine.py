@@ -116,7 +116,6 @@ class SqliteEngine(object):
 		cur.close()
 
 
-
 class SqliteEngineTx(object):
 
 	def __init__(self, engine, context):
@@ -164,7 +163,7 @@ class SqliteEngineTx(object):
 		if not hasattr(oid, '__iter__'):
 			oid = (oid, )
 		for ioid in oid:
-			self._cursor.execute('delete from objects where oid=?', (oid, ))
+			self._cursor.execute('delete from objects where oid=?', (ioid, ))
 
 	def put_object(self, objs):
 		_LOG.debug('SqliteEngineTx.put(%r)', objs)
@@ -210,7 +209,7 @@ class SqliteEngineTx(object):
 		if not hasattr(class_id, '__iter__'):
 			class_id = (class_id, )
 		for cid in class_id:
-			self._cursor.execute('delete from classes where id = ?', (class_id, ))
+			self._cursor.execute('delete from classes where id = ?', (cid, ))
 
 	def get_blob(self, object_id, field):
 		_LOG.debug('SqliteEngineTx.get_blob(%s, %s)', object_id, field)

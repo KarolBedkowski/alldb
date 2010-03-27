@@ -28,10 +28,6 @@
 ./alldb/model/db.py
 ./alldb/model/dbtest.py
 ./alldb/model/objects.py
-./alldb/model/sldb/__init__.py
-./alldb/model/sldb/sldb.py
-./alldb/model/sldb/sldb_objects.py
-./alldb/model/sldb/sldb_test.py
-./alldb/model/sldb/sqlite_engine.py
+./alldb/model/sqlite_engine.py
 ./alldb/version.py
 ./alldb.py

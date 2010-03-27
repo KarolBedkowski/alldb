@@ -10,7 +10,7 @@ import objects
 def run():
 	storage = db.Db('test')
 
-	cls = objects.ObjectClass(name='cls1')
+	cls = objects.ADObjectClass(name='cls1')
 	cls.fields = [('f1', 'str', '', None), ('f2', 'int', '', None)]
 	cls.save(storage)
 
