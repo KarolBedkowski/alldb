@@ -2,6 +2,7 @@
 
 """
 """
+from __future__ import with_statement
 
 __author__ = 'Karol Będkowski'
 __copyright__ = 'Copyright (C) Karol Będkowski 2009'
@@ -9,11 +10,15 @@ __version__ = '0.1'
 __release__ = '2009-12-20'
 
 
+import os.path
 import time
+import cStringIO
+
 import wx
 import wx.lib.scrolledpanel as scrolled
 import wx.gizmos as gizmos
 from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
+import  wx.lib.imagebrowser as imgbr
 
 from alldb.gui.dlg_select_tags import DlgSelectTags
 
@@ -25,7 +30,9 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self._obj = None
 		self._obj_cls = obj_class
 		self._fields = {}
+		self._blobs = {}
 		self._first_field = None
+		self._last_dir = os.path.expanduser('~')
 
 		self._COLOR_HIGHLIGHT_BG = wx.SystemSettings.GetColour(
 				wx.SYS_COLOUR_HIGHLIGHT)
@@ -59,11 +66,13 @@ class PanelInfo(scrolled.ScrolledPanel):
 					value = field.GetStrings()
 				elif ftype == 'choice':
 					value = field.GetStringSelection()
+				elif ftype == 'image':
+					value = len(self._blobs[name]) if self._blobs[name] else 0
 				else:
 					value = field.GetValue()
 				data[name] = value
 		tags = self.tc_tags.GetValue()
-		return data, tags
+		return data, tags, self._blobs
 
 	def set_focus(self):
 		if self._first_field:
@@ -113,6 +122,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 			grid.Add(wx.StaticText(self, -1, "%s:" % format_label(name)), 0,
 					wx.ALIGN_CENTER_VERTICAL)
 			ctrl = None
+			box = None
 			if ftype == 'bool':
 				ctrl = wx.CheckBox(self, -1)
 			elif ftype == 'multi':
@@ -126,12 +136,16 @@ class PanelInfo(scrolled.ScrolledPanel):
 			elif ftype == 'choice':
 				values = options.get('values') or []
 				ctrl = wx.Choice(self, -1, choices=values)
+			elif ftype == 'image':
+				ctrl, box = self._create_field_image(name, options)
 			else:
 				ctrl = wx.TextCtrl(self, -1)
 			self._fields[name] = (ctrl, ftype, _default, options)
 
 			if ctrl:
-				grid.Add(ctrl, 1, wx.EXPAND)
+				if box is None:
+					box = ctrl
+				grid.Add(box, 1, wx.EXPAND)
 			else:
 				grid.Add((1, 1))
 
@@ -140,8 +154,27 @@ class PanelInfo(scrolled.ScrolledPanel):
 
 		grid.Add(wx.StaticText(self, -1, _("Tags:")), 0, wx.ALIGN_CENTER_VERTICAL)
 		grid.Add(self._create_fields_tag(self), 1, wx.EXPAND)
-
 		return grid
+
+	def _create_field_image(self, name, options):
+		ctrl = wx.StaticBitmap(self, -1, size=(100, 100))
+		box = wx.BoxSizer(wx.HORIZONTAL)
+		box.Add(ctrl, 1, wx.EXPAND)
+		box.Add((6, 6))
+
+		bbox = wx.FlexGridSizer(3, 1, 6, 6)
+		bbox.AddGrowableRow(0)
+		bbox.Add((1, 1))
+		btn = wx.Button(self, -1, _('Select'))
+		btn._ctrl = (name, ctrl)
+		btn.Bind(wx.EVT_BUTTON, self._on_btn_image_select)
+		bbox.Add(btn)
+		btn = wx.Button(self, -1, _('Clear'))
+		btn._ctrl = (name, ctrl)
+		btn.Bind(wx.EVT_BUTTON, self._on_btn_image_clear)
+		bbox.Add(btn)
+		box.Add(bbox)
+		return ctrl, box
 
 	def _create_fields_tag(self, parent):
 		box = wx.BoxSizer(wx.HORIZONTAL)
@@ -171,6 +204,10 @@ class PanelInfo(scrolled.ScrolledPanel):
 					field.SetStringSelection(value)
 				else:
 					field.SetSelection(-1)
+			elif ftype == 'image':
+				img = obj.get_blob(name)
+				self._show_image(field, img)
+				self._blobs[name] = img
 			else:
 				field.SetValue(unicode(value or ''))
 		self.tc_title.SetLabel(obj.title or '')
@@ -183,6 +220,8 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self.lb_id.SetLabel(str(obj.oid or _("new")))
 
 	def _fill_fields_clear(self):
+		self._blobs = {}
+
 		for field, ftype, _default, options in self._fields.itervalues():
 			if field:
 				if ftype == 'bool':
@@ -197,6 +236,8 @@ class PanelInfo(scrolled.ScrolledPanel):
 						field.SetStringSelection(_default)
 					else:
 						field.SetSelection(-1)
+				elif ftype == 'image':
+					self._show_image(field, None)
 				else:
 					field.SetValue(str(_default))
 
@@ -205,6 +246,14 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self.lb_modified.SetLabel('')
 		self.lb_created.SetLabel('')
 		self.lb_id.SetLabel('')
+
+	def _show_image(self, ctrl, img):
+		if img:
+			img = wx.ImageFromStream(cStringIO.StringIO(img))
+		if img is None or not img.IsOk():
+			img = wx.EmptyImage(1, 1)
+		bmp = img.ConvertToBitmap()
+		ctrl.SetBitmap(bmp)
 
 	def _on_expand_text(self, evt):
 		self.Layout()
@@ -225,6 +274,27 @@ class PanelInfo(scrolled.ScrolledPanel):
 			dlg = DlgSelectTags(self, tag_list, item_tags)
 			if dlg.run():
 				self.tc_tags.SetValue(', '.join(sorted(dlg.selected)))
+
+	def _on_btn_image_select(self, evt):
+		btn = evt.GetEventObject()
+		name, ctrl = btn._ctrl
+		dlg = imgbr.ImageDialog(self, self._last_dir)
+		if dlg.ShowModal() == wx.ID_OK:
+			filename = dlg.GetFile()
+			data = None
+			with open(filename, 'rb') as fimg:
+				data = fimg.read()
+			if data:
+				self._blobs[name] = data
+				self._show_image(ctrl, data)
+			self._last_dir = os.path.dirname(filename)
+		dlg.Destroy()
+
+	def _on_btn_image_clear(self, evt):
+		btn = evt.GetEventObject()
+		name, ctrl = btn._ctrl
+		self._blobs[name] = None
+		self._show_image(ctrl, None)
 
 
 def _create_label(parent, label, colour=None):
@@ -269,6 +339,7 @@ def find_objs_commons(objs):
 	for obj in objs:
 		if not obj.data:
 			continue
+
 		for key, val in obj.data.iteritems():
 			if fields.get(key) is None:
 				continue

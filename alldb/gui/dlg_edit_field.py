@@ -39,6 +39,7 @@ class DlgEditField(object):
 		self.rb_type_multiline = xrc.XRCCTRL(self.wnd, 'rb_type_multiline')
 		self.rb_type_list = xrc.XRCCTRL(self.wnd, 'rb_type_list')
 		self.rb_type_choice = xrc.XRCCTRL(self.wnd, 'rb_type_choice')
+		self.rb_type_image = xrc.XRCCTRL(self.wnd, 'rb_type_image')
 		self.tc_name = xrc.XRCCTRL(self.wnd, 'tc_name')
 		self.tc_default = xrc.XRCCTRL(self.wnd, 'tc_default')
 		self.cb_show_in_title = xrc.XRCCTRL(self.wnd, 'cb_show_in_title')
@@ -51,7 +52,8 @@ class DlgEditField(object):
 			'date': self.rb_type_date,
 			'multi': self.rb_type_multiline,
 			'list': self.rb_type_list,
-			'choice': self.rb_type_choice, }
+			'choice': self.rb_type_choice,
+			'image': self.rb_type_image, }
 
 	def _create_bindings(self):
 		wnd = self.wnd
@@ -74,6 +76,7 @@ class DlgEditField(object):
 		radio = self._radios.get(ftype)
 		if radio:
 			radio.SetValue(True)
+		self._on_rb_type_choice(None)
 
 	def _on_ok(self, evt):
 		name = self.tc_name.GetValue().strip()
@@ -87,23 +90,29 @@ class DlgEditField(object):
 					_('Field with this name already exists.\nPlease enter other name.'))
 			return
 
-		self._data['name'] = name
-		self._data['default'] = self.tc_default.GetValue()
-		options = self._data.get('options') or {}
-		options['in_title'] = self.cb_show_in_title.IsChecked()
-		options['in_list'] = self.cb_show_in_list.IsChecked()
-		self._data['options'] = options
-
 		for ftype, ctrl in self._radios.iteritems():
 			if ctrl.GetValue():
 				self._data['type'] = ftype
 				break
+
+		blob = self._data['type'] == 'image'
+
+		self._data['name'] = name
+		self._data['default'] = None if blob else self.tc_default.GetValue()
+		options = self._data.get('options') or {}
+		options['in_title'] = self.cb_show_in_title.IsChecked() and not blob
+		options['in_list'] = self.cb_show_in_list.IsChecked() and not blob
+		self._data['options'] = options
 
 		self.wnd.EndModal(wx.ID_OK)
 
 	def _on_rb_type_choice(self, event):
 		type_choice = self.rb_type_choice.GetValue()
 		self.btn_values.Enable(type_choice)
+		type_image = self.rb_type_image.GetValue()
+		self.tc_default.Enable(not type_image)
+		self.cb_show_in_list.Enable(not type_image)
+		self.cb_show_in_title.Enable(not type_image)
 
 	def _on_btn_values(self, event):
 		values = self._data['options'].get('values')

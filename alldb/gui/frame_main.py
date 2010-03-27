@@ -275,14 +275,15 @@ class FrameMain(object):
 	def _save_object(self, ask_for_save=False, update_lists=True, select=None):
 		if not self._curr_obj:
 			return
-		data, tags = self._curr_info_panel.get_values()
+		data, tags, blobs = self._curr_info_panel.get_values()
 		curr_obj = self._curr_obj
-		if curr_obj.check_for_changes(data, tags):
+		if curr_obj.check_for_changes(data, tags, blobs):
 			if ask_for_save:
 				if not msgbox.message_box_save_confirm(self.wnd, _('Save changes?')):
 					return
 
 			curr_obj.data.update(data)
+			curr_obj.blobs = blobs
 			curr_obj.set_tags(tags)
 			curr_obj.save()
 			oid = curr_obj.oid

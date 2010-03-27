@@ -88,6 +88,10 @@ class SchemaLessDatabase(object):
 			return [self._create_single_object(oid, class_id, data)
 					for oid, class_id, data in res]
 
+	def get_blob(self, object_id, field):
+		with self._engine.create_transaction(self) as trans:
+			return trans.get_blob(object_id, field)
+
 	def _create_class_object(self, cid, name, data):
 		cls = sldb_objects.ObjectClass(cid, name, self)
 		cls.restore(data)

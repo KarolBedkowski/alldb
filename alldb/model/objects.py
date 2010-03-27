@@ -68,6 +68,7 @@ class ADObject(sldb.Object):
 		sldb.Object.__init__(self, oid, class_id, context)
 		self.tags = []
 		self.title = None
+		self.blobs = {}
 
 	def set_tags(self, tagstr):
 		self.tags = tags2str(tagstr)
@@ -90,10 +91,18 @@ class ADObject(sldb.Object):
 	def get_values(self, keys):
 		return ','.join(self.get_value(key) for key in keys)
 
-	def check_for_changes(self, new_data, tags):
+	def get_blob(self, field):
+		return self.sldb_context.get_blob(self.oid, field)
+
+	def check_for_changes(self, new_data, tags, blobs):
 		for key, val in new_data.iteritems():
 			value = self.data.get(key)
 			if value != val and (value or val):
+				return True
+
+		for field, blob in blobs.iteritems():
+			if (blob is None and self.data.get(field, 0) != 0) or \
+					(blob and len(blob) != self.data.get(field)):
 				return True
 
 		return self.tags != tags2str(tags)
@@ -112,6 +121,11 @@ class ADObject(sldb.Object):
 			self.title = title_expr % (self.data)
 		if not self.title:
 			self.title = ':'.join(self.data.items()[0])
+
+		for name, ftype, defautl, options in cls.fields:
+			if ftype == 'image':
+				if self.data[name] == 0:
+					self.blobs[name] = None
 
 	def duplicate(self):
 		obj = super(ADObject, self).duplicate()

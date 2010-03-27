@@ -52,8 +52,13 @@ _INIT_SQLS = (
 	on indexes (class_id, name)''',
 '''create table if not exists index_objects (
 	idx_id integer not null references indexes (id) on delete cascade,
-	obj_id integer not null references indexes (id) on delete cascade,
-	value blob)''')
+	obj_id integer not null references objects (id) on delete cascade,
+	value blob)''',
+'''create table if not exists blobs (
+	object_id integer references objects (id) on delete cascade,
+	field varchar,
+	data blob,
+	primary key (object_id, field))''')
 
 
 class SqliteEngine(object):
@@ -196,6 +201,21 @@ class SqliteEngineTx(object):
 		for cid in class_id:
 			self._cursor.execute('delete from classes where id = ?', (class_id, ))
 
+	def get_blob(self, object_id, field):
+		_LOG.debug('SqliteEngineTx.get_blob(%s, %s)', object_id, field)
+		self._cursor.execute('select data from blobs where object_id=? and field=?',
+				(object_id, field))
+		data = self._cursor.fetchone()
+		return data[0] if data else None
+
+	def put_blob(self, object_id, field, data):
+		_LOG.debug('SqliteEngineTx.put_blob(%s, %s, len=%d)', object_id, field,
+				len(data or []))
+		self._cursor.execute('delete from blobs where object_id=? and field=?',
+				(object_id, field))
+		if data:
+			self._cursor.execute('insert into blobs (object_id, field, data) values '\
+					'(?, ?, ?)', (object_id, field, sqlite3.Binary(data)))
 
 
 # vim: encoding=utf8: ff=unix:
