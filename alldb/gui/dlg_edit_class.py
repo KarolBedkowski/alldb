@@ -48,6 +48,15 @@ class DlgEditClass(object):
 		self._cls = cls
 		self._cls_names = cls_names
 
+		self._type_names = {
+				'str': _('string'),
+				'bool': _('boolean'),
+				'date': _('date'),
+				'multi': _('multi line'),
+				'list': _('list'),
+				'choice': _('choice'),
+				'image': _('image')}
+
 		lc_fields = self.lc_fields
 		lc_fields.InsertColumn(0, _('No'))
 		lc_fields.InsertColumn(1, _('Name'))
@@ -61,8 +70,8 @@ class DlgEditClass(object):
 
 	def _create_bindings(self):
 		wnd = self.wnd
-		wnd.Bind(wx.EVT_BUTTON, self._on_ok, id=wx.ID_APPLY)
-		wnd.Bind(wx.EVT_BUTTON, self._on_close, id=wx.ID_CLOSE)
+		wnd.Bind(wx.EVT_BUTTON, self._on_ok, id=wx.ID_OK)
+		wnd.Bind(wx.EVT_BUTTON, self._on_close, id=wx.ID_CANCEL)
 		wnd.Bind(wx.EVT_CHECKBOX, self._on_item_have_title_checkbox,
 				self.cb_show_title)
 		wnd.Bind(wx.EVT_CHECKBOX, self._on_title_auto, self.cb_title_auto)
@@ -100,8 +109,8 @@ class DlgEditClass(object):
 		for no, (name, ftype, default, options) in enumerate(cls.fields):
 			lc_fields.InsertStringItem(no, str(no + 1))
 			lc_fields.SetStringItem(no, 1, str(name))
-			lc_fields.SetStringItem(no, 2, str(ftype))
-			lc_fields.SetStringItem(no, 3, str(default))
+			lc_fields.SetStringItem(no, 2, str(self._type_names.get(ftype, ftype)))
+			lc_fields.SetStringItem(no, 3, str(default or ''))
 			if options:
 				opt_str = _options2string(options)
 				lc_fields.SetStringItem(no, 4, opt_str)
