@@ -28,8 +28,8 @@ _CACHE = {}
 
 def load_xrc_resource(filename):
 	xrcfile_path = AppConfig().get_data_file('alldb.xrc')
-	data = _CACHE.get(xrcfile_path)
-	if data is None:
+	res = _CACHE.get(xrcfile_path)
+	if res is None:
 		with open(xrcfile_path) as xrc_file:
 			data = xrc_file.read()
 		data = data.decode('UTF-8')
@@ -38,10 +38,11 @@ def load_xrc_resource(filename):
 		re_gettext = re.compile(r'(\<title\>)(.*?)(\<\/title\>)')
 		data = re_gettext.sub(_localize, data)
 		data = data.encode('UTF-8')
-		_CACHE[xrcfile_path] = data
 
-	res = xrc.EmptyXmlResource()
-	res.LoadFromString(data)
+		res = xrc.EmptyXmlResource()
+		res.LoadFromString(data)
+		_CACHE[xrcfile_path] = res
+
 	return res
 
 # vim: encoding=utf8: ff=unix:
