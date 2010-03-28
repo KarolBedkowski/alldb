@@ -81,6 +81,12 @@ class FrameMain(object):
 		self.searchbox = wx.SearchCtrl(self.wnd, -1)
 		self.res.AttachUnknownControl('searchbox', self.searchbox, self.wnd)
 
+		menu = self.wnd.GetMenuBar()
+		self.menu_item_delete = menu.FindItemById(xrc.XRCID('menu_item_delete'))
+		self.menu_item_duplicate = menu.FindItemById(xrc.XRCID(
+				'menu_item_duplicate'))
+
+
 	def _create_bindings(self):
 		wnd = self.wnd
 		wnd.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self._on_search, self.searchbox)
@@ -272,6 +278,8 @@ class FrameMain(object):
 		if self._curr_info_panel:
 			self._curr_info_panel.Show(record_showed)
 			self.panel_info.GetSizer().Layout()
+		self.menu_item_delete.Enable(record_showed and not new_record)
+		self.menu_item_duplicate.Enable(record_showed and not new_record)
 
 	def _save_object(self, ask_for_save=False, update_lists=True, select=None):
 		if not self._curr_obj:
