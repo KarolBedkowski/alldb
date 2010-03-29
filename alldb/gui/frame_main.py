@@ -17,7 +17,7 @@ from wx import xrc
 from alldb.libs import wxresources
 from alldb.libs.appconfig import AppConfig
 from alldb.libs.iconprovider import IconProvider
-from alldb.filetypes.csv_support import export2csv, import_csv
+from alldb.filetypes.csv_support import export2csv
 from alldb.filetypes.html_support import export_html
 from alldb.gui.dialogs import message_boxes as msgbox
 from alldb.model import objects
@@ -25,6 +25,7 @@ from alldb.model import objects
 from .panel_info import PanelInfo
 from .dlg_classes import DlgClasses
 from .dlg_about import show_about_box
+from .dlg_import_csv import DlgImportCsv
 
 
 class FrameMain(object):
@@ -419,16 +420,9 @@ class FrameMain(object):
 		self._show_class(current_class_oid)
 
 	def _on_menu_import_csv(self, event):
-		dlg = wx.FileDialog(self.wnd, _('Choice a file'),
-				wildcard=_('CSV files (*.csv)|*.csv|All files|*.*'),
-				style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
-		if dlg.ShowModal() == wx.ID_OK:
-			filepath = dlg.GetPath()
-			cls = self._result.cls
-			items = list(import_csv(filepath, cls))
-			self._db.put_object(items)
-
-		dlg.Destroy()
+		wzrg = DlgImportCsv(self.wnd, self._result.cls)
+		if wzrg.run():
+			self._db.put_object(wzrg.items)
 		current_class_oid = self._fill_classes(self._result.cls.oid)
 		self._show_class(current_class_oid)
 

@@ -34,17 +34,30 @@ def export2csv(filename, cls, items):
 			writer.writerow(row_data)
 
 
-def import_csv(filename, cls):
+def import_csv(filename, cls, mapping):
 	with codecs.open(filename, 'rt', 'utf-8') as fcsv:
-		for row in csv.DictReader(fcsv):
-			for field in cls.fields:
-				if field[1] == 'bool':
-					row[field[0]] = bool(row[field[0]])
+		fields_types = dict(fieldinfo[:2] for fieldinfo in cls.fields)
+		for row in csv.reader(fcsv):
+			if len(row) == 0:
+				continue
+			item_data = {}
+			for col, field in mapping.iteritems():
+				if fields_types[field] == 'bool':
+					item_data[field] = bool(row[col])
 				else:
-					row[field[0]] = unicode(row[field[0]])
+					item_data[field] = unicode(row[col])
 			item = cls.create_object()
-			item.data.update(row)
+			item.data.update(item_data)
 			yield item
+
+
+def load_cvs_header(filename):
+	with codecs.open(filename, 'rt', 'utf-8') as fcsv:
+		for idx, row in enumerate(csv.reader(fcsv)):
+			if idx > 10:
+				return
+			yield row
+
 
 
 # vim: encoding=utf8: ff=unix:
