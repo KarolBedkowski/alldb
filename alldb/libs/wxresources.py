@@ -27,7 +27,7 @@ _CACHE = {}
 
 
 def load_xrc_resource(filename):
-	xrcfile_path = AppConfig().get_data_file('alldb.xrc')
+	xrcfile_path = AppConfig().get_data_file(filename)
 	res = _CACHE.get(xrcfile_path)
 	if res is None:
 		with open(xrcfile_path) as xrc_file:
