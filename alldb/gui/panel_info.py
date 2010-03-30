@@ -157,7 +157,8 @@ class PanelInfo(scrolled.ScrolledPanel):
 		return grid
 
 	def _create_field_image(self, name, options):
-		ctrl = wx.StaticBitmap(self, -1, size=(100, 100))
+		width_height = int(options.get('width', 100)), int(options.get('height', 100))
+		ctrl = wx.StaticBitmap(self, -1, size=width_height)
 		box = wx.BoxSizer(wx.HORIZONTAL)
 		box.Add(ctrl, 1, wx.EXPAND)
 		box.Add((6, 6))
@@ -205,7 +206,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 					field.SetSelection(-1)
 			elif ftype == 'image':
 				img = obj.get_blob(name)
-				self._show_image(field, img)
+				self._show_image(field, img, options)
 				self._blobs[name] = img
 			else:
 				field.SetValue(unicode(value or ''))
@@ -236,7 +237,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 					else:
 						field.SetSelection(-1)
 				elif ftype == 'image':
-					self._show_image(field, None)
+					self._show_image(field, None, options)
 				else:
 					field.SetValue(str(_default))
 
@@ -246,13 +247,18 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self.lb_created.SetLabel('')
 		self.lb_id.SetLabel('')
 
-	def _show_image(self, ctrl, img):
+	def _show_image(self, ctrl, img, options):
 		if img:
 			img = wx.ImageFromStream(cStringIO.StringIO(img))
 		if img is None or not img.IsOk():
-			img = wx.EmptyImage(1, 1)
-		bmp = img.ConvertToBitmap()
-		ctrl.SetBitmap(bmp)
+			width = int(options.get('width', 100))
+			height = int(options.get('height', 100))
+			img = wx.EmptyImage(width, height)
+			ctrl.Show(False)
+		else:
+			bmp = img.ConvertToBitmap()
+			ctrl.SetBitmap(bmp)
+			ctrl.Show(True)
 
 	def _on_expand_text(self, evt):
 		self.Layout()
@@ -280,11 +286,18 @@ class PanelInfo(scrolled.ScrolledPanel):
 		if dlg.ShowModal() == wx.ID_OK:
 			filename = dlg.GetFile()
 			data = None
-			with open(filename, 'rb') as fimg:
-				data = fimg.read()
-			if data:
-				self._blobs[name] = data
-				self._show_image(ctrl, data)
+			img = wx.Image(filename)
+			if img:
+				opt = self._fields[name][3] or {}
+				width, height = opt.get('width'), opt.get('height')
+				if width and height:
+					width, height = int(width), int(height)
+					if width < img.GetWidth() or height < img.GetHeight():
+						img = img.Scale(width, height)
+				output = cStringIO.StringIO()
+				img.SaveStream(output, wx.BITMAP_TYPE_JPEG)
+				data = self._blobs[name] = output.getvalue()
+				self._show_image(ctrl, data, opt)
 			self._last_dir = os.path.dirname(filename)
 		dlg.Destroy()
 
@@ -292,7 +305,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		btn = evt.GetEventObject()
 		name, ctrl = btn._ctrl
 		self._blobs[name] = None
-		self._show_image(ctrl, None)
+		self._show_image(ctrl, None, self._fields[name][3])
 
 
 def _create_label(parent, label, colour=None):

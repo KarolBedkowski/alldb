@@ -45,6 +45,10 @@ class DlgEditField(object):
 		self.cb_show_in_title = xrc.XRCCTRL(self.wnd, 'cb_show_in_title')
 		self.cb_show_in_list = xrc.XRCCTRL(self.wnd, 'cb_show_in_list')
 		self.btn_values = xrc.XRCCTRL(self.wnd, 'btn_values')
+		panel = xrc.XRCCTRL(self.wnd, 'panel_tc_width')
+		self._tc_width = self._create_tc_number(panel)
+		panel = xrc.XRCCTRL(self.wnd, 'panel_tc_height')
+		self._tc_height = self._create_tc_number(panel)
 
 		self._radios = {
 			'str': self.rb_type_text,
@@ -71,12 +75,21 @@ class DlgEditField(object):
 		options = data.get('options') or {}
 		self.cb_show_in_title.SetValue(options.get('in_title', False))
 		self.cb_show_in_list.SetValue(options.get('in_list', False))
+		self._tc_width.SetValue(str(options.get('width', '')))
+		self._tc_height.SetValue(str(options.get('height', '')))
 
 		ftype = data.get('type') or 'str'
 		radio = self._radios.get(ftype)
 		if radio:
 			radio.SetValue(True)
 		self._on_rb_type_choice(None)
+
+	def _create_tc_number(self, panel):
+		tc = wx.TextCtrl(panel, -1)
+		box = wx.BoxSizer(wx.VERTICAL)
+		box.Add(tc, 1, wx.EXPAND)
+		panel.SetSizerAndFit(box)
+		return tc
 
 	def _on_ok(self, evt):
 		name = self.tc_name.GetValue().strip()
@@ -100,6 +113,9 @@ class DlgEditField(object):
 		options = self._data.get('options') or {}
 		options['in_title'] = self.cb_show_in_title.IsChecked() and not blob
 		options['in_list'] = self.cb_show_in_list.IsChecked() and not blob
+		if blob:
+			options['width'] = self._tc_width.GetValue()
+			options['height'] = self._tc_height.GetValue()
 		self._data['options'] = options
 		self.wnd.EndModal(wx.ID_OK)
 
@@ -110,6 +126,8 @@ class DlgEditField(object):
 		self.tc_default.Enable(not type_image)
 		self.cb_show_in_list.Enable(not type_image)
 		self.cb_show_in_title.Enable(not type_image)
+		self._tc_width.Enable(type_image)
+		self._tc_height.Enable(type_image)
 
 	def _on_btn_values(self, event):
 		values = self._data['options'].get('values')

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alldb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-28 12:55+0200\n"
-"PO-Revision-Date: 2010-03-28 12:55+0200\n"
+"POT-Creation-Date: 2010-03-30 15:00+0200\n"
+"PO-Revision-Date: 2010-03-30 15:00+0200\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -29,8 +29,8 @@ msgstr "Kateogria"
 msgid "Create title expresion automatically"
 msgstr "Utwórz wyrażenie tytułu automatycznie"
 
-msgid "Default"
-msgstr "Domyślne"
+msgid "Default:"
+msgstr "Domyślne:"
 
 msgid "Define values"
 msgstr "Określ wartości"
@@ -49,6 +49,9 @@ msgstr "Pole"
 
 msgid "Fields"
 msgstr "Pola"
+
+msgid "Height:"
+msgstr "Wysokość:"
 
 msgid "Items"
 msgstr "Elementy"
@@ -97,6 +100,9 @@ msgstr "Wyrażenie tytułu:"
 
 msgid "Type:"
 msgstr "Typ:"
+
+msgid "Width:"
+msgstr "Szerokość:"
 
 msgid "_About"
 msgstr "O _programie"
