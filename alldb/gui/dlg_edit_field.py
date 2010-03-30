@@ -11,6 +11,7 @@ __release__ = '2009-12-20'
 
 import wx
 from wx import xrc
+from wx.lib import masked
 
 from alldb.libs import wxresources
 from alldb.gui.dialogs import message_boxes as msgbox
@@ -85,9 +86,10 @@ class DlgEditField(object):
 		self._on_rb_type_choice(None)
 
 	def _create_tc_number(self, panel):
-		tc = wx.TextCtrl(panel, -1)
+		tc = masked.NumCtrl(panel, -1, integerWidth=3, allowNegative=False, min=50,
+				max=500)
 		box = wx.BoxSizer(wx.VERTICAL)
-		box.Add(tc, 1, wx.EXPAND)
+		box.Add(tc)
 		panel.SetSizerAndFit(box)
 		return tc
 

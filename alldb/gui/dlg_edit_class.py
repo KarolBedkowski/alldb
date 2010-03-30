@@ -243,6 +243,8 @@ def _options2string(options):
 		result.append(_('in title'))
 	if options.get('in_list'):
 		result.append(_('show in list'))
+	if options.get('width'):
+		result.append(_('size: %(width)s x %(height)s') % options)
 	return ', '.join(result)
 
 
