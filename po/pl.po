@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alldb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-30 15:00+0200\n"
-"PO-Revision-Date: 2010-03-30 15:00+0200\n"
+"POT-Creation-Date: 2010-03-30 16:51+0200\n"
+"PO-Revision-Date: 2010-03-30 16:53+0200\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -245,6 +245,10 @@ msgstr "w tytule"
 msgid "show in list"
 msgstr "pokaż na liście"
 
+#, python-format
+msgid "size: %(width)s x %(height)s"
+msgstr "wymiary: %(width)s x %(height)s"
+
 msgid "Cannot add this field"
 msgstr "Nie można dodać tego pola"
 
@@ -270,6 +274,35 @@ msgstr "Nie można dodać tej etykiety"
 
 msgid "Entered tag already exists on the list."
 msgstr "Wprowadzona etykieta znajduje się już na liście."
+
+msgid "<Skip>"
+msgstr "<Pomiń>"
+
+msgid "Mapping"
+msgstr "Mapowanie"
+
+msgid "Choice a file"
+msgstr "Wybór pliku"
+
+msgid "CSV files (*.csv)|*.csv|All files|*.*"
+msgstr "Pliki CSV (*.csv)|*.csv|Wszystkie pliki|*.*"
+
+msgid "Can not import selected file"
+msgstr "Nie można zaimportować wybranego pliku"
+
+#, python-format
+msgid "File %s don't contain any useful information."
+msgstr "Plik %s nie zawiera żadnych użytecznych danych."
+
+msgid "Fields mapping is not defined"
+msgstr "Mapowanie pól nie zostało określone"
+
+msgid ""
+"Please define how columns in the CSV file should be mapped to fields in this "
+"category"
+msgstr ""
+"Proszę określić w jaki sposób kolumny w pliku CSV powinny być mapowane do "
+"pól kategorii"
 
 msgid "Search"
 msgstr "Szukaj"
@@ -298,12 +331,6 @@ msgid_plural "%(count)d objects"
 msgstr[0] "jeden obiekt"
 msgstr[1] "%(count)d obiekty"
 msgstr[2] "%(count)d obiektów"
-
-msgid "Choice a file"
-msgstr "Wybór pliku"
-
-msgid "CSV files (*.csv)|*.csv|All files|*.*"
-msgstr "Pliki CSV (*.csv)|*.csv|Wszystkie pliki|*.*"
 
 msgid "HTML files (*.html, *.htm)|*.html;*.htm|All files|*.*"
 msgstr "Pliki HTML (*.html, *.htm)|*.html;*.htm|Wszystkie pliki|*.*"
@@ -432,6 +459,3 @@ msgstr ""
 
 #~ msgid "&Item"
 #~ msgstr "&Element"
-
-#~ msgid "Manage"
-#~ msgstr "Zarządzaj"

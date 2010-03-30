@@ -15,6 +15,7 @@
 ./alldb/gui/dlg_edit_field.py
 ./alldb/gui/dlg_edit_values.py
 ./alldb/gui/dlg_select_tags.py
+./alldb/gui/dlg_import_csv.py
 ./alldb/gui/frame_main.py
 ./alldb/gui/panel_info.py
 ./alldb/libs/__init__.py
