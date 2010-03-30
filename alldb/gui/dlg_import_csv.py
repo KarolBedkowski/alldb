@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 """
-wxGrid::SetColFormatCustom
 """
 
 __author__ = 'Karol Będkowski'
@@ -10,27 +9,30 @@ __version__ = '0.1'
 __release__ = '2009-12-20'
 
 
+import os.path
+
 import wx
 import wx.grid
 from wx import xrc
 
 from alldb.libs import wxresources
 from alldb.filetypes import csv_support
-#from alldb.gui.dialogs import message_boxes as msgbox
+from alldb.gui.dialogs import message_boxes as msgbox
 
 
 class MappingTable(wx.grid.PyGridTableBase):
 	def __init__(self, category, data):
 		wx.grid.PyGridTableBase.__init__(self)
 		self._category = category
+		self._skip_msg = _('<Skip>')
 
 		self._fields = [field[0] for field in self._category.fields]
 		self._data = data
 		while len(self._fields) < len(self._data[0]):
-			self._fields.append(_('<Skip>'))
+			self._fields.append(self._skip_msg)
 
-		self._map_type = wx.grid.GRID_VALUE_CHOICE + ":" + _('<Skip>') + "," + \
-				','.join(self._fields)
+		self._map_type = ''.join((wx.grid.GRID_VALUE_CHOICE, ":", self._skip_msg, 
+				",", ','.join(self._fields)))
 
 		g_style1 = wx.grid.GridCellAttr()
 		g_style1.SetBackgroundColour(wx.Colour(255, 255, 255))
@@ -41,7 +43,7 @@ class MappingTable(wx.grid.PyGridTableBase):
 	@property
 	def mapping(self):
 		return dict((idx, field) for idx, field in enumerate(self._fields)
-				if field != _('<Skip>'))
+				if field != self._skip_msg)
 
 	def GetRowLabelValue(self, row):
 		if row == 0:
@@ -64,7 +66,7 @@ class MappingTable(wx.grid.PyGridTableBase):
 
 	def SetValue(self, row, col, value):
 		if row == 0:
-			if value != _('<Skip>'):
+			if value != self._skip_msg:
 				for idx, field in enumerate(self._fields):
 					if idx != col and field == value:
 						return
@@ -125,7 +127,8 @@ class DlgImportCsv(object):
 		grid_box = wx.BoxSizer(wx.VERTICAL)
 		self._grid_mapping = wx.grid.Grid(panel_grid)
 		grid_box.Add(self._grid_mapping, 1, wx.EXPAND)
-		panel_grid.SetSizer(grid_box)
+		panel_grid.SetSizerAndFit(grid_box)
+		self._cb_header = xrc.XRCCTRL(self.wnd, 'cb_header')
 
 	def _create_bindings(self):
 		wnd = self.wnd
@@ -134,15 +137,17 @@ class DlgImportCsv(object):
 
 	def _setup(self):
 		xrc.XRCCTRL(self.wnd, 'label_filename').SetLabel(self.filepath)
+		self._cb_header.SetValue(False)
 
 	def _load_header(self):
 		header = list(csv_support.load_cvs_header(self.filepath))
-		if len(header) == 0:
-			# TODO: info brak danych
-			return
-		cols = max(len(row) for row in header)
+		cols = 0
+		if len(header) > 0:
+			cols = max(len(row) for row in header)
 		if cols == 0:
-			# TODO: info brak danych
+			msgbox.message_box_info_ex(self.wnd, _('Can not import selected file'),
+					_("File %s don't contain any useful information.") % \
+					os.path.basename(self.filepath))
 			return
 		self._mapping_table = MappingTable(self._category, header)
 		self._grid_mapping.SetTable(self._mapping_table)
@@ -152,12 +157,14 @@ class DlgImportCsv(object):
 
 	def _on_btn_import(self, _event):
 		self._mapping = self._mapping_table.mapping
-		print self._mapping
 		if not self._mapping:
-			# FIXME: msg brak mapowań
+			msgbox.message_box_info_ex(self.wnd, _('Fields mapping is not defined'),
+					_('Please define how columns in the CSV file should be mapped '
+						'to fields in this category'))
 			return
+		skip_header = self._cb_header.IsChecked()
 		self.items = list(csv_support.import_csv(self.filepath, self._category,
-				self._mapping))
+				self._mapping, skip_header))
 		self.wnd.EndModal(wx.ID_OK)
 
 

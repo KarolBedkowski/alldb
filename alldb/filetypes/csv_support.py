@@ -34,11 +34,13 @@ def export2csv(filename, cls, items):
 			writer.writerow(row_data)
 
 
-def import_csv(filename, cls, mapping):
+def import_csv(filename, cls, mapping, skip_header=False):
 	with codecs.open(filename, 'rt', 'utf-8') as fcsv:
 		fields_types = dict(fieldinfo[:2] for fieldinfo in cls.fields)
-		for row in csv.reader(fcsv):
+		for idx, row in enumerate(csv.reader(fcsv)):
 			if len(row) == 0:
+				continue
+			if idx == 0 and skip_header:
 				continue
 			item_data = {}
 			for col, field in mapping.iteritems():
@@ -54,9 +56,9 @@ def import_csv(filename, cls, mapping):
 def load_cvs_header(filename):
 	with codecs.open(filename, 'rt', 'utf-8') as fcsv:
 		for idx, row in enumerate(csv.reader(fcsv)):
-			if idx > 10:
+			if idx > 9:
 				return
-			yield row
+			yield map(unicode, row)
 
 
 
