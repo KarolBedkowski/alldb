@@ -23,42 +23,30 @@ except ImportError:
 	_DECODER = json.loads
 	_ENCODER = json.dumps
 
-#import cPickle
-#_ENCODER = cPickle.dumps
-#_DECODER = cPickle.loads
 
 _LOG = logging.getLogger(__name__)
 
-
 _INIT_SQLS = (
-'''create table if not exists classes (
-	id integer primary key autoincrement,
-	name varchar(100),
-	updated timestamp,
-	data blob);''',
-"""create table if not exists objects (
-	id integer primary key autoincrement,
-	class_id integer references classes (id) on delete cascade,
-	updated timestamp,
-	data blob);""",
-"""create index if not exists objects_class_idx
-	on objects (class_id);""",
-"""create table if not exists indexes (
-	id integer primary key autoincrement,
-	name varchar(100),
-	updated timestamp,
-	class_id integer references classes (id) on delete cascade);""",
-'''create index if not exists indexes_idx1
-	on indexes (class_id, name);''',
-'''create table if not exists index_objects (
-	idx_id integer not null references indexes (id) on delete cascade,
-	obj_id integer not null references objects (id) on delete cascade,
-	value blob);''',
-'''create table if not exists blobs (
-	object_id integer references objects (id) on delete cascade,
-	field varchar,
-	data blob,
-	primary key (object_id, field));''')
+	'''PRAGMA encoding = "UTF-8";''',
+	'''PRAGMA foreign_keys = 1;''',
+	'''PRAGMA locking_mode=EXCLUSIVE; ''',
+	'''create table if not exists classes (
+		id integer primary key autoincrement,
+		name varchar(100),
+		updated timestamp,
+		data blob);''',
+	'''create table if not exists objects (
+		id integer primary key autoincrement,
+		class_id integer references classes (id) on delete cascade,
+		updated timestamp,
+		data blob);''',
+	'''create index if not exists objects_class_idx
+		on objects (class_id);''',
+	'''create table if not exists blobs (
+		object_id integer references objects (id) on delete cascade,
+		field varchar,
+		data blob,
+		primary key (object_id, field));''')
 
 
 class SqliteEngine(object):
@@ -81,7 +69,7 @@ class SqliteEngine(object):
 		_LOG.info('SqliteEngine.open(); filename=%s', self.filename)
 		bdir = os.path.dirname(self.filename)
 		if not os.path.exists(bdir):
-			os.mkdir(bdir)
+			os.makedirs(bdir)
 		self.database = sqlite3.connect(self.filename)
 		self._after_open()
 
@@ -98,13 +86,6 @@ class SqliteEngine(object):
 			raise ValueError('No database')
 		return SqliteEngineTx(self, context)
 
-	def _after_open(self):
-		cur = self.database.cursor()
-		for sql in _INIT_SQLS:
-			cur.executescript(sql)
-		cur.close()
-		self.database.commit()
-
 	def optimize(self):
 		_LOG.info('SqliteEngine.optimize')
 		cur = self.database.cursor()
@@ -114,6 +95,14 @@ class SqliteEngine(object):
 		cur.executescript('analyze;')
 		_LOG.debug('SqliteEngine.optimize: done')
 		cur.close()
+
+	def _after_open(self):
+		cur = self.database.cursor()
+		for sql in _INIT_SQLS:
+			cur.executescript(sql)
+		cur.close()
+		self.database.commit()
+
 
 
 class SqliteEngineTx(object):
