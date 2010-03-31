@@ -221,6 +221,7 @@ class FrameMain(object):
 			items = self._result.sort_items(self._current_sorting_col)
 
 		item2select = None
+		self._items = []
 		for num, item in enumerate(items):
 			oid, cols = item
 			list_items.InsertStringItem(num, str(num + 1))
@@ -230,6 +231,7 @@ class FrameMain(object):
 			list_items.SetItemData(num, int(oid))
 			if oid == select:
 				item2select = num
+			self._items.append((oid, cols))
 
 		for x in xrange(len(self._cols) + 2):
 			list_items.SetColumnWidth(x, wx.LIST_AUTOSIZE)
@@ -473,7 +475,7 @@ class FrameMain(object):
 		return checked
 
 
-def get_object_info(self, cls, item, cols=None):
+def get_object_info(cls, item, cols=None):
 	info = None
 	if cols:
 		info = (item.oid, [item.get_value(col) for col in cols])

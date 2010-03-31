@@ -76,8 +76,8 @@ class DlgEditField(object):
 		options = data.get('options') or {}
 		self.cb_show_in_title.SetValue(options.get('in_title', False))
 		self.cb_show_in_list.SetValue(options.get('in_list', False))
-		self._tc_width.SetValue(str(options.get('width', '')))
-		self._tc_height.SetValue(str(options.get('height', '')))
+		self._tc_width.SetValue(options.get('width', None))
+		self._tc_height.SetValue(options.get('height', None))
 
 		ftype = data.get('type') or 'str'
 		radio = self._radios.get(ftype)
@@ -87,7 +87,7 @@ class DlgEditField(object):
 
 	def _create_tc_number(self, panel):
 		tc = masked.NumCtrl(panel, -1, integerWidth=3, allowNegative=False, min=50,
-				max=500)
+				max=500, allowNone=True)
 		box = wx.BoxSizer(wx.VERTICAL)
 		box.Add(tc)
 		panel.SetSizerAndFit(box)

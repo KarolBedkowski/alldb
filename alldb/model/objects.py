@@ -311,7 +311,7 @@ def tags2str(tagstr):
 
 def get_field_value_human(value):
 	if value is None:
-		return _('None')
+		return ''
 	if value == True:
 		return _('True')
 	if value == False:
