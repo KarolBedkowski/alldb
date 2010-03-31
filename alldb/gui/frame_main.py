@@ -238,8 +238,10 @@ class FrameMain(object):
 		self.label_info.SetLabel(_('Items: %d') % items_count)
 
 		if item2select is not None:
-			list_items.SetItemState(item2select, wx.LIST_STATE_SELECTED,
-				wx.LIST_STATE_SELECTED)
+			list_items.EnsureVisible(item2select)
+			list_items.SetItemState(item2select,
+					wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED,
+					wx.LIST_STATE_SELECTED | wx.LIST_STATE_FOCUSED)
 		list_items.Thaw()
 
 	def _fill_tags(self, clear_selection=False):
