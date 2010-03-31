@@ -164,7 +164,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		box.Add((6, 6))
 		bbox = wx.FlexGridSizer(3, 1, 6, 6)
 		bbox.AddGrowableRow(0)
-		bbox.Add((1, 1))
+		bbox.Add((1, 1), 1)
 		btn = wx.Button(self, -1, _('Select'))
 		btn._ctrl = (name, ctrl)
 		btn.Bind(wx.EVT_BUTTON, self._on_btn_image_select)
@@ -173,13 +173,15 @@ class PanelInfo(scrolled.ScrolledPanel):
 		btn._ctrl = (name, ctrl)
 		btn.Bind(wx.EVT_BUTTON, self._on_btn_image_clear)
 		bbox.Add(btn)
-		box.Add(bbox)
+		box.Add(bbox, 0, wx.EXPAND)
 		return ctrl, box
 
 	def _create_fields_tag(self, parent):
 		box = wx.BoxSizer(wx.HORIZONTAL)
+		box1 = wx.BoxSizer(wx.VERTICAL)
 		self.tc_tags = wx.TextCtrl(parent, -1)
-		box.Add(self.tc_tags, 1, wx.EXPAND)
+		box1.Add(self.tc_tags, 1, wx.EXPAND)
+		box.Add(box1, 1, wx.ALIGN_CENTER_VERTICAL)
 		box.Add((6, 6))
 		btn_choice_tags = wx.Button(parent, -1, _('Select'))
 		box.Add(btn_choice_tags)
@@ -251,14 +253,14 @@ class PanelInfo(scrolled.ScrolledPanel):
 		if img:
 			img = wx.ImageFromStream(cStringIO.StringIO(img))
 		if img is None or not img.IsOk():
-			width = int(options.get('width', 100))
-			height = int(options.get('height', 100))
-			img = wx.EmptyImage(width, height)
+			img = wx.EmptyImage(1, 1)
 			ctrl.Show(False)
 		else:
 			bmp = img.ConvertToBitmap()
 			ctrl.SetBitmap(bmp)
 			ctrl.Show(True)
+			ctrl.SetSize((img.GetWidth(), img.GetHeight()))
+		ctrl.GetParent().Layout()
 
 	def _on_expand_text(self, evt):
 		self.Layout()
@@ -293,7 +295,10 @@ class PanelInfo(scrolled.ScrolledPanel):
 				if width and height:
 					width, height = int(width), int(height)
 					if width < img.GetWidth() or height < img.GetHeight():
-						img = img.Scale(width, height)
+						scale = min(float(width) / img.GetWidth(),
+								float(height) / img.GetHeight())
+						img = img.Scale(int(img.GetWidth() * scale),
+								int(img.GetHeight() * scale))
 				output = cStringIO.StringIO()
 				img.SaveStream(output, wx.BITMAP_TYPE_JPEG)
 				data = self._blobs[name] = output.getvalue()
