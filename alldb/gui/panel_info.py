@@ -260,7 +260,8 @@ class PanelInfo(scrolled.ScrolledPanel):
 			ctrl.SetBitmap(bmp)
 			ctrl.Show(True)
 			ctrl.SetSize((img.GetWidth(), img.GetHeight()))
-		ctrl.GetParent().Layout()
+		self.Layout()
+		self.Refresh()
 
 	def _on_expand_text(self, evt):
 		self.Layout()

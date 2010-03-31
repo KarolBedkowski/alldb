@@ -65,6 +65,7 @@ def _setup_locale():
 	gettext.install(package_name, localedir=locales_dir, unicode=True,
 			names=("ngettext",))
 	gettext.bindtextdomain(package_name, locales_dir)
+	gettext.bindtextdomain('wxstd', locales_dir)
 	gettext.bind_textdomain_codeset(package_name, "UTF-8")
 
 	_LOG.info('locale: %s' % str(locale.getlocale()))
@@ -94,6 +95,9 @@ def run():
 	db_filename = os.path.join(config.user_share_dir, 'alldb.db')
 
 	app = wx.PySimpleApp(0)
+	wx.Locale.AddCatalogLookupPathPrefix(config.locales_dir)
+	wxloc = wx.Locale(wx.LANGUAGE_DEFAULT)
+	wxloc.AddCatalog('wxstd')
 
 	IconProvider(None, config.data_dir)
 
