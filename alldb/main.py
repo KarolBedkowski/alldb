@@ -95,9 +95,10 @@ def run():
 	db_filename = os.path.join(config.user_share_dir, 'alldb.db')
 
 	app = wx.PySimpleApp(0)
-	wx.Locale.AddCatalogLookupPathPrefix(config.locales_dir)
-	wxloc = wx.Locale(wx.LANGUAGE_DEFAULT)
-	wxloc.AddCatalog('wxstd')
+	if sys.platform == 'win32':
+		wx.Locale.AddCatalogLookupPathPrefix(config.locales_dir)
+		wxloc = wx.Locale(wx.LANGUAGE_DEFAULT)
+		wxloc.AddCatalog('wxstd')
 
 	IconProvider(None, config.data_dir)
 

@@ -5,6 +5,7 @@ import os
 import os.path
 import time
 import sys
+import wx
 
 try:
 	from setuptools import setup
@@ -70,6 +71,12 @@ def get_data_files():
 
 	for x in find_files('locale', locales_dir):
 		yield x
+
+	if 'py2exe' in sys.argv:
+		yield (os.path.join(locales_dir, 'locale', 'pl', 'LC_MESSAGES'),
+				[os.path.join(os.path.dirname(wx.__file__), 'locale', 'pl', 
+				'LC_MESSAGES', 'wxstd.mo')])
+
 
 
 class CleanupCmd(Command):
