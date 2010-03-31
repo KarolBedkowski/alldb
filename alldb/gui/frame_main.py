@@ -63,6 +63,10 @@ class FrameMain(object):
 			self.choice_klasa.SetSelection(0)
 			self._show_class(fclass_oid)
 
+		appconfig = AppConfig()
+		autosave = appconfig.get('frame_main', 'autosave', 1) > 0
+		self._menu_save_on_scroll.Check(autosave)
+
 		self._set_size_pos()
 
 	def _load_controls(self):
@@ -86,7 +90,8 @@ class FrameMain(object):
 		self.menu_item_delete = menu.FindItemById(xrc.XRCID('menu_item_delete'))
 		self.menu_item_duplicate = menu.FindItemById(xrc.XRCID(
 				'menu_item_duplicate'))
-
+		self._menu_save_on_scroll = menu.FindItemById(xrc.XRCID(
+				'menu_save_on_scroll'))
 
 	def _create_bindings(self):
 		wnd = self.wnd
@@ -289,6 +294,8 @@ class FrameMain(object):
 	def _save_object(self, ask_for_save=False, update_lists=True, select=None):
 		if not self._curr_obj:
 			return
+		if self._menu_save_on_scroll.IsChecked():
+			ask_for_save = False
 		data, tags, blobs = self._curr_info_panel.get_values()
 		curr_obj = self._curr_obj
 		if curr_obj.check_for_changes(data, tags, blobs):
@@ -325,6 +332,8 @@ class FrameMain(object):
 		appconfig.set('frame_main', 'position', self.wnd.GetPositionTuple())
 		appconfig.set('frame_main', 'win1', self.window_1.GetSashPosition())
 		appconfig.set('frame_main', 'win2', self.window_2.GetSashPosition())
+		appconfig.set('frame_main', 'autosave',
+				1 if self._menu_save_on_scroll.IsChecked() else 0)
 		self.wnd.Destroy()
 
 	def _on_class_select(self, evt):
