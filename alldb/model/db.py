@@ -46,6 +46,13 @@ class Db(object):
 			for icls in cls:
 				if hasattr(icls, 'before_save'):
 					icls.before_save()
+				if icls.changed_fields_names:
+					res = list(trans.get_objects_by_class(icls.oid))
+					for oid, class_id, data in res:
+						obj = self._create_single_object(oid, class_id, data)
+						obj.update_fields_names(icls.changed_fields_names)
+						trans.put_object((obj, ))
+						# todo: fix blobs
 			trans.put_class(cls)
 		self._engine.sync()
 

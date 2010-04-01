@@ -158,7 +158,17 @@ class DlgEditClass(object):
 				if field[0] != name]
 		dlg = DlgEditField(self.wnd, data)
 		if dlg.run():
-			field = (data['name'], data['type'], data['default'], data['options'])
+			new_name = data['name']
+			field = (new_name, data['type'], data['default'], data['options'])
+			if new_name != name:
+				changed = False
+				for idx, (old_name, dst_name) in enumerate(self._cls.changed_fields_names):
+					if dst_name == name:
+						self._cls.changed_fields_names[idx] = (old_name, new_name)
+						changed = True
+						break
+				if not changed:
+					self._cls.changed_fields_names.append((name, new_name))
 			self._cls.fields[item_idx] = field
 			self._refresh_list(self._cls)
 			self._on_title_auto(None)

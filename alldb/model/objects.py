@@ -73,6 +73,7 @@ class ADObjectClass(BaseObject):
 		self.title_show = True
 		self.title_auto = True
 		self.fields = []
+		self.changed_fields_names = []
 
 	@property
 	def fields_in_list(self):
@@ -204,6 +205,14 @@ class ADObject(BaseObject):
 			if ftype == 'image':
 				if self.data[name] == 0:
 					self.blobs[name] = None
+
+	def update_fields_names(self, changes):
+		new_data = {}
+		for old_name, new_name in changes:
+			if old_name in self.data:
+				new_data[new_name] = self.data.pop(old_name)
+		new_data.update(self.data)
+		self.data = new_data
 
 
 class SearchResult(object):
