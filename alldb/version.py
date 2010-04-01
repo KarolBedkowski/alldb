@@ -12,9 +12,9 @@ _ = gettext.gettext
 
 SHORTNAME = 'alldb'
 NAME = _("AllDB")
-VERSION = '1.0b3'
-VERSION_INFO = (1, 0, 0, 'beta', 3)
-RELEASE = '2010-03-31'
+VERSION = '1.0b4'
+VERSION_INFO = (1, 0, 0, 'beta', 4)
+RELEASE = '2010-04-01'
 DESCRIPTION = _('''All-kind of data database''')
 DEVELOPERS = u'''Karol Będkowski'''
 TRANSLATORS = u'''Karol Będkowski'''
