@@ -37,6 +37,8 @@ def load_xrc_resource(filename):
 		data = re_gettext.sub(_localize, data)
 		re_gettext = re.compile(r'(\<title\>)(.*?)(\<\/title\>)')
 		data = re_gettext.sub(_localize, data)
+		re_gettext = re.compile(r'(\<tooltip\>)(.*?)(\<\/tooltip\>)')
+		data = re_gettext.sub(_localize, data)
 		data = data.encode('UTF-8')
 
 		res = xrc.EmptyXmlResource()

@@ -14,12 +14,6 @@ import locale
 import optparse
 import logging
 
-from alldb.gui.frame_main import FrameMain
-from alldb.libs import appconfig
-from alldb.libs.logging_setup import logging_setup
-from alldb.model.db import Db
-from alldb.libs.iconprovider import IconProvider
-
 import sys
 reload(sys)
 try:
@@ -29,7 +23,6 @@ except Exception, _:
 
 
 _LOG = logging.getLogger(__name__)
-
 
 def show_version(ption, opt_str, value, parser, *args, **kwargs):
 	from alldb import version
@@ -45,7 +38,11 @@ p.add_option('--version', action="callback", callback=show_version,
 options, arguments = p.parse_args()
 
 # logowanie
+from alldb.libs.logging_setup import logging_setup
 logging_setup('alldb.log', options.debug)
+
+
+from alldb.libs import appconfig
 
 
 def _setup_locale():
@@ -86,6 +83,10 @@ if not appconfig.is_frozen():
 
 
 import wx
+
+from alldb.gui.frame_main import FrameMain
+from alldb.model.db import Db
+from alldb.libs.iconprovider import IconProvider
 
 
 def run():
