@@ -92,10 +92,8 @@ class FrameMain(object):
 		self.window_2 = xrc.XRCCTRL(self.wnd, 'window_2')
 		self.list_items = xrc.XRCCTRL(self.wnd, 'list_items')
 		self.label_info = xrc.XRCCTRL(self.wnd, 'label_info')
-		self.button_apply = xrc.XRCCTRL(self.wnd, 'wxID_SAVE')
 		self.clb_tags = xrc.XRCCTRL(self.wnd, 'clb_tags')
 		self.choice_klasa = xrc.XRCCTRL(self.wnd, 'choice_klasa')
-		self.button_new_item = xrc.XRCCTRL(self.wnd, 'wxID_ADD')
 		self.panel_info = xrc.XRCCTRL(self.wnd, 'panel_info')
 		self.choice_filter = xrc.XRCCTRL(self.wnd, 'choice_filter')
 
@@ -136,14 +134,13 @@ class FrameMain(object):
 		wnd.Bind(wx.EVT_MENU, self._on_menu_about, id=xrc.XRCID('menu_about'))
 		wnd.Bind(wx.EVT_MENU, self._on_menu_optimize_database,
 				id=xrc.XRCID('menu_optimize_database'))
+		wnd.Bind(wx.EVT_MENU, self._on_btn_apply, id=xrc.XRCID('menu_save_changes'))
 		wnd.Bind(wx.EVT_CHOICE, self._on_class_select, self.choice_klasa)
 		wnd.Bind(wx.EVT_CHOICE, self._on_filter_select, self.choice_filter)
 		wnd.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_item_deselect,
 				self.list_items)
 		self.list_items.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_item_select)
 		self.list_items.Bind(wx.EVT_LIST_COL_CLICK, self._on_items_col_click)
-		self.button_new_item.Bind(wx.EVT_BUTTON, self._on_btn_new)
-		self.button_apply.Bind(wx.EVT_BUTTON, self._on_btn_apply)
 		self.wnd.Bind(EVT_RECORD_UPDATED, self._on_record_updated)
 
 	def _set_size_pos(self):
@@ -315,8 +312,6 @@ class FrameMain(object):
 
 	def _set_buttons_status(self, new_record=False):
 		record_showed = (self.list_items.GetSelectedItemCount() > 0) or new_record
-		self.button_apply.Enable(record_showed)
-		self.button_new_item.Enable(self._result is not None)
 		if self._curr_info_panel:
 			self._curr_info_panel.Show(record_showed)
 			self.panel_info.GetSizer().Layout()
