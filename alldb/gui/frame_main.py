@@ -38,6 +38,7 @@ class FrameMain(object):
 		self._icon_provider.load_icons(['alldb'])
 
 		self._load_controls()
+		self._create_toolbar()
 		self._create_bindings()
 		self._setup(db)
 
@@ -155,6 +156,33 @@ class FrameMain(object):
 			self.wnd.Move(position)
 		self.window_1.SetSashPosition(appconfig.get('frame_main', 'win1', 200))
 		self.window_2.SetSashPosition(appconfig.get('frame_main', 'win2', -200))
+
+	def _create_toolbar(self):
+		toolbar = self.wnd.CreateToolBar()
+		iconpr = self._icon_provider
+		tbi = toolbar.AddLabelTool(-1, _('Refresh'), iconpr.get_image('refresh'),
+				shortHelp=_("Refresh"), longHelp=_("Refresh items list"))
+		self.wnd.Bind(wx.EVT_TOOL, self._on_refresh_all, id=tbi.GetId())
+		toolbar.AddSeparator()
+		tbi = toolbar.AddLabelTool(-1, _('Add Item'), wx.ArtProvider.GetBitmap(
+				wx.ART_NEW, wx.ART_TOOLBAR), shortHelp=_('Add item'),
+				longHelp=_('Create new item'))
+		self.wnd.Bind(wx.EVT_TOOL, self._on_btn_new, id=tbi.GetId())
+		tbi = toolbar.AddLabelTool(-1, _('Delete Item'), wx.ArtProvider.GetBitmap(
+				wx.ART_DELETE, wx.ART_TOOLBAR), shortHelp=_('Delete item'),
+				longHelp=_('Delete selected items'))
+		self.wnd.Bind(wx.EVT_TOOL, self._on_menu_item_delete, id=tbi.GetId())
+		toolbar.AddSeparator()
+		tbi = toolbar.AddLabelTool(-1, _('Save Item'), wx.ArtProvider.GetBitmap(
+				wx.ART_TICK_MARK, wx.ART_TOOLBAR), shortHelp=_('Save item'),
+				longHelp=_('Save changes'))
+		self.wnd.Bind(wx.EVT_TOOL, self._on_btn_apply, id=tbi.GetId())
+		toolbar.AddSeparator()
+		tbi = toolbar.AddLabelTool(-1, _('Quit'), wx.ArtProvider.GetBitmap(
+				wx.ART_QUIT, wx.ART_TOOLBAR), shortHelp=_('Quit'),
+				longHelp=_('Close application'))
+		self.wnd.Bind(wx.EVT_TOOL, self._on_menu_exit, id=tbi.GetId())
+		toolbar.Realize()
 
 	def _fill_classes(self, select=None):
 		''' wczytenie listy klas i wypełnienie choicebox-a

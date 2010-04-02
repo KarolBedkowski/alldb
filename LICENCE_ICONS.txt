@@ -1,4 +1,4 @@
-alldb.svg and alldb.pngis a compound of couple icons from Tango Icons Theme.
+All icons come from Tango Icons Theme.
 The whole package's copyright file is as follows:
 
 It was downloaded from http://tango.freedesktop.org/releases/
