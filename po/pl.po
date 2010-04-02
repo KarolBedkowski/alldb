@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alldb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-30 16:51+0200\n"
-"PO-Revision-Date: 2010-03-30 16:53+0200\n"
+"POT-Creation-Date: 2010-04-02 19:22+0200\n"
+"PO-Revision-Date: 2010-04-02 19:25+0200\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -19,6 +19,9 @@ msgstr ""
 
 msgid "AllDB"
 msgstr "AllDB"
+
+msgid "Autosave Changes"
+msgstr "Automatyczne zapisywanie zmian"
 
 msgid "Categories"
 msgstr "Kateogrie"
@@ -307,6 +310,45 @@ msgstr ""
 msgid "Search"
 msgstr "Szukaj"
 
+msgid "Refresh"
+msgstr "Odśwież"
+
+msgid "Refresh items list"
+msgstr "Odświeżenie listy elementów"
+
+msgid "Add Item"
+msgstr "Dodaj element"
+
+msgid "Add item"
+msgstr "Dodaj element"
+
+msgid "Create new item"
+msgstr "Utworzenie nowego elementu"
+
+msgid "Delete Item"
+msgstr "Usuń element"
+
+msgid "Delete item"
+msgstr "Usunąć element"
+
+msgid "Delete selected items"
+msgstr "Usunięcie zaznaczonego elementu"
+
+msgid "Save Item"
+msgstr "Zapisz element"
+
+msgid "Save item"
+msgstr "Zapisz element"
+
+msgid "Save changes"
+msgstr "Zapisanie zmian"
+
+msgid "Quit"
+msgstr "Zakończ"
+
+msgid "Close application"
+msgstr "Zamknięcie programu"
+
 #, python-format
 msgid "%s - AllDB"
 msgstr "%s - AllDB"
@@ -325,6 +367,9 @@ msgstr "%(tag)s (%(items)d)"
 msgid "Save changes?"
 msgstr "Zapisać zmiany?"
 
+msgid "Saved"
+msgstr "Zapisano"
+
 #, python-format
 msgid "one object"
 msgid_plural "%(count)d objects"
@@ -335,7 +380,7 @@ msgstr[2] "%(count)d obiektów"
 msgid "HTML files (*.html, *.htm)|*.html;*.htm|All files|*.*"
 msgstr "Pliki HTML (*.html, *.htm)|*.html;*.htm|Wszystkie pliki|*.*"
 
-msgid "Optimaliz\tation finished."
+msgid "Optimalization finished."
 msgstr "Zakończono optymalizację."
 
 msgid "Title"
@@ -367,9 +412,6 @@ msgstr "nie zapisany"
 
 msgid "new"
 msgstr "new"
-
-msgid "None"
-msgstr "Nic"
 
 msgid "True"
 msgstr "Prawda"
@@ -433,6 +475,9 @@ msgstr ""
 "\n"
 "Szczegóły opisano w pliku COPYING.\n"
 
+#~ msgid "None"
+#~ msgstr "Nic"
+
 #~ msgid "Enter name"
 #~ msgstr "Wprowadź nazwę"
 
@@ -447,9 +492,6 @@ msgstr ""
 
 #~ msgid "Classes"
 #~ msgstr "Klasy"
-
-#~ msgid "Delete field?"
-#~ msgstr "Usunąć pole?"
 
 #~ msgid "&Preferences"
 #~ msgstr "&Preferencje"
