@@ -1,1 +1,2 @@
 /po/*.po		filter=cleanpo
+/data/*.wxg		filter=cleanxml
