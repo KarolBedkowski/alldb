@@ -13,14 +13,19 @@ __release__ = '2009-12-20'
 import os.path
 import time
 import cStringIO
+import threading
 
 import wx
 import wx.lib.scrolledpanel as scrolled
+import wx.lib.newevent
+import wx.lib.imagebrowser as imgbr
 import wx.gizmos as gizmos
 from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
-import  wx.lib.imagebrowser as imgbr
 
 from alldb.gui.dlg_select_tags import DlgSelectTags
+
+
+(RecordUpdatedEvent, EVT_RECORD_UPDATED) = wx.lib.newevent.NewEvent()
 
 
 class PanelInfo(scrolled.ScrolledPanel):
@@ -33,6 +38,8 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self._blobs = {}
 		self._first_field = None
 		self._last_dir = os.path.expanduser('~')
+		self._update_timer = None
+		self._obj_showed = False
 
 		self._COLOR_HIGHLIGHT_BG = wx.SystemSettings.GetColour(
 				wx.SYS_COLOUR_HIGHLIGHT)
@@ -51,6 +58,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 
 	def update(self, obj):
 		self._obj = obj
+		self._obj_showed = False
 		if obj:
 			self._fill_fields_from_obj()
 		else:
@@ -125,9 +133,11 @@ class PanelInfo(scrolled.ScrolledPanel):
 			box = None
 			if ftype == 'bool':
 				ctrl = wx.CheckBox(self, -1)
+				ctrl.Bind(wx.EVT_CHECKBOX , self._on_field_update)
 			elif ftype == 'multi':
 				ctrl = ExpandoTextCtrl(self, -1)
 				self.Bind(EVT_ETC_LAYOUT_NEEDED, self._on_expand_text, ctrl)
+				ctrl.Bind(wx.EVT_TEXT, self._on_field_update)
 			elif ftype == 'date':
 				ctrl = wx.DatePickerCtrl(self, -1,
 						style=wx.DP_DROPDOWN | wx.DP_SHOWCENTURY | wx.DP_ALLOWNONE)
@@ -136,10 +146,12 @@ class PanelInfo(scrolled.ScrolledPanel):
 			elif ftype == 'choice':
 				values = options.get('values') or []
 				ctrl = wx.Choice(self, -1, choices=values)
+				ctrl.Bind(wx.EVT_CHOICE, self._on_field_update)
 			elif ftype == 'image':
 				ctrl, box = self._create_field_image(name, options)
 			else:
 				ctrl = wx.TextCtrl(self, -1)
+				ctrl.Bind(wx.EVT_TEXT, self._on_field_update)
 			self._fields[name] = (ctrl, ftype, _default, options)
 
 			if ctrl:
@@ -220,9 +232,11 @@ class PanelInfo(scrolled.ScrolledPanel):
 			self.lb_created.SetLabel(_('not saved'))
 		self.lb_modified.SetLabel(format_date(obj.updated))
 		self.lb_id.SetLabel(str(obj.oid or _("new")))
+		self._obj_showed = True
 
 	def _fill_fields_clear(self):
 		self._blobs = {}
+		self._obj_showed = False
 
 		for field, ftype, _default, options in self._fields.itervalues():
 			if field:
@@ -312,6 +326,17 @@ class PanelInfo(scrolled.ScrolledPanel):
 		name, ctrl = btn._ctrl
 		self._blobs[name] = None
 		self._show_image(ctrl, None, self._fields[name][3])
+
+	def _on_field_update(self, evt):
+		if self._update_timer is not None:
+			self._update_timer.cancel()
+		if not self._obj_showed:
+			return
+		self._update_timer = threading.Timer(0.5, self._on_timer_update)
+		self._update_timer.start()
+
+	def _on_timer_update(self):
+		wx.PostEvent(self._window.wnd, RecordUpdatedEvent(obj=self._obj))
 
 
 def _create_label(parent, label, colour=None):

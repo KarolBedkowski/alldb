@@ -11,6 +11,8 @@ __release__ = '2009-12-20'
 
 
 import os.path
+import threading
+
 import wx
 from wx import xrc
 
@@ -22,7 +24,7 @@ from alldb.filetypes.html_support import export_html
 from alldb.gui.dialogs import message_boxes as msgbox
 from alldb.model import objects
 
-from .panel_info import PanelInfo
+from .panel_info import PanelInfo, EVT_RECORD_UPDATED
 from .dlg_classes import DlgClasses
 from .dlg_about import show_about_box
 from .dlg_import_csv import DlgImportCsv
@@ -32,9 +34,24 @@ class FrameMain(object):
 	''' Klasa głównego okna programu'''
 	def __init__(self, db):
 		self.res = wxresources.load_xrc_resource('alldb.xrc')
+		self._icon_provider = IconProvider()
+		self._icon_provider.load_icons(['alldb'])
+
 		self._load_controls()
 		self._create_bindings()
 		self._setup(db)
+
+	@property
+	def current_class_id(self):
+		return self._result.cls.oid if self._result else None
+
+	@property
+	def current_obj_id(self):
+		return self._curr_obj.oid if self._curr_obj else None
+
+	@property
+	def current_tags(self):
+		return self._result.tags if self._result else []
 
 	def _setup(self, db):
 		self._db = db
@@ -46,8 +63,6 @@ class FrameMain(object):
 		self._items = None
 		self._tagslist = []
 
-		self._icon_provider = IconProvider()
-		self._icon_provider.load_icons(['alldb'])
 		self.wnd.SetIcon(self._icon_provider.get_icon('alldb'))
 
 		if wx.Platform == '__WXMSW__':
@@ -124,22 +139,11 @@ class FrameMain(object):
 		wnd.Bind(wx.EVT_CHOICE, self._on_filter_select, self.choice_filter)
 		wnd.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_item_deselect,
 				self.list_items)
-		wnd.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_item_select, self.list_items)
-		wnd.Bind(wx.EVT_LIST_COL_CLICK, self._on_items_col_click, self.list_items)
-		wnd.Bind(wx.EVT_BUTTON, self._on_btn_new, self.button_new_item)
-		wnd.Bind(wx.EVT_BUTTON, self._on_btn_apply, self.button_apply)
-
-	@property
-	def current_class_id(self):
-		return self._result.cls.oid if self._result else None
-
-	@property
-	def current_obj_id(self):
-		return self._curr_obj.oid if self._curr_obj else None
-
-	@property
-	def current_tags(self):
-		return self._result.tags if self._result else []
+		self.list_items.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_item_select)
+		self.list_items.Bind(wx.EVT_LIST_COL_CLICK, self._on_items_col_click)
+		self.button_new_item.Bind(wx.EVT_BUTTON, self._on_btn_new)
+		self.button_apply.Bind(wx.EVT_BUTTON, self._on_btn_apply)
+		self.wnd.Bind(EVT_RECORD_UPDATED, self._on_record_updated)
 
 	def _set_size_pos(self):
 		appconfig = AppConfig()
@@ -307,6 +311,7 @@ class FrameMain(object):
 			curr_obj.blobs = blobs
 			curr_obj.set_tags(tags)
 			curr_obj.save()
+			self._set_status_text(_('Saved'))
 			oid = curr_obj.oid
 			reload_items = True
 			if update_lists:
@@ -315,10 +320,10 @@ class FrameMain(object):
 					if ind:
 						indx = ind[0]
 						info = get_object_info(self._result.cls, curr_obj, self._cols)
-						self._items[ind[0]] = info
+						self._items[indx] = info
 						for col, val in enumerate(info[1]):
 							val = objects.get_field_value_human(val)
-							self.list_items.SetStringItem(indx, col + 1, str(val))
+							self.list_items.SetStringItem(indx, col + 1, val)
 						reload_items = False
 
 			self._result = self._db.load_class(self._result.cls.oid)
@@ -470,7 +475,21 @@ class FrameMain(object):
 
 	def _on_menu_optimize_database(self, event):
 		self._db.optimize()
-		msgbox.message_box_info_ex(self.wnd, _('Optimaliz	ation finished.'), None)
+		msgbox.message_box_info_ex(self.wnd, _('Optimalization finished.'), None)
+
+	def _on_record_updated(self, evt):
+		if self._menu_save_on_scroll.IsChecked():
+			self._save_object()
+
+	def _on_refresh_all(self, event):
+		if self._result:
+			self._show_class(self._result.cls.oid)
+
+	def _set_status_text(self, text):
+		self.wnd.SetStatusText(text, 1)
+		def clear():
+			self.wnd.SetStatusText('', 1)
+		threading.Timer(2.0, clear).start()
 
 	@property
 	def selected_tags(self):
