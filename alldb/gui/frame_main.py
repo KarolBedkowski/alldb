@@ -15,6 +15,7 @@ import threading
 
 import wx
 from wx import xrc
+import wx.lib.newevent
 
 from alldb.libs import wxresources
 from alldb.libs.appconfig import AppConfig
@@ -28,6 +29,9 @@ from .panel_info import PanelInfo, EVT_RECORD_UPDATED
 from .dlg_classes import DlgClasses
 from .dlg_about import show_about_box
 from .dlg_import_csv import DlgImportCsv
+
+
+(StatusUpdatedEvent, EVT_STATUS_UPDATED) = wx.lib.newevent.NewEvent()
 
 
 class FrameMain(object):
@@ -63,6 +67,7 @@ class FrameMain(object):
 		self._current_sorting_col = 0
 		self._items = None
 		self._tagslist = []
+		self._status_update_timer = None
 
 		self.wnd.SetIcon(self._icon_provider.get_icon('alldb'))
 
@@ -142,6 +147,7 @@ class FrameMain(object):
 		self.list_items.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_item_select)
 		self.list_items.Bind(wx.EVT_LIST_COL_CLICK, self._on_items_col_click)
 		self.wnd.Bind(EVT_RECORD_UPDATED, self._on_record_updated)
+		self.wnd.Bind(EVT_STATUS_UPDATED, self._on_update_status)
 
 	def _set_size_pos(self):
 		appconfig = AppConfig()
@@ -508,11 +514,18 @@ class FrameMain(object):
 		if self._result:
 			self._show_class(self._result.cls.oid)
 
+	def _on_update_status(self, event):
+		self.wnd.SetStatusText(event.text, 1)
+		self._status_update_timer = None
+
 	def _set_status_text(self, text):
+		if self._status_update_timer is not None:
+			self._status_update_timer.cancel()
 		self.wnd.SetStatusText(text, 1)
 		def clear():
-			self.wnd.SetStatusText('', 1)
-		threading.Timer(2.0, clear).start()
+			wx.PostEvent(self.wnd, StatusUpdatedEvent(text=''))
+		self._status_update_timer = threading.Timer(2.0, clear)
+		self._status_update_timer.start()
 
 	@property
 	def selected_tags(self):
