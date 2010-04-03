@@ -325,7 +325,7 @@ def get_field_value_human(value):
 		return _('True')
 	if value == False:
 		return _('False')
-	return value
+	return unicode(value).replace('\n', '')
 
 
 # vim: encoding=utf8: ff=unix:
