@@ -341,6 +341,8 @@ class FrameMain(object):
 			curr_obj.set_tags(tags)
 			curr_obj.save()
 			self._set_status_text(_('Saved'))
+			if self._curr_info_panel:
+				self._curr_info_panel.update_base_info(curr_obj)
 			oid = curr_obj.oid
 			reload_items = True
 			if update_lists:

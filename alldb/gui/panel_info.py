@@ -64,6 +64,16 @@ class PanelInfo(scrolled.ScrolledPanel):
 		else:
 			self._fill_fields_clear()
 
+	def update_base_info(self, obj):
+		if self._obj.oid != obj.oid:
+			return
+		if obj.oid:
+			self.lb_created.SetLabel(format_date(obj.created))
+		else:
+			self.lb_created.SetLabel(_('not saved'))
+		self.lb_modified.SetLabel(format_date(obj.updated))
+		self.lb_id.SetLabel(str(obj.oid or _("new")))
+
 	def get_values(self):
 		data = {}
 		for name, (field, ftype, _default, options) in self._fields.iteritems():
@@ -227,12 +237,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 				field.SetValue(unicode(value or ''))
 		self.tc_title.SetLabel(obj.title or '')
 		self.tc_tags.SetValue(obj.tags_str)
-		if obj.oid:
-			self.lb_created.SetLabel(format_date(obj.created))
-		else:
-			self.lb_created.SetLabel(_('not saved'))
-		self.lb_modified.SetLabel(format_date(obj.updated))
-		self.lb_id.SetLabel(str(obj.oid or _("new")))
+		self.update_base_info(obj)
 		self._obj_showed = True
 
 	def _fill_fields_clear(self):
