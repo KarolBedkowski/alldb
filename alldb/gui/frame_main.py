@@ -523,7 +523,10 @@ class FrameMain(object):
 			self._status_update_timer.cancel()
 		self.wnd.SetStatusText(text, 1)
 		def clear():
-			wx.PostEvent(self.wnd, StatusUpdatedEvent(text=''))
+			try:
+				wx.PostEvent(self.wnd, StatusUpdatedEvent(text=''))
+			except TypeError:
+				pass
 		self._status_update_timer = threading.Timer(2.0, clear)
 		self._status_update_timer.start()
 

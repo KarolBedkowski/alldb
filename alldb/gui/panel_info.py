@@ -126,7 +126,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self._first_field = None
 		grid = wx.FlexGridSizer(len(self._obj_cls.fields), 2, 3, 6)
 		grid.AddGrowableCol(1)
-		for name, ftype, _default, options in self._obj_cls.fields:
+		for idx, (name, ftype, _default, options) in enumerate(self._obj_cls.fields):
 			grid.Add(wx.StaticText(self, -1, "%s:" % format_label(name)), 0,
 					wx.ALIGN_CENTER_VERTICAL)
 			ctrl = None
@@ -135,9 +135,10 @@ class PanelInfo(scrolled.ScrolledPanel):
 				ctrl = wx.CheckBox(self, -1)
 				ctrl.Bind(wx.EVT_CHECKBOX , self._on_field_update)
 			elif ftype == 'multi':
-				ctrl = ExpandoTextCtrl(self, -1)
-				self.Bind(EVT_ETC_LAYOUT_NEEDED, self._on_expand_text, ctrl)
+				ctrl = ExpandoTextCtrl(self, -1, size=(-1, 50))
 				ctrl.Bind(wx.EVT_TEXT, self._on_field_update)
+				ctrl.Bind(EVT_ETC_LAYOUT_NEEDED, self._on_expand_text)
+				grid.AddGrowableRow(idx)
 			elif ftype == 'date':
 				ctrl = wx.DatePickerCtrl(self, -1,
 						style=wx.DP_DROPDOWN | wx.DP_SHOWCENTURY | wx.DP_ALLOWNONE)
@@ -281,6 +282,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self.Layout()
 		self.GetParent().Refresh()
 		self.SetupScrolling()
+		evt.Skip()
 
 	def _on_btn_choice_tags(self, evt):
 		cls_tags = self._window.current_tags.copy()
@@ -336,7 +338,10 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self._update_timer.start()
 
 	def _on_timer_update(self):
-		wx.PostEvent(self._window.wnd, RecordUpdatedEvent(obj=self._obj))
+		try:
+			wx.PostEvent(self._window.wnd, RecordUpdatedEvent(obj=self._obj))
+		finally:
+			pass
 
 
 def _create_label(parent, label, colour=None):
