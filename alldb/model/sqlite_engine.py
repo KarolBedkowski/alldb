@@ -14,6 +14,8 @@ import logging
 import sqlite3
 import os
 import os.path
+import base64
+import gzip
 try:
 	import cjson
 	_DECODER = cjson.decode
@@ -221,6 +223,21 @@ class SqliteEngineTx(object):
 			self._cursor.execute('update blobs set field=? where object_id in '
 					'(select id from objects where class_id=?) and field=?',
 					(new_name, class_id, old_name))
+
+	def create_backup(self, filename):
+		bfile =  gzip.open(filename, 'w')
+		self._cursor.execute('select id, name, data from classes')
+		for row in self._cursor:
+			bfile.write('CLS:' + _ENCODER(row) + '\n')
+		self._cursor.execute('select id, class_id, data from objects')
+		for row in self._cursor:
+			bfile.write('OBJ:' + _ENCODER(row) + '\n')
+		self._cursor.execute('select object_id, field, data from blobs')
+		for object_id, field, data in self._cursor:
+			sdata = dict(object_id=object_id, field=field,
+					data=base64.b64encode(data))
+			bfile.write('BLO:' + _ENCODER(sdata) + '\n')
+		bfile.close()
 
 
 # vim: encoding=utf8: ff=unix:
