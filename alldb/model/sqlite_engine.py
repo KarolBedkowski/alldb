@@ -60,7 +60,7 @@ class SqliteEngine(object):
 		if not self.database:
 			return False
 		cur = self.database.cursor()
-		cur.execute('select 1 from objects where oid=?', (oid, ))
+		cur.execute('select 1 from objects where id=?', (oid, ))
 		obj = cur.fetchone()
 		cur.close()
 		return bool(obj)
@@ -152,7 +152,7 @@ class SqliteEngineTx(object):
 		if not hasattr(oid, '__iter__'):
 			oid = (oid, )
 		for ioid in oid:
-			self._cursor.execute('delete from objects where oid=?', (ioid, ))
+			self._cursor.execute('delete from objects where id=?', (ioid, ))
 
 	def put_object(self, objs):
 		_LOG.debug('SqliteEngineTx.put(%r)', objs)
@@ -160,10 +160,10 @@ class SqliteEngineTx(object):
 		for obj in objs:
 			data = _ENCODER(obj.dump())
 			if obj.oid:
-				cur.execute('update objects set class_id=?, data=? where oid=?',
+				cur.execute('update objects set class_id=?, data=? where id=?',
 						(obj.class_id, data, obj.oid))
 			else:
-				cur.execute('insert into objects (oid, class_id, data) values (?, ?, ?)',
+				cur.execute('insert into objects (id, class_id, data) values (?, ?, ?)',
 						(obj.oid, obj.class_id, data))
 				obj.oid = cur.lastrowid
 			obj.sldb_context = self._context
