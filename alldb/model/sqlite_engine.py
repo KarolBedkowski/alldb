@@ -216,5 +216,11 @@ class SqliteEngineTx(object):
 			self._cursor.execute('insert into blobs (object_id, field, data) values '\
 					'(?, ?, ?)', (object_id, field, sqlite3.Binary(data)))
 
+	def rename_fields_in_blobs(self, class_id, changes):
+		for old_name, new_name in changes:
+			self._cursor.execute('update blobs set field=? where object_id in '
+					'(select id from objects where class_id=?) and field=?',
+					(new_name, class_id, old_name))
+
 
 # vim: encoding=utf8: ff=unix:

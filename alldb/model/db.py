@@ -52,7 +52,7 @@ class Db(object):
 						obj = self._create_single_object(oid, class_id, data)
 						obj.update_fields_names(icls.changed_fields_names)
 						trans.put_object((obj, ))
-						# todo: fix blobs
+					trans.rename_fields_in_blobs(icls.oid, icls.changed_fields_names)
 			trans.put_class(cls)
 		self._engine.sync()
 
