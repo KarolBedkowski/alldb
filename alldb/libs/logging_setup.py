@@ -19,11 +19,8 @@ import imp
 import tempfile
 import time
 
+from . import appconfig
 
-def _is_frozen():
-	return (hasattr(sys, "frozen")		# new py2exe
-			or hasattr(sys, "importers")		# old py2exe
-			or imp.is_frozen("__main__"))		# tools/freeze
 
 
 def logging_setup(filename, debug=False):
@@ -37,7 +34,7 @@ def logging_setup(filename, debug=False):
 		if not log_dir_access:
 			create_temp = True
 	else:
-		if _is_frozen() or not log_dir_access:
+		if appconfig.is_frozen() or not log_dir_access:
 			create_temp = True
 
 	if create_temp:
