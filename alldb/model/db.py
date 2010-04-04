@@ -118,6 +118,10 @@ class Db(object):
 		"""optimize sql database"""
 		self._engine.optimize()
 
+	def create_backup(self, filename):
+		with self._engine.create_transaction(self) as trans:
+			trans.create_backup(filename)
+
 	def _create_class_object(self, cid, name, data):
 		cls = ADObjectClass(cid, name, self)
 		cls.restore(data)

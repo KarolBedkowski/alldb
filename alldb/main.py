@@ -105,6 +105,7 @@ def run():
 
 	config['_DB'] = db = Db(db_filename)
 	db.open()
+	db.create_backup('/home/k/backup.txt')
 
 	wx.InitAllImageHandlers()
 	main_frame = FrameMain(db)
