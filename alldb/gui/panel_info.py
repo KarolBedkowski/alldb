@@ -149,7 +149,8 @@ class PanelInfo(scrolled.ScrolledPanel):
 				ctrl = wx.CheckBox(self, -1)
 				ctrl.Bind(wx.EVT_CHECKBOX , self._on_field_update)
 			elif ftype == 'multi':
-				ctrl = ExpandoTextCtrl(self, -1, size=(-1, 50))
+				ctrl = ExpandoTextCtrl(self, -1)
+				ctrl.SetMaxHeight(200)
 				ctrl.Bind(wx.EVT_TEXT, self._on_field_update)
 				ctrl.Bind(EVT_ETC_LAYOUT_NEEDED, self._on_expand_text)
 				grid.AddGrowableRow(idx)
@@ -237,6 +238,8 @@ class PanelInfo(scrolled.ScrolledPanel):
 				img = obj.get_blob(name)
 				self._show_image(field, img, options)
 				self._blobs[name] = img
+			elif ftype == 'multi':
+				field.WriteText(unicode(value or ''))
 			else:
 				field.SetValue(unicode(value or ''))
 		self.tc_tags.SetValue(obj.tags_str)
@@ -263,8 +266,10 @@ class PanelInfo(scrolled.ScrolledPanel):
 						field.SetSelection(-1)
 				elif ftype == 'image':
 					self._show_image(field, None, options)
+				elif ftype == 'multi':
+					field.WriteText(unicode(_default))
 				else:
-					field.SetValue(str(_default))
+					field.SetValue(unicode(_default))
 
 		self.tc_title.SetValue('')
 		self.tc_tags.SetValue('')
@@ -342,6 +347,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		if not self._obj_showed:
 			return
 		self._update_timer.Start(500, True)
+		evt.Skip()
 
 	def _on_timer(self, event):
 		if event.Id == _ID_TIMER_SAVE:
