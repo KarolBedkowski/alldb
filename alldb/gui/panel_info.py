@@ -13,7 +13,6 @@ __release__ = '2009-12-20'
 import os.path
 import time
 import cStringIO
-import threading
 
 import wx
 import wx.lib.scrolledpanel as scrolled
@@ -28,6 +27,8 @@ from alldb.gui.dlg_select_tags import DlgSelectTags
 (RecordUpdatedEvent, EVT_RECORD_UPDATED) = wx.lib.newevent.NewEvent()
 
 
+_ID_TIMER_SAVE = 1
+
 class PanelInfo(scrolled.ScrolledPanel):
 	def __init__(self, window, parent, obj_class, *argv, **kwarg):
 		scrolled.ScrolledPanel.__init__(self, parent, -1, *argv, **kwarg)
@@ -38,7 +39,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self._blobs = {}
 		self._first_field = None
 		self._last_dir = os.path.expanduser('~')
-		self._update_timer = None
+		self._update_timer = wx.Timer(self, _ID_TIMER_SAVE)
 		self._obj_showed = False
 
 		self._COLOR_HIGHLIGHT_BG = wx.SystemSettings.GetColour(
@@ -55,6 +56,8 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self.SetSizer(main_grid)
 		self.SetAutoLayout(1)
 		self.SetupScrolling()
+
+		self.Bind(wx.EVT_TIMER, self._on_timer)
 
 	def update(self, obj):
 		self._obj = obj
@@ -335,18 +338,18 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self._show_image(ctrl, None, self._fields[name][3])
 
 	def _on_field_update(self, evt):
-		if self._update_timer is not None:
-			self._update_timer.cancel()
+		self._update_timer.Stop()
 		if not self._obj_showed:
 			return
-		self._update_timer = threading.Timer(0.5, self._on_timer_update)
-		self._update_timer.start()
+		self._update_timer.Start(500, True)
 
-	def _on_timer_update(self):
-		try:
-			wx.PostEvent(self._window.wnd, RecordUpdatedEvent(obj=self._obj))
-		finally:
-			pass
+	def _on_timer(self, event):
+		if event.Id == _ID_TIMER_SAVE:
+			try:
+				wx.PostEvent(self._window.wnd, RecordUpdatedEvent(obj=self._obj))
+			finally:
+				pass
+
 
 
 def _create_label(parent, label, colour=None):
