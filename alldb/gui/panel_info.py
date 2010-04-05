@@ -70,6 +70,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 	def update_base_info(self, obj):
 		if self._obj.oid != obj.oid:
 			return
+		self.tc_title.SetLabel(obj.title or '')
 		if obj.oid:
 			self.lb_created.SetLabel(format_date(obj.created))
 		else:
@@ -238,7 +239,6 @@ class PanelInfo(scrolled.ScrolledPanel):
 				self._blobs[name] = img
 			else:
 				field.SetValue(unicode(value or ''))
-		self.tc_title.SetLabel(obj.title or '')
 		self.tc_tags.SetValue(obj.tags_str)
 		self.update_base_info(obj)
 		self._obj_showed = True
