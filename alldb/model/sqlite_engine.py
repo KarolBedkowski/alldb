@@ -16,6 +16,7 @@ import os
 import os.path
 import base64
 import gzip
+import time
 try:
 	import cjson
 	_DECODER = cjson.decode
@@ -226,12 +227,15 @@ class SqliteEngineTx(object):
 
 	def create_backup(self, filename):
 		bfile =  gzip.open(filename, 'w')
+		bfile.write('ALLDB_BACKUP|1.0|' + time.asctime() + '\n')
 		self._cursor.execute('select id, name, data from classes')
-		for row in self._cursor:
-			bfile.write('CLS:' + _ENCODER(row) + '\n')
+		for oid, name, data in self._cursor:
+			irow = dict(id=oid, name=name, data=data)
+			bfile.write('CLS:' + _ENCODER(irow) + '\n')
 		self._cursor.execute('select id, class_id, data from objects')
-		for row in self._cursor:
-			bfile.write('OBJ:' + _ENCODER(row) + '\n')
+		for oid, class_id, data in self._cursor:
+			irow = dict(id=oid, class_id=class_id, data=data)
+			bfile.write('OBJ:' + _ENCODER(irow) + '\n')
 		self._cursor.execute('select object_id, field, data from blobs')
 		for object_id, field, data in self._cursor:
 			sdata = dict(object_id=object_id, field=field,
