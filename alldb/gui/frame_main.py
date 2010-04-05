@@ -502,7 +502,11 @@ class FrameMain(object):
 		show_about_box(self.wnd)
 
 	def _on_menu_optimize_database(self, event):
-		self._db.optimize()
+		self.wnd.SetCursor(wx.HOURGLASS_CURSOR)
+		try:
+			self._db.optimize()
+		finally:
+			self.wnd.SetCursor(wx.STANDARD_CURSOR)
 		msgbox.message_box_info_ex(self.wnd, _('Optimalization finished.'), None)
 
 	def _on_record_updated(self, evt):
