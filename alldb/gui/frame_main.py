@@ -140,6 +140,10 @@ class FrameMain(object):
 		wnd.Bind(wx.EVT_MENU, self._on_menu_optimize_database,
 				id=xrc.XRCID('menu_optimize_database'))
 		wnd.Bind(wx.EVT_MENU, self._on_btn_apply, id=xrc.XRCID('menu_save_changes'))
+		wnd.Bind(wx.EVT_MENU, self._on_menu_backup_create,
+				id=xrc.XRCID('menu_backup_create'))
+		wnd.Bind(wx.EVT_MENU, self._on_menu_backup_restore,
+				id=xrc.XRCID('menu_backup_restore'))
 		wnd.Bind(wx.EVT_CHOICE, self._on_class_select, self.choice_klasa)
 		wnd.Bind(wx.EVT_CHOICE, self._on_filter_select, self.choice_filter)
 		wnd.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_item_deselect,
@@ -531,6 +535,20 @@ class FrameMain(object):
 		with self._wait_cursor():
 			self._db.optimize()
 		msgbox.message_box_info_ex(self.wnd, _('Optimalization finished.'), None)
+
+	def _on_menu_backup_create(self, event):
+		dlg = wx.FileDialog(self.wnd, _('Choice a Backup File'),
+				wildcard=_('Backup files (*.alldb_bak)|*.alldb_bak|All files|*.*'),
+				style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+		if dlg.ShowModal() == wx.ID_OK:
+			filepath = dlg.GetPath()
+			if not os.path.splitext(filepath)[1]:
+				filepath += '.alldb_bak'
+			self._db.create_backup(filepath)
+		dlg.Destroy()
+
+	def _on_menu_backup_restore(self, event):
+		print '_on_menu_backup_restore'
 
 	def _on_record_updated(self, evt):
 		if self._menu_save_on_scroll.IsChecked():

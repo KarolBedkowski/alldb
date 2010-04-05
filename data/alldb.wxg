@@ -38,6 +38,23 @@
                         <id>---</id>
                         <name>---</name>
                     </item>
+                    <menu name="" label="&amp;Backup">
+                        <item>
+                            <label>&amp;Create...</label>
+                            <id>1013</id>
+                            <name>menu_backup_create</name>
+                        </item>
+                        <item>
+                            <label>&amp;Restore...</label>
+                            <id>1014</id>
+                            <name>menu_backup_restore</name>
+                        </item>
+                    </menu>
+                    <item>
+                        <label>---</label>
+                        <id>---</id>
+                        <name>---</name>
+                    </item>
                     <item>
                         <label>Optimize Database</label>
                         <name>menu_optimize_database</name>
@@ -109,7 +126,7 @@
                 <menu name="" itemid="1009" label="&amp;Help">
                     <item>
                         <label>&amp;About</label>
-                        <id>10010</id>
+                        <id>1010</id>
                         <name>menu_about</name>
                         <handler>_on_menu_about</handler>
                     </item>
@@ -621,7 +638,6 @@
                                 <option>0</option>
                                 <object class="wxButton" name="button_new" base="EditButton">
                                     <stockitem>ADD</stockitem>
-                                    <label>Add</label>
                                     <events>
                                         <handler event="EVT_BUTTON">_on_btn_new</handler>
                                     </events>
