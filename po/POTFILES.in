@@ -5,6 +5,7 @@
 ./alldb/configuration.py
 ./alldb/filetypes/__init__.py
 ./alldb/filetypes/csv_support.py
+./alldb/filetypes/exporting.py
 ./alldb/gui/__init__.py
 ./alldb/gui/dialogs/__init__.py
 ./alldb/gui/dialogs/dialogs.py

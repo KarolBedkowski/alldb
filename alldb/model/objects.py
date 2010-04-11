@@ -58,6 +58,17 @@ class BaseObject(object):
 		obj.data = self.data.copy()
 		return obj
 
+	def export(self):
+		data = self.dump()
+		data['oid'] = self.oid
+		data['updated'] = self.updated
+		return data
+
+	def import_obj(self, data):
+		self.restore(data)
+		self.oid = data.get('oid')
+		self.updated = data.get('updated')
+
 
 class ADObjectClass(BaseObject):
 	__persistattr__ = ('data', 'default_data', 'title_expr', 'title_show',
@@ -118,6 +129,15 @@ class ADObjectClass(BaseObject):
 			if fld[0] == field:
 				return fld
 		return None
+
+	def export(self):
+		exp = BaseObject.export(self)
+		exp['name'] = self.name
+		return exp
+
+	def import_obj(self, data):
+		BaseObject.import_obj(self, data)
+		self.name = data.get('name')
 
 
 class ADObject(BaseObject):

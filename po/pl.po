@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alldb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-05 12:26+0200\n"
-"PO-Revision-Date: 2010-04-05 12:27+0200\n"
+"POT-Creation-Date: 2010-04-11 15:04+0200\n"
+"PO-Revision-Date: 2010-04-11 15:08+0200\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -24,10 +24,13 @@ msgid "Autosave Changes"
 msgstr "Automatyczne zapisywanie zmian"
 
 msgid "Categories"
-msgstr "Kateogrie"
+msgstr "Kategorie"
 
 msgid "Category"
-msgstr "Kateogria"
+msgstr "Kategoria"
+
+msgid "Create category from template file"
+msgstr "Utworzenie kategorii na postawie szablonu"
 
 msgid "Create title expresion automatically"
 msgstr "Utwórz wyrażenie tytułu automatycznie"
@@ -40,6 +43,12 @@ msgstr "Określ wartości"
 
 msgid "Duplicate _Item\\tCtrl+D"
 msgstr "_Powiel element\\tCtrl+D"
+
+msgid "E_xport"
+msgstr "E_ksportuj"
+
+msgid "Export selected category"
+msgstr "Eksportuj zaznaczoną kategorię"
 
 msgid "Export to _CSV..."
 msgstr "Eksport do _CSV..."
@@ -128,6 +137,9 @@ msgstr "_Plik"
 msgid "_Help"
 msgstr "_Pomoc"
 
+msgid "_Import"
+msgstr "_Importuj"
+
 msgid "_Import from CSV..."
 msgstr "_Import z CSV..."
 
@@ -154,6 +166,21 @@ msgstr "wieloliniowe"
 
 msgid "text"
 msgstr "tekst"
+
+msgid "Export category"
+msgstr "Eksport kategorii"
+
+msgid "Category Files (*.category)|*.category|All files|*.*"
+msgstr "Pliki kategorii (*.category)|*.category|Wszystkie pliki|*.*"
+
+msgid "Import category"
+msgstr "Import kategorii"
+
+msgid "Invalid export file"
+msgstr "Niewłaściwy plik eksportu"
+
+msgid "Invalid data in export file"
+msgstr "Niewłaściwa zawartość pliku eksportu"
 
 #, python-format
 msgid ""
@@ -201,6 +228,9 @@ msgstr "Anuluj"
 
 msgid "selected category and ALL items"
 msgstr "zaznaczone kategorie i wszystkie elementy"
+
+msgid "Cannot import file"
+msgstr "Nie można zaimportować pliku"
 
 msgid "string"
 msgstr "tekst"

@@ -27,7 +27,7 @@ def dialog_file_save(parent, title, wildcard, filename=None, default_dir=None):
 		dlg = wx.FileDialog(parent, title, style=wx.SAVE, wildcard=wildcard,
 				defaultDir=default_dir)
 	if filename is not None:
-		dlg.SetPath(filename)
+		dlg.SetFilename(filename)
 	if dlg.ShowModal() == wx.ID_OK:
 		filename = dlg.GetPath()
 	else:

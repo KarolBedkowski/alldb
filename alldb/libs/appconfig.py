@@ -35,6 +35,7 @@ class AppConfig(Singleton):
 		self.main_dir = self._get_main_dir()
 		self.config_path = self._get_config_path(app_name)
 		self.data_dir = os.path.join(self.main_dir, configuration.DATA_DIR)
+		self.templates_dir = os.path.join(self.data_dir, 'templates')
 		self._filename = os.path.join(self.config_path, filename)
 		self._config = ConfigParser.SafeConfigParser()
 		self.clear()
