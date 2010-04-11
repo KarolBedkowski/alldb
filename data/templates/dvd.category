@@ -1,0 +1,2 @@
+AllDb|Export|Category|1.0|Sun Apr 11 15:32:14 2010
+{"updated": null, "name": "dvd", "fields": [["title", "str", "", {"in_title": false, "in_list": true}], ["year", "str", "", {"in_title": false, "in_list": false}], ["genre", "str", "", {"in_title": false, "in_list": false}], ["runtime", "str", "", {"in_title": false, "in_list": false}], ["cast", "list", "", {"in_title": false, "in_list": false}]], "title_expr": "%(title)", "oid": 8, "title_show": false, "title_auto": true, "data": {}, "default_data": null}
