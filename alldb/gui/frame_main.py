@@ -200,11 +200,16 @@ class FrameMain(object):
 			return classes[cls2select].oid
 		return classes[0].oid if classes else None
 
-	def _create_info_panel(self, cls):
-		''' utworzenie panela z polami dla podanej klasy '''
+	def _hide_info_panel(self):
 		if self._curr_info_panel:
 			self._curr_info_panel.Destroy()
-		panel = PanelInfo(self, self.panel_info, cls)
+			self._curr_info_panel = None
+
+	def _create_info_panel(self):
+		''' utworzenie panela z polami dla podanej klasy '''
+		if self._curr_info_panel is not None:
+			return self._curr_info_panel
+		panel = PanelInfo(self, self.panel_info, self._result.cls)
 		panel_info_sizer = self.panel_info.GetSizer()
 		panel_info_sizer.Add(panel, 1, wx.EXPAND)
 		panel_info_sizer.Layout()
@@ -224,9 +229,8 @@ class FrameMain(object):
 		''' wyświetlenie klasy - listy tagów i obiektów '''
 		curr_class_oid = self.current_class_id
 		result = self._db.load_class(class_oid)
-		if not curr_class_oid or curr_class_oid != class_oid \
-				or self._curr_info_panel is None:
-			self._create_info_panel(result.cls)
+		if not curr_class_oid or curr_class_oid != class_oid:
+			self._hide_info_panel()
 			self._curr_obj = None
 		self._result = result
 		self._create_columns_in_list(result.cls)
@@ -387,6 +391,7 @@ class FrameMain(object):
 			return
 		self._save_object(True, True, oid)
 		self._curr_obj = self._db.get_object(oid)
+		self._create_info_panel()
 		self._curr_info_panel.update(self._curr_obj)
 		self._set_buttons_status()
 
@@ -397,6 +402,7 @@ class FrameMain(object):
 	def _on_btn_new(self, event):
 		self._save_object(True, True)
 		self._curr_obj = self._result.cls.create_object()
+		self._create_info_panel()
 		self._curr_info_panel.update(self._curr_obj)
 		self._set_buttons_status(True)
 		self._curr_info_panel.set_focus()
@@ -452,6 +458,7 @@ class FrameMain(object):
 	def _on_menu_item_duplicate(self, event):
 		if self._curr_obj:
 			self._curr_obj = self._curr_obj.duplicate()
+			self._create_info_panel()
 			self._curr_info_panel.update(self._curr_obj)
 			self._set_buttons_status()
 			self._curr_info_panel.set_focus()
@@ -459,9 +466,7 @@ class FrameMain(object):
 	def _on_menu_categories(self, event):
 		current_class_oid = self.current_class_id
 		DlgClasses(self.wnd, self._db).run()
-		if self._curr_info_panel:
-			self._curr_info_panel.Destroy()
-			self._curr_info_panel = None
+		self._hide_info_panel()
 		current_class_oid = self._fill_classes(current_class_oid)
 		self._show_class(current_class_oid)
 
