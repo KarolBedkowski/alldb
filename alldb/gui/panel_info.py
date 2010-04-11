@@ -228,7 +228,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 				date = strdate2wxdate(value)
 				field.SetValue(date)
 			elif ftype == 'list':
-				field.SetStrings(value)
+				field.SetStrings(value or '')
 			elif ftype == 'choice':
 				if value:
 					field.SetStringSelection(value)
