@@ -32,7 +32,8 @@ _ID_TIMER_SAVE = 1
 
 class PanelInfo(scrolled.ScrolledPanel):
 	def __init__(self, window, parent, obj_class, *argv, **kwarg):
-		scrolled.ScrolledPanel.__init__(self, parent, -1, *argv, **kwarg)
+		scrolled.ScrolledPanel.__init__(self, parent, -1,
+				style=wx.FULL_REPAINT_ON_RESIZE)
 		self._window = window
 		self._obj = None
 		self._obj_cls = obj_class
@@ -220,6 +221,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		return box
 
 	def _fill_fields_from_obj(self):
+		self.Freeze()
 		obj = self._obj
 		for name, (field, ftype, _default, options) in self._fields.iteritems():
 			if not field:
@@ -242,17 +244,19 @@ class PanelInfo(scrolled.ScrolledPanel):
 				self._show_image(field, img, options)
 				self._blobs[name] = img
 			elif ftype == 'multi':
+				field.SetValue(u'')
 				field.WriteText(unicode(value or ''))
 			else:
 				field.SetValue(unicode(value or ''))
 		self.tc_tags.SetValue(obj.tags_str)
 		self.update_base_info(obj)
 		self._obj_showed = True
+		self.Thaw()
 
 	def _fill_fields_clear(self):
 		self._blobs = {}
 		self._obj_showed = False
-
+		self.Freeze()
 		for field, ftype, _default, options in self._fields.itervalues():
 			if field:
 				if ftype == 'bool':
@@ -270,6 +274,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 				elif ftype == 'image':
 					self._show_image(field, None, options)
 				elif ftype == 'multi':
+					field.SetValue(u'')
 					field.WriteText(unicode(_default))
 				else:
 					field.SetValue(unicode(_default))
@@ -279,6 +284,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self.lb_modified.SetLabel('')
 		self.lb_created.SetLabel('')
 		self.lb_id.SetLabel('')
+		self.Thaw()
 
 	def _show_image(self, ctrl, img, options):
 		if img:
@@ -347,9 +353,8 @@ class PanelInfo(scrolled.ScrolledPanel):
 
 	def _on_field_update(self, evt):
 		self._update_timer.Stop()
-		if not self._obj_showed:
-			return
-		self._update_timer.Start(500, True)
+		if self._obj_showed:
+			self._update_timer.Start(500, True)
 		evt.Skip()
 
 	def _on_timer(self, event):
