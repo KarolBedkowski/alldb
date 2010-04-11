@@ -20,6 +20,7 @@ import wx.lib.newevent
 import wx.lib.imagebrowser as imgbr
 import wx.gizmos as gizmos
 from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
+from wx.lib import masked
 
 from alldb.gui.dlg_select_tags import DlgSelectTags
 
@@ -165,6 +166,8 @@ class PanelInfo(scrolled.ScrolledPanel):
 				ctrl.Bind(wx.EVT_CHOICE, self._on_field_update)
 			elif ftype == 'image':
 				ctrl, box = self._create_field_image(name, options)
+			elif ftype == 'numeric':
+				ctrl = masked.NumCtrl(self, -1, groupDigits=False, allowNone=True)
 			else:
 				ctrl = wx.TextCtrl(self, -1)
 				ctrl.Bind(wx.EVT_TEXT, self._on_field_update)

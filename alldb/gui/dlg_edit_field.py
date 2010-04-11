@@ -41,6 +41,7 @@ class DlgEditField(object):
 		self.rb_type_list = xrc.XRCCTRL(self.wnd, 'rb_type_list')
 		self.rb_type_choice = xrc.XRCCTRL(self.wnd, 'rb_type_choice')
 		self.rb_type_image = xrc.XRCCTRL(self.wnd, 'rb_type_image')
+		self.rb_type_numeric = xrc.XRCCTRL(self.wnd, 'rb_type_numeric')
 		self.tc_name = xrc.XRCCTRL(self.wnd, 'tc_name')
 		self.tc_default = xrc.XRCCTRL(self.wnd, 'tc_default')
 		self.cb_show_in_title = xrc.XRCCTRL(self.wnd, 'cb_show_in_title')
@@ -58,7 +59,8 @@ class DlgEditField(object):
 			'multi': self.rb_type_multiline,
 			'list': self.rb_type_list,
 			'choice': self.rb_type_choice,
-			'image': self.rb_type_image, }
+			'image': self.rb_type_image,
+			'numeric': self.rb_type_numeric}
 
 	def _create_bindings(self):
 		wnd = self.wnd
