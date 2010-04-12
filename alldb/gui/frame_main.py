@@ -3,6 +3,7 @@
 """
 Główne okno programu
 """
+from __future__ import with_statement
 
 __author__ = 'Karol Będkowski'
 __copyright__ = 'Copyright (C) Karol Będkowski 2009,2010'
@@ -11,6 +12,7 @@ __release__ = '2009-12-20'
 
 
 import os.path
+from contextlib import contextmanager
 
 import wx
 from wx import xrc
@@ -30,6 +32,7 @@ from .dlg_import_csv import DlgImportCsv
 
 
 _ID_TIMER_CLEAR_STATUS = 1
+
 
 class FrameMain(object):
 	''' Klasa głównego okna programu'''
@@ -184,6 +187,14 @@ class FrameMain(object):
 		self.wnd.Bind(wx.EVT_TOOL, self._on_menu_exit, id=tbi.GetId())
 		toolbar.Realize()
 
+	@contextmanager
+	def _wait_cursor(self):
+		self.wnd.SetCursor(wx.HOURGLASS_CURSOR)
+		try:
+			yield
+		finally:
+			wx.SetCursor(wx.NullCursor)
+
 	def _fill_classes(self, select=None):
 		''' wczytenie listy klas i wypełnienie choicebox-a
 		@select - oid klasy do zaznaczenia lib None'''
@@ -227,21 +238,22 @@ class FrameMain(object):
 
 	def _show_class(self, class_oid):
 		''' wyświetlenie klasy - listy tagów i obiektów '''
-		curr_class_oid = self.current_class_id
-		result = self._db.load_class(class_oid)
-		if not curr_class_oid or curr_class_oid != class_oid:
-			self._hide_info_panel()
-			self._curr_obj = None
-		self._result = result
-		self._create_columns_in_list(result.cls)
-		self._fill_items()
-		self._set_buttons_status()
-		self.choice_filter.Clear()
-		for field in result.fields:
-			self.choice_filter.Append(field, field)
-		self.choice_filter.SetSelection(0)
-		self._fill_tags((curr_class_oid != class_oid))
-		self.wnd.SetTitle(_('%s - AllDB') % result.cls.name)
+		with self._wait_cursor():
+			curr_class_oid = self.current_class_id
+			result = self._db.load_class(class_oid)
+			if not curr_class_oid or curr_class_oid != class_oid:
+				self._hide_info_panel()
+				self._curr_obj = None
+			self._result = result
+			self._create_columns_in_list(result.cls)
+			self._fill_items()
+			self._set_buttons_status()
+			self.choice_filter.Clear()
+			for field in result.fields:
+				self.choice_filter.Append(field, field)
+			self.choice_filter.SetSelection(0)
+			self._fill_tags((curr_class_oid != class_oid))
+			self.wnd.SetTitle(_('%s - AllDB') % result.cls.name)
 
 	def _fill_items(self, select=None, do_filter=True, do_sort=True):
 		''' wyświetlenie listy elemtów aktualnej klasy, opcjonalne zaznaczenie
@@ -334,34 +346,38 @@ class FrameMain(object):
 		curr_obj = self._curr_obj
 		if curr_obj.check_for_changes(data, tags, blobs):
 			if ask_for_save:
-				if not msgbox.message_box_save_confirm(self.wnd, _('Save changes?')):
+				if not msgbox.message_box_save_confirm(self.wnd,
+						_('Save changes?')):
 					return
 
-			curr_obj.data.update(data)
-			curr_obj.blobs = blobs
-			curr_obj.set_tags(tags)
-			curr_obj.save()
-			self._set_status_text(_('Saved'))
-			if self._curr_info_panel:
-				self._curr_info_panel.update_base_info(curr_obj)
-			oid = curr_obj.oid
-			reload_items = True
-			if update_lists:
-				if self._items:
-					ind = [idx for idx, (ioid, item) in enumerate(self._items) if ioid == oid]
-					if ind:
-						indx = ind[0]
-						info = get_object_info(self._result.cls, curr_obj, self._cols)
-						self._items[indx] = info
-						for col, val in enumerate(info[1]):
-							val = objects.get_field_value_human(val)
-							self.list_items.SetStringItem(indx, col + 1, val)
-						reload_items = False
+			with self._wait_cursor():
+				curr_obj.data.update(data)
+				curr_obj.blobs = blobs
+				curr_obj.set_tags(tags)
+				curr_obj.save()
+				self._set_status_text(_('Saved'))
+				if self._curr_info_panel:
+					self._curr_info_panel.update_base_info(curr_obj)
+				oid = curr_obj.oid
+				reload_items = True
+				if update_lists:
+					if self._items:
+						ind = [idx for idx, (ioid, item) in enumerate(self._items)
+								if ioid == oid]
+						if ind:
+							indx = ind[0]
+							info = get_object_info(self._result.cls, curr_obj,
+									self._cols)
+							self._items[indx] = info
+							for col, val in enumerate(info[1]):
+								val = objects.get_field_value_human(val)
+								self.list_items.SetStringItem(indx, col + 1, val)
+							reload_items = False
 
-			self._result = self._db.load_class(self._result.cls.oid)
-			self._fill_tags()
-			if reload_items:
-				self._fill_items(select=(select or oid))
+				self._result = self._db.load_class(self._result.cls.oid)
+				self._fill_tags()
+				if reload_items:
+					self._fill_items(select=(select or oid))
 
 	def _on_close(self, evt):
 		appconfig = AppConfig()
@@ -397,7 +413,8 @@ class FrameMain(object):
 
 	def _on_items_col_click(self, event):
 		self._current_sorting_col = event.m_col
-		self._fill_items(self.current_obj_id, do_filter=False)
+		with self._wait_cursor():
+			self._fill_items(self.current_obj_id, do_filter=False)
 
 	def _on_btn_new(self, event):
 		self._save_object(True, True)
@@ -412,16 +429,19 @@ class FrameMain(object):
 		self._curr_info_panel.update(self._curr_obj)
 
 	def _on_clb_tags(self, evt):
-		self._fill_items()
+		with self._wait_cursor():
+			self._fill_items()
 		evt.Skip()
 
 	def _on_search(self, evt):
-		self._fill_items(do_sort=False)
+		with self._wait_cursor():
+			self._fill_items(do_sort=False)
 
 	def _on_search_cancel(self, event):
 		if self.searchbox.GetValue():
 			self.searchbox.SetValue('')
-			self._fill_items(do_sort=False)
+			with self._wait_cursor():
+				self._fill_items(do_sort=False)
 
 	def _on_menu_exit(self, event):
 		self._save_object(True, False)
@@ -440,20 +460,21 @@ class FrameMain(object):
 
 		msg = ngettext('one object', '%(count)d objects', cnt)
 		if msgbox.message_box_delete_confirm(self.wnd, msg % dict(count=cnt)):
-			items_to_delete = []
-			itemid = -1
-			while True:
-				itemid = litems.GetNextItem(itemid, wx.LIST_NEXT_ALL,
-						wx.LIST_STATE_SELECTED)
-				if itemid == -1:
-					break
-				items_to_delete.append(litems.GetItemData(itemid))
+			with self._wait_cursor():
+				items_to_delete = []
+				itemid = -1
+				while True:
+					itemid = litems.GetNextItem(itemid, wx.LIST_NEXT_ALL,
+							wx.LIST_STATE_SELECTED)
+					if itemid == -1:
+						break
+					items_to_delete.append(litems.GetItemData(itemid))
 
-			self._db.del_objects(items_to_delete)
-			self._curr_obj = None
-			self._result = self._db.load_class(self._result.cls.oid)
-			self._fill_tags()
-			self._fill_items()
+				self._db.del_objects(items_to_delete)
+				self._curr_obj = None
+				self._result = self._db.load_class(self._result.cls.oid)
+				self._fill_tags()
+				self._fill_items()
 
 	def _on_menu_item_duplicate(self, event):
 		if self._curr_obj:
@@ -507,11 +528,8 @@ class FrameMain(object):
 		show_about_box(self.wnd)
 
 	def _on_menu_optimize_database(self, event):
-		self.wnd.SetCursor(wx.HOURGLASS_CURSOR)
-		try:
+		with self._wait_cursor():
 			self._db.optimize()
-		finally:
-			self.wnd.SetCursor(wx.STANDARD_CURSOR)
 		msgbox.message_box_info_ex(self.wnd, _('Optimalization finished.'), None)
 
 	def _on_record_updated(self, evt):
