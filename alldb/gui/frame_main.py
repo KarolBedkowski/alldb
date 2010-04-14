@@ -22,6 +22,7 @@ from alldb.libs.appconfig import AppConfig
 from alldb.libs.iconprovider import IconProvider
 from alldb.filetypes.csv_support import export2csv
 from alldb.filetypes.html_support import export_html
+from alldb.filetypes import exporting
 from alldb.gui.dialogs import message_boxes as msgbox
 from alldb.model import objects
 
@@ -144,6 +145,10 @@ class FrameMain(object):
 				id=xrc.XRCID('menu_backup_create'))
 		wnd.Bind(wx.EVT_MENU, self._on_menu_backup_restore,
 				id=xrc.XRCID('menu_backup_restore'))
+		wnd.Bind(wx.EVT_MENU, self._on_menu_save_items,
+				id=xrc.XRCID('menu_save_items'))
+		wnd.Bind(wx.EVT_MENU, self._on_menu_load_items,
+				id=xrc.XRCID('menu_load_items'))
 		wnd.Bind(wx.EVT_CHOICE, self._on_class_select, self.choice_klasa)
 		wnd.Bind(wx.EVT_CHOICE, self._on_filter_select, self.choice_filter)
 		wnd.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_item_deselect,
@@ -549,6 +554,13 @@ class FrameMain(object):
 
 	def _on_menu_backup_restore(self, event):
 		print '_on_menu_backup_restore'
+
+	def _on_menu_save_items(self, event):
+		exporting.export_items(self.wnd, self._result.cls, self._result.items)
+
+	def _on_menu_load_items(self, event):
+		exporting.import_items(self.wnd, self._result.cls, self._db)
+		self._on_refresh_all(None)
 
 	def _on_record_updated(self, evt):
 		if self._menu_save_on_scroll.IsChecked():

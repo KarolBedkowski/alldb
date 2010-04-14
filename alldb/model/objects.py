@@ -96,6 +96,10 @@ class ADObjectClass(BaseObject):
 				fields.append(field[0])
 		return fields
 
+	@property
+	def blob_fields(self):
+		return [field[0] for field in self.fields if field[1] == 'image']
+
 	def create_object(self):
 		obj = ADObject(class_id=self.oid)
 		obj.sldb_context = self.sldb_context

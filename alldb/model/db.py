@@ -114,6 +114,11 @@ class Db(object):
 		with self._engine.create_transaction(self) as trans:
 			return trans.get_blob(object_id, field)
 
+	def put_blob(self, object_id, field, data):
+		with self._engine.create_transaction(self) as trans:
+			trans.put_blob(object_id, field, data)
+		self._engine.sync()
+
 	def optimize(self):
 		"""optimize sql database"""
 		self._engine.optimize()
