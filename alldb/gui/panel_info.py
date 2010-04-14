@@ -19,7 +19,6 @@ import wx.lib.scrolledpanel as scrolled
 import wx.lib.newevent
 import wx.lib.imagebrowser as imgbr
 import wx.gizmos as gizmos
-from wx.lib.expando import ExpandoTextCtrl, EVT_ETC_LAYOUT_NEEDED
 from wx.lib import masked
 
 from alldb.gui.dlg_select_tags import DlgSelectTags
@@ -151,10 +150,8 @@ class PanelInfo(scrolled.ScrolledPanel):
 				ctrl = wx.CheckBox(self, -1)
 				ctrl.Bind(wx.EVT_CHECKBOX , self._on_field_update)
 			elif ftype == 'multi':
-				ctrl = ExpandoTextCtrl(self, -1)
-				ctrl.SetMaxHeight(200)
+				ctrl = wx.TextCtrl(self, -1, size=(-1, 100), style=wx.TE_MULTILINE)
 				ctrl.Bind(wx.EVT_TEXT, self._on_field_update)
-				ctrl.Bind(EVT_ETC_LAYOUT_NEEDED, self._on_expand_text)
 				grid.AddGrowableRow(idx)
 			elif ftype == 'date':
 				ctrl = wx.DatePickerCtrl(self, -1,
@@ -244,8 +241,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 				self._show_image(field, img, options)
 				self._blobs[name] = img
 			elif ftype == 'multi':
-				field.SetValue(u'')
-				field.WriteText(unicode(value or ''))
+				field.SetValue(unicode(value or ''))
 			else:
 				field.SetValue(unicode(value or ''))
 		self.tc_tags.SetValue(obj.tags_str)
@@ -274,8 +270,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 				elif ftype == 'image':
 					self._show_image(field, None, options)
 				elif ftype == 'multi':
-					field.SetValue(u'')
-					field.WriteText(unicode(_default))
+					field.SetValue(unicode(_default))
 				else:
 					field.SetValue(unicode(_default))
 
@@ -299,12 +294,6 @@ class PanelInfo(scrolled.ScrolledPanel):
 			ctrl.SetSize((img.GetWidth(), img.GetHeight()))
 		self.Layout()
 		self.Refresh()
-
-	def _on_expand_text(self, evt):
-		self.Layout()
-		self.GetParent().Refresh()
-		self.SetupScrolling()
-		evt.Skip()
 
 	def _on_btn_choice_tags(self, evt):
 		cls_tags = self._window.current_tags.copy()
