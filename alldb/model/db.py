@@ -40,6 +40,12 @@ class Db(object):
 		_LOG.info('SchemaLessDatabase.close()')
 		self._engine.close()
 
+	def sync(self):
+		self._engine.sync()
+
+	def create_transaction(self):
+		return self._engine.create_transaction(self)
+
 	def put_class(self, cls):
 		with self._engine.create_transaction(self) as trans:
 			cls = cls if hasattr(cls, '__iter__') else (cls, )
@@ -84,14 +90,17 @@ class Db(object):
 
 	def put_object(self, obj):
 		with self._engine.create_transaction(self) as trans:
-			obj = obj if hasattr(obj, '__iter__') else (obj, )
-			for iobj in obj:
-				if hasattr(iobj, 'before_save'):
-					iobj.before_save()
-				trans.put_object((iobj, ))
-				for field, blob in iobj.blobs.iteritems():
-					trans.put_blob(iobj.oid, field, blob)
+			self.put_object_in_trans(trans, obj)
 		self._engine.sync()
+
+	def put_object_in_trans(self, trans, obj):
+		obj = obj if hasattr(obj, '__iter__') else (obj, )
+		for iobj in obj:
+			if hasattr(iobj, 'before_save'):
+				iobj.before_save()
+			trans.put_object((iobj, ))
+			for field, blob in iobj.blobs.iteritems():
+				trans.put_blob(iobj.oid, field, blob)
 
 	def get_object(self, oid):
 		with self._engine.create_transaction(self) as trans:

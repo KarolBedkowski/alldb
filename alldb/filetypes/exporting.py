@@ -113,25 +113,26 @@ def import_items(parent_wnd, cls, db):
 		head, cls_info, comments = header.split('|#|', 2)
 		cls_id, cls_name = cls_info.split('|', 1)
 		ids_converts = {}
-		while True:
-			line = efile.readline()
-			if line == '':
-				return
-			line = line.strip()
-			item_type, item_data = line.split(":", 1)
-			data = _DECODER(item_data)
-			if item_type == 'OBJ':
-				obj = cls.create_object()
-				obj.import_obj(data)
-				obj.oid = None
-				db.put_object(obj)
-				ids_converts[data['oid']] = obj.oid
-			elif item_type == 'BLO':
-				obj_id = ids_converts[data['object_id']]
-				field = data['field']
-				blob = base64.b64decode(data['data'])
-				db.put_blob(obj_id, field, blob)
-
+		with db.create_transaction() as trans:
+			while True:
+				line = efile.readline()
+				if line == '':
+					break
+				line = line.strip()
+				item_type, item_data = line.split(":", 1)
+				data = _DECODER(item_data)
+				if item_type == 'OBJ':
+					obj = cls.create_object()
+					obj.import_obj(data)
+					obj.oid = None
+					db.put_object_in_trans(trans, obj)
+					ids_converts[data['oid']] = obj.oid
+				elif item_type == 'BLO':
+					obj_id = ids_converts[data['object_id']]
+					field = data['field']
+					blob = base64.b64decode(data['data'])
+					trans.put_blob(obj_id, field, blob)
+		db.sync()
 	except IOError, err:
 		print err
 	finally:
