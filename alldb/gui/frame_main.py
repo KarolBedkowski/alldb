@@ -556,11 +556,24 @@ class FrameMain(object):
 		print '_on_menu_backup_restore'
 
 	def _on_menu_save_items(self, event):
-		exporting.export_items(self.wnd, self._result.cls, self._result.items)
+		try:
+			exporting.export_items(self.wnd, self._result.cls, self._result.items)
+		except RuntimeError, err:
+			msgbox.message_box_error_ex(self.wnd, _('Cannot save items.'), err)
 
 	def _on_menu_load_items(self, event):
-		exporting.import_items(self.wnd, self._result.cls, self._db)
-		self._on_refresh_all(None)
+		try:
+			items, blobs = exporting.import_items(self.wnd, self._result.cls,
+					self._db)
+		except RuntimeError, err:
+			msgbox.message_box_error_ex(self.wnd, _('Cannot load items.'), err)
+		else:
+			if not items:
+				return
+			msgbox.message_box_info_ex(self.wnd, _("Loading items finished."),
+					_("Loaded %(items)d items and %(blobs)d blobs.") % \
+							{'items': items, 'blobs': blobs})
+			self._on_refresh_all(None)
 
 	def _on_record_updated(self, evt):
 		if self._menu_save_on_scroll.IsChecked():

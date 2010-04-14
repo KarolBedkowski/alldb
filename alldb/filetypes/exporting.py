@@ -15,6 +15,7 @@ __release__ = '2009-11-12'
 import gzip
 import base64
 import time
+import logging
 try:
 	import cjson
 	_DECODER = cjson.decode
@@ -27,6 +28,9 @@ except ImportError:
 from alldb.gui.dialogs import dialogs
 from alldb.model import objects
 from alldb.libs import appconfig
+
+
+_LOG = logging.getLogger(__name__)
 
 
 def export_category(parent_wnd, cls):
@@ -92,7 +96,8 @@ def export_items(parent_wnd, cls, items):
 					efile.write(_ENCODER(sdata))
 					efile.write('\n')
 	except IOError, err:
-		print err
+		_LOG.error('export_items: IOError', err)
+		raise RuntimeError(err)
 	finally:
 		if efile:
 			efile.close()
@@ -102,9 +107,10 @@ def import_items(parent_wnd, cls, db):
 	filename = dialogs.dialog_file_load(parent_wnd, _('Select source file'),
 			_('AllDB Files (*.alldb)|*.alldb|All files|*'))
 	if filename is None:
-		return
+		return None, None
 
 	efile = None
+	loaded_obj, loaded_blob = 0, 0
 	try:
 		efile = gzip.open(filename, 'r')
 		header = efile.readline()
@@ -127,17 +133,21 @@ def import_items(parent_wnd, cls, db):
 					obj.oid = None
 					db.put_object_in_trans(trans, obj)
 					ids_converts[data['oid']] = obj.oid
+					loaded_obj += 1
 				elif item_type == 'BLO':
 					obj_id = ids_converts[data['object_id']]
 					field = data['field']
 					blob = base64.b64decode(data['data'])
 					trans.put_blob(obj_id, field, blob)
+					loaded_blob += 1
 		db.sync()
 	except IOError, err:
-		print err
+		_LOG.error('import_items: IOError', err)
+		raise RuntimeError(err)
 	finally:
 		if efile:
 			efile.close()
+	return loaded_obj, loaded_blob
 
 
 # vim: encoding=utf8: ff=unix:
