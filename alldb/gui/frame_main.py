@@ -112,6 +112,9 @@ class FrameMain(object):
 				'menu_item_duplicate'))
 		self._menu_save_on_scroll = menu.FindItemById(xrc.XRCID(
 				'menu_save_on_scroll'))
+		self._menu_save_items = menu.FindItemById(xrc.XRCID('menu_save_items'))
+		self._menu_export_csv = menu.FindItemById(xrc.XRCID('menu_export_csv'))
+		self._menu_export_html = menu.FindItemById(xrc.XRCID('menu_export_html'))
 
 	def _create_bindings(self):
 		wnd = self.wnd
@@ -345,6 +348,9 @@ class FrameMain(object):
 			self.panel_info.GetSizer().Layout()
 		self.menu_item_delete.Enable(record_showed and not new_record)
 		self.menu_item_duplicate.Enable(record_showed and not new_record)
+		self._menu_save_items.Enable(self.list_items.GetItemCount() > 0)
+		self._menu_export_csv.Enable(self.list_items.GetItemCount() > 0)
+		self._menu_export_html.Enable(self.list_items.GetItemCount() > 0)
 
 	def _save_object(self, ask_for_save=False, update_lists=True, select=None):
 		if not self._curr_obj:
