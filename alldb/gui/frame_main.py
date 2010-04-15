@@ -115,6 +115,8 @@ class FrameMain(object):
 		self._menu_save_items = menu.FindItemById(xrc.XRCID('menu_save_items'))
 		self._menu_export_csv = menu.FindItemById(xrc.XRCID('menu_export_csv'))
 		self._menu_export_html = menu.FindItemById(xrc.XRCID('menu_export_html'))
+		# temporary disabled backup
+		menu.FindItemById(xrc.XRCID('menu_backup')).Enable(False)
 
 	def _create_bindings(self):
 		wnd = self.wnd
