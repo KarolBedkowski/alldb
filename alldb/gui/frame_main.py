@@ -79,13 +79,14 @@ class FrameMain(object):
 		self.searchbox.SetDescriptiveText(_('Search'))
 		self.searchbox.ShowCancelButton(True)
 
+		appconfig = AppConfig()
+
 		self._set_buttons_status()
-		fclass_oid = self._fill_classes()
+		last_class_oid = appconfig.get('frame_main', 'last_class_id', None)
+		fclass_oid = self._fill_classes(last_class_oid)
 		if fclass_oid is not None:
-			self.choice_klasa.SetSelection(0)
 			self._show_class(fclass_oid)
 
-		appconfig = AppConfig()
 		autosave = appconfig.get('frame_main', 'autosave', 1) > 0
 		self._menu_save_on_scroll.Check(autosave)
 
@@ -222,7 +223,7 @@ class FrameMain(object):
 				if cls.oid == select:
 					cls2select = num
 		if cls2select is not None:
-			self.choice_klasa.SetSelection(cls2select)
+			self.choice_klasa.Select(cls2select)
 			return classes[cls2select].oid
 		return classes[0].oid if classes else None
 
@@ -405,6 +406,8 @@ class FrameMain(object):
 		appconfig.set('frame_main', 'win2', self.window_2.GetSashPosition())
 		appconfig.set('frame_main', 'autosave',
 				1 if self._menu_save_on_scroll.IsChecked() else 0)
+		if self._result and self._result.cls:
+			appconfig.set('frame_main', 'last_class_id', self._result.cls.oid)
 		self.wnd.Destroy()
 
 	def _on_class_select(self, evt):
