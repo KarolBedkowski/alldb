@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alldb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-11 21:20+0200\n"
-"PO-Revision-Date: 2010-04-11 21:21+0200\n"
+"POT-Creation-Date: 2010-04-16 09:03+0200\n"
+"PO-Revision-Date: 2010-04-16 17:54+0200\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -122,6 +122,12 @@ msgstr "Szerokość:"
 msgid "_About"
 msgstr "O _programie"
 
+msgid "_Backup"
+msgstr "_Kopia zapasowa"
+
+msgid "_Create..."
+msgstr "_Utwórz..."
+
 msgid "_Delete\\tCtrl+Delete"
 msgstr "_Usuń\\tCtrl+Delete"
 
@@ -143,8 +149,17 @@ msgstr "_Importuj"
 msgid "_Import from CSV..."
 msgstr "_Import z CSV..."
 
+msgid "_Load Items..."
+msgstr "_Wczytaj elementy..."
+
 msgid "_New Item\\tCtrl+N"
 msgstr "_Nowy element\\tCtrl+N"
+
+msgid "_Restore..."
+msgstr "_Przywróć..."
+
+msgid "_Save Items..."
+msgstr "_Zapisz elementy"
 
 msgid "checkbox"
 msgstr "zaznaczenie"
@@ -184,6 +199,21 @@ msgstr "Niewłaściwy plik eksportu"
 
 msgid "Invalid data in export file"
 msgstr "Niewłaściwa zawartość pliku eksportu"
+
+msgid "Select destination file"
+msgstr "Proszę wybrać plik docelowy"
+
+msgid "AllDB Files (*.alldb)|*.alldb|All files|*.*"
+msgstr "Pliki AllDB (*.alldb)|*.alldb|Wszystkie pliki|*.*"
+
+msgid "Select source file"
+msgstr "Proszę wybrać plik źródłowy"
+
+msgid "AllDB Files (*.alldb)|*.alldb|All files|*"
+msgstr "Pliki AllDB (*.alldb)|*.alldb|Wszystkie pliki|*.*"
+
+msgid "Invalid file"
+msgstr "Niewłaściwy plik"
 
 #, python-format
 msgid ""
@@ -419,6 +449,25 @@ msgstr "Pliki HTML (*.html, *.htm)|*.html;*.htm|Wszystkie pliki|*.*"
 msgid "Optimalization finished."
 msgstr "Zakończono optymalizację."
 
+msgid "Choice a Backup File"
+msgstr "Wybór pliku kopii zapasowej"
+
+msgid "Backup files (*.alldb_bak)|*.alldb_bak|All files|*.*"
+msgstr "Pliki kopii zapasowej (*.alldb_bak)|*.alldb_bak|Wszystkie pliki|*.*"
+
+msgid "Cannot save items."
+msgstr "Nie można zapisać elementów."
+
+msgid "Cannot load items."
+msgstr "Nie można wczytać elementów."
+
+msgid "Loading items finished."
+msgstr "Zakończono wczytywanie elementów."
+
+#, python-format
+msgid "Loaded %(items)d items and %(blobs)d blobs."
+msgstr "Wczytano %(items)d elementów oraz  %(blobs)d blobów."
+
 msgid "Title"
 msgstr "Tytuł"
 
@@ -510,6 +559,9 @@ msgstr ""
 "wyboru) którejś z późniejszych wersji.\n"
 "\n"
 "Szczegóły opisano w pliku COPYING.\n"
+
+#~ msgid "AllDB Files (*.alldb)|*.cls|All files|*.*"
+#~ msgstr "Pliki AllDB (*.alldb)|*.alldb|Wszystkie pliki|*.*"
 
 #~ msgid "None"
 #~ msgstr "Nic"

@@ -71,7 +71,7 @@ def import_category(parent_wnd):
 def export_items(parent_wnd, cls, items):
 	filename = cls.name + '.alldb'
 	filename = dialogs.dialog_file_save(parent_wnd, _('Select destination file'),
-			_('AllDB Files (*.alldb)|*.cls|All files|*.*'),
+			_('AllDB Files (*.alldb)|*.alldb|All files|*.*'),
 			filename)
 	if filename is None:
 		return
