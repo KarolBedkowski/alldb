@@ -25,9 +25,10 @@ from alldb.gui.dlg_select_tags import DlgSelectTags
 
 
 (RecordUpdatedEvent, EVT_RECORD_UPDATED) = wx.lib.newevent.NewEvent()
-
+(SelectRecordEvent, EVT_SELECT_RECORD) = wx.lib.newevent.NewEvent()
 
 _ID_TIMER_SAVE = 1
+
 
 class PanelInfo(scrolled.ScrolledPanel):
 	def __init__(self, window, parent, obj_class, *argv, **kwarg):
@@ -175,6 +176,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 				if box is None:
 					box = ctrl
 				grid.Add(box, 1, wx.EXPAND)
+				ctrl.Bind(wx.EVT_CHAR, self._on_key_down)
 			else:
 				grid.Add((1, 1))
 
@@ -352,6 +354,22 @@ class PanelInfo(scrolled.ScrolledPanel):
 				wx.PostEvent(self._window.wnd, RecordUpdatedEvent(obj=self._obj))
 			finally:
 				pass
+
+	def _on_key_down(self, event):
+		if event.GetModifiers() == wx.MOD_CONTROL:
+			keycode = event.GetKeyCode()
+			try:
+				if keycode == wx.WXK_UP:
+					wx.PostEvent(self._window.wnd, SelectRecordEvent(
+							direction=-1))
+					return
+				elif keycode ==  wx.WXK_DOWN:
+					wx.PostEvent(self._window.wnd, SelectRecordEvent(
+							direction=1))
+					return
+			finally:
+				pass
+		event.Skip()
 
 
 

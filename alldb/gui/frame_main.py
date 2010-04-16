@@ -26,7 +26,7 @@ from alldb.filetypes import exporting
 from alldb.gui.dialogs import message_boxes as msgbox
 from alldb.model import objects
 
-from .panel_info import PanelInfo, EVT_RECORD_UPDATED
+from .panel_info import PanelInfo, EVT_RECORD_UPDATED, EVT_SELECT_RECORD
 from .dlg_classes import DlgClasses
 from .dlg_about import show_about_box
 from .dlg_import_csv import DlgImportCsv
@@ -160,8 +160,9 @@ class FrameMain(object):
 				self.list_items)
 		self.list_items.Bind(wx.EVT_LIST_ITEM_SELECTED, self._on_item_select)
 		self.list_items.Bind(wx.EVT_LIST_COL_CLICK, self._on_items_col_click)
-		self.wnd.Bind(EVT_RECORD_UPDATED, self._on_record_updated)
-		self.wnd.Bind(wx.EVT_TIMER, self._on_timer)
+		wnd.Bind(EVT_RECORD_UPDATED, self._on_record_updated)
+		wnd.Bind(EVT_SELECT_RECORD, self._on_select_record)
+		wnd.Bind(wx.EVT_TIMER, self._on_timer)
 
 	def _set_size_pos(self):
 		appconfig = AppConfig()
@@ -586,6 +587,18 @@ class FrameMain(object):
 	def _on_record_updated(self, evt):
 		if self._menu_save_on_scroll.IsChecked():
 			self._save_object()
+
+	def _on_select_record(self, event):
+		idx = self.list_items.GetNextItem(-1, wx.LIST_NEXT_ALL,
+				wx.LIST_STATE_SELECTED)
+		if idx < 0:
+			return
+
+		self.list_items.SetItemState(idx, 0, wx.LIST_STATE_SELECTED)
+		idx += event.direction
+		idx = min(max(idx, 0), self.list_items.GetItemCount() - 1)
+		self.list_items.SetItemState(idx, wx.LIST_STATE_SELECTED,
+					wx.LIST_STATE_SELECTED)
 
 	def _on_refresh_all(self, event):
 		if self._result:
