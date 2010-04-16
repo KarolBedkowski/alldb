@@ -116,7 +116,7 @@ class FrameMain(object):
 		self._menu_export_csv = menu.FindItemById(xrc.XRCID('menu_export_csv'))
 		self._menu_export_html = menu.FindItemById(xrc.XRCID('menu_export_html'))
 		# temporary disabled backup
-		menu.FindItemById(xrc.XRCID('menu_backup')).Enable(False)
+		#menu.FindItemById(xrc.XRCID('menu_backup')).Enable(False)
 
 	def _create_bindings(self):
 		wnd = self.wnd
@@ -146,10 +146,10 @@ class FrameMain(object):
 		wnd.Bind(wx.EVT_MENU, self._on_menu_optimize_database,
 				id=xrc.XRCID('menu_optimize_database'))
 		wnd.Bind(wx.EVT_MENU, self._on_btn_apply, id=xrc.XRCID('menu_save_changes'))
-		wnd.Bind(wx.EVT_MENU, self._on_menu_backup_create,
-				id=xrc.XRCID('menu_backup_create'))
-		wnd.Bind(wx.EVT_MENU, self._on_menu_backup_restore,
-				id=xrc.XRCID('menu_backup_restore'))
+		#wnd.Bind(wx.EVT_MENU, self._on_menu_backup_create,
+		#		id=xrc.XRCID('menu_backup_create'))
+		#wnd.Bind(wx.EVT_MENU, self._on_menu_backup_restore,
+		#		id=xrc.XRCID('menu_backup_restore'))
 		wnd.Bind(wx.EVT_MENU, self._on_menu_save_items,
 				id=xrc.XRCID('menu_save_items'))
 		wnd.Bind(wx.EVT_MENU, self._on_menu_load_items,
