@@ -68,6 +68,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 			self._fill_fields_from_obj()
 		else:
 			self._fill_fields_clear()
+		self.SetupScrolling()
 
 	def update_base_info(self, obj):
 		if self._obj.oid != obj.oid:

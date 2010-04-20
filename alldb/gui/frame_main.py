@@ -205,11 +205,11 @@ class FrameMain(object):
 
 	@contextmanager
 	def _wait_cursor(self):
-		self.wnd.SetCursor(wx.HOURGLASS_CURSOR)
+		wx.SetCursor(wx.HOURGLASS_CURSOR)
 		try:
 			yield
 		finally:
-			wx.SetCursor(wx.NullCursor)
+			wx.SetCursor(wx.STANDARD_CURSOR)
 
 	def _fill_classes(self, select=None):
 		''' wczytenie listy klas i wypełnienie choicebox-a
