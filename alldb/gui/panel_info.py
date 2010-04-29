@@ -27,7 +27,6 @@ from alldb.gui.dlg_select_tags import DlgSelectTags
 (RecordUpdatedEvent, EVT_RECORD_UPDATED) = wx.lib.newevent.NewEvent()
 (SelectRecordEvent, EVT_SELECT_RECORD) = wx.lib.newevent.NewEvent()
 
-_ID_TIMER_SAVE = 1
 
 
 class PanelInfo(scrolled.ScrolledPanel):
@@ -41,7 +40,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self._blobs = {}
 		self._first_field = None
 		self._last_dir = os.path.expanduser('~')
-		self._update_timer = wx.Timer(self, _ID_TIMER_SAVE)
+		self._update_timer = None
 		self._obj_showed = False
 
 		self._COLOR_HIGHLIGHT_BG = wx.SystemSettings.GetColour(
@@ -58,8 +57,6 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self.SetSizer(main_grid)
 		self.SetAutoLayout(1)
 		self.SetupScrolling()
-
-		self.Bind(wx.EVT_TIMER, self._on_timer)
 
 	def update(self, obj):
 		self._obj = obj
@@ -344,17 +341,16 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self._show_image(ctrl, None, self._fields[name][3])
 
 	def _on_field_update(self, evt):
-		self._update_timer.Stop()
 		if self._obj_showed:
-			self._update_timer.Start(500, True)
-		evt.Skip()
+			if self._update_timer:
+				self._update_timer.Stop()
+			self._update_timer = wx.CallLater(500, self._on_timer_update)
 
-	def _on_timer(self, event):
-		if event.Id == _ID_TIMER_SAVE:
-			try:
-				wx.PostEvent(self._window.wnd, RecordUpdatedEvent(obj=self._obj))
-			finally:
-				pass
+	def _on_timer_update(self):
+		try:
+			wx.PostEvent(self._window.wnd, RecordUpdatedEvent(obj=self._obj))
+		finally:
+			pass
 
 	def _on_key_down(self, event):
 		if event.GetModifiers() == wx.MOD_CONTROL:

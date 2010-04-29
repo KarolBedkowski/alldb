@@ -32,8 +32,6 @@ from .dlg_about import show_about_box
 from .dlg_import_csv import DlgImportCsv
 
 
-_ID_TIMER_CLEAR_STATUS = 1
-
 
 class FrameMain(object):
 	''' Klasa głównego okna programu'''
@@ -68,7 +66,7 @@ class FrameMain(object):
 		self._current_sorting_col = 0
 		self._items = None
 		self._tagslist = []
-		self._status_update_timer = wx.Timer(self.wnd, _ID_TIMER_CLEAR_STATUS)
+		self._status_update_timer = None
 
 		self.wnd.SetIcon(self._icon_provider.get_icon('alldb'))
 
@@ -98,7 +96,6 @@ class FrameMain(object):
 		self.window_1 = xrc.XRCCTRL(self.wnd, 'window_1')
 		self.window_2 = xrc.XRCCTRL(self.wnd, 'window_2')
 		self.list_items = xrc.XRCCTRL(self.wnd, 'list_items')
-		self.label_info = xrc.XRCCTRL(self.wnd, 'label_info')
 		self.clb_tags = xrc.XRCCTRL(self.wnd, 'clb_tags')
 		self.choice_klasa = xrc.XRCCTRL(self.wnd, 'choice_klasa')
 		self.panel_info = xrc.XRCCTRL(self.wnd, 'panel_info')
@@ -163,7 +160,6 @@ class FrameMain(object):
 		self.list_items.Bind(wx.EVT_LIST_COL_CLICK, self._on_items_col_click)
 		wnd.Bind(EVT_RECORD_UPDATED, self._on_record_updated)
 		wnd.Bind(EVT_SELECT_RECORD, self._on_select_record)
-		wnd.Bind(wx.EVT_TIMER, self._on_timer)
 
 	def _set_size_pos(self):
 		appconfig = AppConfig()
@@ -231,6 +227,7 @@ class FrameMain(object):
 		if self._curr_info_panel:
 			self._curr_info_panel.Destroy()
 			self._curr_info_panel = None
+		self._curr_obj = None
 
 	def _create_info_panel(self):
 		''' utworzenie panela z polami dla podanej klasy '''
@@ -259,7 +256,6 @@ class FrameMain(object):
 			result = self._db.load_class(class_oid)
 			if not curr_class_oid or curr_class_oid != class_oid:
 				self._hide_info_panel()
-				self._curr_obj = None
 			self._result = result
 			self._create_columns_in_list(result.cls)
 			self._fill_items()
@@ -306,7 +302,7 @@ class FrameMain(object):
 			list_items.SetColumnWidth(x, wx.LIST_AUTOSIZE)
 
 		items_count = self.list_items.GetItemCount()
-		self.label_info.SetLabel(_('Items: %d') % items_count)
+		self.wnd.SetStatusText(_('Items: %d') % items_count, 2)
 
 		if item2select is not None:
 			list_items.EnsureVisible(item2select)
@@ -607,14 +603,12 @@ class FrameMain(object):
 		if self._result:
 			self._show_class(self._result.cls.oid)
 
-	def _on_timer(self, event):
-		if event.Id == _ID_TIMER_CLEAR_STATUS:
-			self.wnd.SetStatusText('', 1)
-
 	def _set_status_text(self, text):
-		self._status_update_timer.Stop()
 		self.wnd.SetStatusText(text, 1)
-		self._status_update_timer.Start(2000, True)
+		if self._status_update_timer:
+			self._status_update_timer.Stop()
+		self._status_update_timer = wx.CallLater(2000, self.wnd.SetStatusText,
+				'', 1)
 
 	@property
 	def selected_tags(self):
