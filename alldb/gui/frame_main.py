@@ -97,12 +97,8 @@ class FrameMain(object):
 		self.window_2 = xrc.XRCCTRL(self.wnd, 'window_2')
 		self.list_items = xrc.XRCCTRL(self.wnd, 'list_items')
 		self.clb_tags = xrc.XRCCTRL(self.wnd, 'clb_tags')
-		self.choice_klasa = xrc.XRCCTRL(self.wnd, 'choice_klasa')
 		self.panel_info = xrc.XRCCTRL(self.wnd, 'panel_info')
 		self.choice_filter = xrc.XRCCTRL(self.wnd, 'choice_filter')
-
-		self.searchbox = wx.SearchCtrl(self.wnd, -1)
-		self.res.AttachUnknownControl('searchbox', self.searchbox, self.wnd)
 
 		menu = self.wnd.GetMenuBar()
 		self.menu_item_delete = menu.FindItemById(xrc.XRCID('menu_item_delete'))
@@ -152,7 +148,6 @@ class FrameMain(object):
 				id=xrc.XRCID('menu_save_items'))
 		wnd.Bind(wx.EVT_MENU, self._on_menu_load_items,
 				id=xrc.XRCID('menu_load_items'))
-		wnd.Bind(wx.EVT_CHOICE, self._on_class_select, self.choice_klasa)
 		wnd.Bind(wx.EVT_CHOICE, self._on_filter_select, self.choice_filter)
 		wnd.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_item_deselect,
 				self.list_items)
@@ -197,6 +192,13 @@ class FrameMain(object):
 				wx.ART_QUIT, wx.ART_TOOLBAR), shortHelp=_('Quit'),
 				longHelp=_('Close application'))
 		self.wnd.Bind(wx.EVT_TOOL, self._on_menu_exit, id=tbi.GetId())
+		toolbar.AddSeparator()
+		self.choice_klasa = wx.Choice(toolbar, -1, size=(150, -1))
+		toolbar.AddControl(self.choice_klasa)
+		self.wnd.Bind(wx.EVT_CHOICE, self._on_class_select, self.choice_klasa)
+		toolbar.AddSeparator()
+		self.searchbox = wx.SearchCtrl(toolbar, -1, size=(250, -1))
+		toolbar.AddControl(self.searchbox)
 		toolbar.Realize()
 
 	@contextmanager
