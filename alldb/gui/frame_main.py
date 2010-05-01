@@ -235,7 +235,7 @@ class FrameMain(object):
 		''' utworzenie panela z polami dla podanej klasy '''
 		if self._curr_info_panel is not None:
 			return self._curr_info_panel
-		panel = PanelInfo(self, self.panel_info, self._result.cls)
+		panel = PanelInfo(self, self.panel_info, self._result.cls, self._result)
 		panel_info_sizer = self.panel_info.GetSizer()
 		panel_info_sizer.Add(panel, 1, wx.EXPAND)
 		panel_info_sizer.Layout()

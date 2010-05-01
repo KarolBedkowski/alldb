@@ -22,6 +22,7 @@ import wx.gizmos as gizmos
 from wx.lib import masked
 
 from alldb.gui.dlg_select_tags import DlgSelectTags
+from alldb.libs.textctrlautocomplete import TextCtrlAutoComplete
 
 
 (RecordUpdatedEvent, EVT_RECORD_UPDATED) = wx.lib.newevent.NewEvent()
@@ -29,8 +30,26 @@ from alldb.gui.dlg_select_tags import DlgSelectTags
 
 
 
+class MyTextCtrlAutoComplete(TextCtrlAutoComplete):
+	def __init__(self, parent, colNames=None, choices=None, *args, **kwargs):
+		TextCtrlAutoComplete.__init__(self, parent, colNames, choices, *args,
+				**kwargs)
+		self._all_choices = choices
+		self._entryCallback = self._entry_callback
+
+	def _entry_callback(self):
+		text = self.GetValue().lower()
+		choices = [choice for choice in self._all_choices
+				if self._match(text, choice)]
+		if choices != self._choices:
+			self.SetChoices(choices)
+
+	def _match(self, text, choice):
+		return (choice or '').lower().startswith(text)
+
+
 class PanelInfo(scrolled.ScrolledPanel):
-	def __init__(self, window, parent, obj_class, *argv, **kwarg):
+	def __init__(self, window, parent, obj_class, result, *argv, **kwarg):
 		scrolled.ScrolledPanel.__init__(self, parent, -1,
 				style=wx.FULL_REPAINT_ON_RESIZE)
 		self._window = window
@@ -42,6 +61,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self._last_dir = os.path.expanduser('~')
 		self._update_timer = None
 		self._obj_showed = False
+		self._result = result
 
 		self._COLOR_HIGHLIGHT_BG = wx.SystemSettings.GetColour(
 				wx.SYS_COLOUR_HIGHLIGHT)
@@ -166,7 +186,9 @@ class PanelInfo(scrolled.ScrolledPanel):
 			elif ftype == 'numeric':
 				ctrl = masked.NumCtrl(self, -1, groupDigits=False, allowNone=True)
 			else:
-				ctrl = wx.TextCtrl(self, -1)
+				choices = [val or '' for val
+						in self._result.get_filter_for_field(name).keys()]
+				ctrl = MyTextCtrlAutoComplete(self, -1, choices=choices)
 				ctrl.Bind(wx.EVT_TEXT, self._on_field_update)
 			self._fields[name] = (ctrl, ftype, _default, options)
 
@@ -345,6 +367,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 			if self._update_timer:
 				self._update_timer.Stop()
 			self._update_timer = wx.CallLater(500, self._on_timer_update)
+		evt.Skip()
 
 	def _on_timer_update(self):
 		try:
