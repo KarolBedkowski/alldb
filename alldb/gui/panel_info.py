@@ -169,7 +169,10 @@ class PanelInfo(scrolled.ScrolledPanel):
 				ctrl = wx.CheckBox(self, -1)
 				ctrl.Bind(wx.EVT_CHECKBOX , self._on_field_update)
 			elif ftype == 'multi':
-				ctrl = wx.TextCtrl(self, -1, size=(-1, 100), style=wx.TE_MULTILINE)
+				choices = [val or '' for val
+						in self._result.get_filter_for_field(name).keys()]
+				ctrl = MyTextCtrlAutoComplete(self, -1, choices=choices,
+						size=(-1, 100), style=wx.TE_MULTILINE)
 				ctrl.Bind(wx.EVT_TEXT, self._on_field_update)
 				grid.AddGrowableRow(idx)
 			elif ftype == 'date':
