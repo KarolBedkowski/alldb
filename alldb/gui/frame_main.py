@@ -32,6 +32,15 @@ from .dlg_about import show_about_box
 from .dlg_import_csv import DlgImportCsv
 
 
+@contextmanager
+def with_wait_cursor():
+	wx.SetCursor(wx.HOURGLASS_CURSOR)
+	try:
+		yield
+	finally:
+		wx.SetCursor(wx.STANDARD_CURSOR)
+
+
 class FrameMain(object):
 	''' Klasa głównego okna programu'''
 	def __init__(self, db):
@@ -200,14 +209,6 @@ class FrameMain(object):
 		toolbar.AddControl(self.searchbox)
 		toolbar.Realize()
 
-	@contextmanager
-	def _wait_cursor(self):
-		wx.SetCursor(wx.HOURGLASS_CURSOR)
-		try:
-			yield
-		finally:
-			wx.SetCursor(wx.STANDARD_CURSOR)
-
 	def _fill_classes(self, select=None):
 		''' wczytenie listy klas i wypełnienie choicebox-a
 		@select - oid klasy do zaznaczenia lib None'''
@@ -252,7 +253,7 @@ class FrameMain(object):
 
 	def _show_class(self, class_oid):
 		''' wyświetlenie klasy - listy tagów i obiektów '''
-		with self._wait_cursor():
+		with with_wait_cursor():
 			curr_class_oid = self.current_class_id
 			result = self._db.load_class(class_oid)
 			if not curr_class_oid or curr_class_oid != class_oid:
@@ -366,7 +367,7 @@ class FrameMain(object):
 						_('Save changes?')):
 					return
 
-			with self._wait_cursor():
+			with with_wait_cursor():
 				curr_obj.data.update(data)
 				curr_obj.blobs = blobs
 				curr_obj.set_tags(tags)
@@ -431,7 +432,7 @@ class FrameMain(object):
 
 	def _on_items_col_click(self, event):
 		self._current_sorting_col = event.m_col
-		with self._wait_cursor():
+		with with_wait_cursor():
 			self._fill_items(self.current_obj_id, do_filter=False)
 
 	def _on_btn_new(self, event):
@@ -447,18 +448,18 @@ class FrameMain(object):
 		self._curr_info_panel.update(self._curr_obj)
 
 	def _on_clb_tags(self, evt):
-		with self._wait_cursor():
+		with with_wait_cursor():
 			self._fill_items()
 		evt.Skip()
 
 	def _on_search(self, evt):
-		with self._wait_cursor():
+		with with_wait_cursor():
 			self._fill_items(do_sort=False)
 
 	def _on_search_cancel(self, event):
 		if self.searchbox.GetValue():
 			self.searchbox.SetValue('')
-			with self._wait_cursor():
+			with with_wait_cursor():
 				self._fill_items(do_sort=False)
 
 	def _on_menu_exit(self, event):
@@ -478,7 +479,7 @@ class FrameMain(object):
 
 		msg = ngettext('one object', '%(count)d objects', cnt)
 		if msgbox.message_box_delete_confirm(self.wnd, msg % dict(count=cnt)):
-			with self._wait_cursor():
+			with with_wait_cursor():
 				items_to_delete = []
 				itemid = -1
 				while True:
@@ -546,7 +547,7 @@ class FrameMain(object):
 		show_about_box(self.wnd)
 
 	def _on_menu_optimize_database(self, event):
-		with self._wait_cursor():
+		with with_wait_cursor():
 			self._db.optimize()
 		msgbox.message_box_info_ex(self.wnd, _('Optimalization finished.'), None)
 
