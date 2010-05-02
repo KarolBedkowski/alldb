@@ -29,7 +29,6 @@ from alldb.libs.textctrlautocomplete import TextCtrlAutoComplete
 (SelectRecordEvent, EVT_SELECT_RECORD) = wx.lib.newevent.NewEvent()
 
 
-
 class MyTextCtrlAutoComplete(TextCtrlAutoComplete):
 	def __init__(self, parent, colNames=None, choices=None, *args, **kwargs):
 		TextCtrlAutoComplete.__init__(self, parent, colNames, choices, *args,
@@ -167,7 +166,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 			box = None
 			if ftype == 'bool':
 				ctrl = wx.CheckBox(self, -1)
-				ctrl.Bind(wx.EVT_CHECKBOX , self._on_field_update)
+				ctrl.Bind(wx.EVT_CHECKBOX, self._on_field_update)
 			elif ftype == 'multi':
 				choices = [val or '' for val
 						in self._result.get_filter_for_field(name).keys()]
@@ -211,7 +210,8 @@ class PanelInfo(scrolled.ScrolledPanel):
 		return grid
 
 	def _create_field_image(self, name, options):
-		width_height = int(options.get('width', 100)), int(options.get('height', 100))
+		width_height = (int(options.get('width', 100)),
+				int(options.get('height', 100)))
 		ctrl = wx.StaticBitmap(self, -1, size=width_height)
 		box = wx.BoxSizer(wx.HORIZONTAL)
 		box.Add(ctrl, 1, wx.EXPAND)
@@ -240,6 +240,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		btn_choice_tags = wx.Button(parent, -1, _('Select'))
 		box.Add(btn_choice_tags)
 		self.Bind(wx.EVT_BUTTON, self._on_btn_choice_tags, btn_choice_tags)
+		self.tc_tags.Bind(wx.EVT_TEXT, self._on_field_update)
 		return box
 
 	def _fill_fields_from_obj(self):
@@ -386,14 +387,13 @@ class PanelInfo(scrolled.ScrolledPanel):
 					wx.PostEvent(self._window.wnd, SelectRecordEvent(
 							direction=-1))
 					return
-				elif keycode ==  wx.WXK_DOWN:
+				elif keycode == wx.WXK_DOWN:
 					wx.PostEvent(self._window.wnd, SelectRecordEvent(
 							direction=1))
 					return
 			finally:
 				pass
 		event.Skip()
-
 
 
 def _create_label(parent, label, colour=None):
