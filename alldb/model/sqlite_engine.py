@@ -107,7 +107,6 @@ class SqliteEngine(object):
 		self.database.commit()
 
 
-
 class SqliteEngineTx(object):
 
 	def __init__(self, engine, context):
@@ -226,7 +225,7 @@ class SqliteEngineTx(object):
 					(new_name, class_id, old_name))
 
 	def create_backup(self, filename):
-		bfile =  gzip.open(filename, 'w')
+		bfile = gzip.open(filename, 'w')
 		bfile.write('ALLDB_BACKUP|1.0|' + time.asctime() + '\n')
 		self._cursor.execute('select id, name, data from classes')
 		for oid, name, data in self._cursor:

@@ -54,6 +54,7 @@ def find_files(directory, base):
 
 packages = packages_for(".")
 
+
 def get_data_files():
 	if sys.platform == 'win32':
 		doc_dir = locales_dir = data_dir = '.'
@@ -74,9 +75,8 @@ def get_data_files():
 
 	if 'py2exe' in sys.argv:
 		yield (os.path.join(locales_dir, 'locale', 'pl', 'LC_MESSAGES'),
-				[os.path.join(os.path.dirname(wx.__file__), 'locale', 'pl', 
+				[os.path.join(os.path.dirname(wx.__file__), 'locale', 'pl',
 				'LC_MESSAGES', 'wxstd.mo')])
-
 
 
 class CleanupCmd(Command):
@@ -136,11 +136,11 @@ class MakeMoCommand(Command):
 			path = os.path.join('locale', lang, 'LC_MESSAGES')
 			if not os.path.exists(path):
 				os.makedirs(path)
-			os.execl('/usr/bin/msgfmt','/usr/bin/msgfmt', 'po/%s.po' % lang, '-o',
-					os.path.join(path, '%s.mo' % version.SHORTNAME))
+			os.execl('/usr/bin/msgfmt', '/usr/bin/msgfmt', 'po/%s.po' % lang,
+					'-o', os.path.join(path, '%s.mo' % version.SHORTNAME))
 
 
-cmdclass={'cleanup': CleanupCmd,
+cmdclass = {'cleanup': CleanupCmd,
 		'make_mo': MakeMoCommand}
 
 
@@ -153,7 +153,7 @@ target = {
 	'company_name': "Karol Będkowski",
 	'copyright': version.COPYRIGHT,
 	'icon_resources': [(0, "data/alldb.ico")],
-	'other_resources': [("VERSIONTAG", 1, build)] }
+	'other_resources': [("VERSIONTAG", 1, build)]}
 
 
 setup(
@@ -187,7 +187,7 @@ setup(
 		"ascii": 0,
 		"bundle_files": 2}},
 	zipfile=r"modules.dat",
-	windows = [target],
+	windows=[target],
 	cmdclass=cmdclass,
 )
 

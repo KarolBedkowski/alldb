@@ -191,7 +191,6 @@ class AppConfig(Singleton):
 			config.set('last_files', 'file%d' % fidn, fname)
 
 
-
 def is_frozen():
 	if __file__.startswith(configuration.LINUX_INSTALL_DIR):
 		return True

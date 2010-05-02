@@ -152,7 +152,6 @@ class DlgClasses(object):
 		cls = self._db.get_class(oid)
 		exporting.export_category(self.wnd, cls)
 
-
 	def _set_buttons_state(self):
 		item_selected = self.lc_classes.GetSelectedItemCount() > 0
 		self.button_edit.Enable(item_selected)

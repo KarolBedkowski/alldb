@@ -31,8 +31,8 @@ class MappingTable(wx.grid.PyGridTableBase):
 		while len(self._fields) < len(self._data[0]):
 			self._fields.append(self._skip_msg)
 
-		self._map_type = ''.join((wx.grid.GRID_VALUE_CHOICE, ":", self._skip_msg, 
-				",", ','.join(self._fields)))
+		self._map_type = ''.join((wx.grid.GRID_VALUE_CHOICE, ":",
+			self._skip_msg, ",", ','.join(self._fields)))
 
 		g_style1 = wx.grid.GridCellAttr()
 		g_style1.SetBackgroundColour(wx.Colour(255, 255, 255))

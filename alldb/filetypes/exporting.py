@@ -78,7 +78,7 @@ def export_items(parent_wnd, cls, items):
 
 	efile = None
 	try:
-		efile =  gzip.open(filename, 'w')
+		efile = gzip.open(filename, 'w')
 		efile.write('AllDb|Export|Items|1.0|#|')
 		efile.write('|'.join((str(cls.oid), cls.name, '#', time.asctime())))
 		efile.write('\n')

@@ -32,7 +32,6 @@ from .dlg_about import show_about_box
 from .dlg_import_csv import DlgImportCsv
 
 
-
 class FrameMain(object):
 	''' Klasa głównego okna programu'''
 	def __init__(self, db):

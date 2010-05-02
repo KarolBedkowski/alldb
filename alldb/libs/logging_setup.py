@@ -13,14 +13,11 @@ __all__ = ['logging_setup']
 
 
 import os.path
-import sys
 import logging
-import imp
 import tempfile
 import time
 
 from . import appconfig
-
 
 
 def logging_setup(filename, debug=False):

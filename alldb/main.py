@@ -24,6 +24,7 @@ except Exception, _:
 
 _LOG = logging.getLogger(__name__)
 
+
 def show_version(ption, opt_str, value, parser, *args, **kwargs):
 	from alldb import version
 	print version.INFO
