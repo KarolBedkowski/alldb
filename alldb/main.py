@@ -3,9 +3,9 @@
 """
 """
 
-__author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (C) Karol Będkowski 2009'
-__revision__ = '2009-11-12'
+__author__ = "Karol Będkowski"
+__copyright__ = "Copyright (C) Karol Będkowski, 2009-2010"
+__version__ = "2010-05-03"
 
 
 import os

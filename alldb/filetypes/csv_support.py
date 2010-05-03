@@ -6,10 +6,9 @@ Eksportowanie danych do pliku csv
 """
 from __future__ import with_statement
 
-__author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (C) Karol Będkowski 2009'
-__version__ = '0.1'
-__release__ = '2009-11-12'
+__author__ = "Karol Będkowski"
+__copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
+__version__ = "2010-05-03"
 
 
 import csv

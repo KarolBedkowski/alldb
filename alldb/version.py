@@ -3,7 +3,9 @@
 Licence and version informations.
 """
 
-__author__ = 'Karol Będkowski'
+__author__ = "Karol Będkowski"
+__copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
+__version__ = "2010-05-03"
 
 
 try:

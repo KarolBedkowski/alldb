@@ -9,11 +9,9 @@ Copyright (c) Karol Będkowski, 2004, 2005, 2006
 This file is part of KPyLibs
 """
 
-__author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (C) Karol Będkowski 2006'
-__revision__ = '$Id$'
-
-
+__author__ = "Karol Będkowski"
+__copyright__ = "Copyright (C) Karol Będkowski, 2004-2010"
+__version__ = "2010-05-03"
 __all__ = ['message_box_error', 'message_box_info',
 		'message_box_question_yesno', 'message_box_warning_yesno',
 		'message_box_warning_yesnocancel', 'message_box_not_save_confirm',

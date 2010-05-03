@@ -4,11 +4,9 @@
 """
 from __future__ import with_statement
 
-__author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (c) Karol Będkowski 2006-2010'
-__revision__ = '$Id$'
-__all__ = []
-
+__author__ = "Karol Będkowski"
+__copyright__ = "Copyright (c) Karol Będkowski 2009-2010"
+__version__ = "2010-05-03"
 
 import sys
 sys.argv.append('-d')

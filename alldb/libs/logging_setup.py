@@ -6,9 +6,10 @@ Logging setup.
 2008-04-17 [k]: umieszczanie loga w tempie jeżeli jest frozen lub wybrany
 katalog jest ro.
 """
-__author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (C) Karol Będkowski 2006'
-__revision__ = '$Id$'
+__author__ = "Karol Będkowski"
+__copyright__ = "Copyright (C) Karol Będkowski, 2006-2010"
+__version__ = "2010-05-03"
+
 __all__ = ['logging_setup']
 
 

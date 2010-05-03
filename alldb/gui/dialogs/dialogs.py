@@ -10,9 +10,9 @@ This file is part of KPyLibs
 
 """
 
-__author__ = 'Karol Będkowski'
-__copyright__ = 'Copyright (C) Karol Będkowski 2006'
-__revision__ = '$Id$'
+__author__ = "Karol Będkowski"
+__copyright__ = "Copyright (C) Karol Będkowski, 2004-2010"
+__version__ = "2010-05-03"
 
 __all__ = ['dialog_file_save', 'dialog_file_load', 'dialog_get_text']
 
