@@ -13,8 +13,11 @@ __release__ = '2009-12-17'
 
 import logging
 
+from alldb.libs import debug
+
 from .sqlite_engine import SqliteEngine
 from .objects import ADObjectClass, ADObject, SearchResult
+
 
 _LOG = logging.getLogger(__name__)
 
@@ -120,8 +123,9 @@ class Db(object):
 					for oid, class_id, data in res]
 
 	def get_blob(self, object_id, field):
-		with self._engine.create_transaction(self) as trans:
-			return trans.get_blob(object_id, field)
+		with debug.time_it('get_blob'):
+			with self._engine.create_transaction(self) as trans:
+				return trans.get_blob(object_id, field)
 
 	def put_blob(self, object_id, field, data):
 		with self._engine.create_transaction(self) as trans:

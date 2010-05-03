@@ -27,6 +27,10 @@ def _profile():
 		stat.sort_stats('cumulative').print_stats('alldb', 50)
 		out.write('\n\n----------------------------\n\n')
 		stat.sort_stats('time').print_stats('alldb', 50)
+		out.write('\n\n============================\n\n')
+		stat.sort_stats('cumulative').print_stats('', 50)
+		out.write('\n\n----------------------------\n\n')
+		stat.sort_stats('time').print_stats('', 50)
 
 
 def _memprofile():

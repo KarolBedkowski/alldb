@@ -244,7 +244,6 @@ class PanelInfo(scrolled.ScrolledPanel):
 		return box
 
 	def _fill_fields_from_obj(self):
-		self.Freeze()
 		obj = self._obj
 		for name, (field, ftype, _default, options) in self._fields.iteritems():
 			if not field:
@@ -273,7 +272,6 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self.tc_tags.SetValue(obj.tags_str)
 		self.update_base_info(obj)
 		self._obj_showed = True
-		self.Thaw()
 
 	def _fill_fields_clear(self):
 		self._blobs = {}
