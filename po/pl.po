@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alldb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-16 09:03+0200\n"
+"POT-Creation-Date: 2010-05-03 10:47+0200\n"
 "PO-Revision-Date: 2010-04-16 17:54+0200\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
@@ -74,9 +74,6 @@ msgstr "Elementy posiadają tytuł"
 msgid "Items title"
 msgstr "Tytuły elementów"
 
-msgid "Items: 0"
-msgstr "Elementy: 0"
-
 msgid "Manage _Categories"
 msgstr "Zarządzaj _kategoriami"
 
@@ -122,12 +119,6 @@ msgstr "Szerokość:"
 msgid "_About"
 msgstr "O _programie"
 
-msgid "_Backup"
-msgstr "_Kopia zapasowa"
-
-msgid "_Create..."
-msgstr "_Utwórz..."
-
 msgid "_Delete\\tCtrl+Delete"
 msgstr "_Usuń\\tCtrl+Delete"
 
@@ -154,9 +145,6 @@ msgstr "_Wczytaj elementy..."
 
 msgid "_New Item\\tCtrl+N"
 msgstr "_Nowy element\\tCtrl+N"
-
-msgid "_Restore..."
-msgstr "_Przywróć..."
 
 msgid "_Save Items..."
 msgstr "_Zapisz elementy"
@@ -559,6 +547,18 @@ msgstr ""
 "wyboru) którejś z późniejszych wersji.\n"
 "\n"
 "Szczegóły opisano w pliku COPYING.\n"
+
+#~ msgid "Items: 0"
+#~ msgstr "Elementy: 0"
+
+#~ msgid "_Backup"
+#~ msgstr "_Kopia zapasowa"
+
+#~ msgid "_Create..."
+#~ msgstr "_Utwórz..."
+
+#~ msgid "_Restore..."
+#~ msgstr "_Przywróć..."
 
 #~ msgid "AllDB Files (*.alldb)|*.cls|All files|*.*"
 #~ msgstr "Pliki AllDB (*.alldb)|*.alldb|Wszystkie pliki|*.*"
