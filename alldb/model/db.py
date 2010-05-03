@@ -121,10 +121,10 @@ class Db(object):
 			return [self._create_single_object(oid, class_id, data)
 					for oid, class_id, data in res]
 
+	@debug.time_method
 	def get_blob(self, object_id, field):
-		with debug.time_it('get_blob'):
-			with self._engine.create_transaction(self) as trans:
-				return trans.get_blob(object_id, field)
+		with self._engine.create_transaction(self) as trans:
+			return trans.get_blob(object_id, field)
 
 	def put_blob(self, object_id, field, data):
 		with self._engine.create_transaction(self) as trans:
