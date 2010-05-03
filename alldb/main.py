@@ -86,6 +86,7 @@ if not appconfig.is_frozen():
 import wx
 
 from alldb.gui.frame_main import FrameMain
+from alldb.gui.splash import AllDbSplash
 from alldb.model.db import Db
 from alldb.libs.iconprovider import IconProvider
 
@@ -97,6 +98,11 @@ def run():
 	db_filename = os.path.join(config.user_share_dir, 'alldb.db')
 
 	app = wx.PySimpleApp(0)
+	wx.InitAllImageHandlers()
+
+	splash = AllDbSplash()
+	splash.Show()
+
 	if sys.platform == 'win32':
 		wx.Locale.AddCatalogLookupPathPrefix(config.locales_dir)
 		wxloc = wx.Locale(wx.LANGUAGE_DEFAULT)
@@ -107,7 +113,6 @@ def run():
 	config['_DB'] = db = Db(db_filename)
 	db.open()
 
-	wx.InitAllImageHandlers()
 	main_frame = FrameMain(db)
 	app.SetTopWindow(main_frame.wnd)
 	main_frame.wnd.Show()
