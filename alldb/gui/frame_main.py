@@ -8,7 +8,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-03"
+__version__ = "2010-05-05"
 
 
 import os.path
@@ -372,6 +372,7 @@ class FrameMain(object):
 				curr_obj.blobs = blobs
 				curr_obj.set_tags(tags)
 				curr_obj.save()
+				self._result.update_item(curr_obj)
 				self._set_status_text(_('Saved'))
 				if self._curr_info_panel:
 					self._curr_info_panel.update_base_info(curr_obj)

@@ -6,7 +6,7 @@ Obiekty alldb
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-03"
+__version__ = "2010-05-05"
 
 
 import time
@@ -245,6 +245,13 @@ class SearchResult(object):
 		self.cls = None
 		self.reset()
 
+	def reset(self):
+		self.tags = {}
+		self._items = {}
+		self.filtered_items = []
+		self.current_sorting_col = 0
+		self._last_filter = None
+
 	@property
 	def items(self):
 		self_items = self._items
@@ -266,13 +273,6 @@ class SearchResult(object):
 			val = item.data.get(field)
 			filters[val] = filters.get(val, 0) + 1
 		return filters
-
-	def reset(self):
-		self.tags = {}
-		self._items = {}
-		self.filtered_items = []
-		self.current_sorting_col = 0
-		self._last_filter = None
 
 	def set_class(self, cls):
 		self.cls = cls
@@ -317,6 +317,9 @@ class SearchResult(object):
 		else:
 			self.current_sorting_col = max(col, 1)
 		return self._do_sort_items()
+
+	def update_item(self, item):
+		self._items[item.oid] = item
 
 	def _do_sort_items(self):
 		current_sorting_col = abs(self.current_sorting_col) - 1
