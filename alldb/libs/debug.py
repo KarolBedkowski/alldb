@@ -3,7 +3,7 @@
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (C) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-03"
+__version__ = "2010-05-05"
 
 
 from contextlib import contextmanager
@@ -23,6 +23,7 @@ def time_it(name):
 
 def time_method(func):
 	if __debug__:
+
 		@wraps(func)
 		def wrapper(*args, **kwds):
 			_ts = time.time()
