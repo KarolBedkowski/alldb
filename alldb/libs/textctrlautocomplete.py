@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 '''
 wxPython Custom Widget Collection 20060207
 Written By: Edward Flick(eddy -=at=- cdf-imaging -=dot=- com)
@@ -6,6 +7,9 @@ Written By: Edward Flick(eddy -=at=- cdf-imaging -=dot=- com)
 			Will Sadkin(wsadkin-=at=- nameconnector -=dot=- com)
 Copyright 2006(c) CDF Inc.(http://www.cdf-imaging.com)
 Contributed to the wxPython project under the wxPython project's license.
+
+Changes:
+	2010-05-05 Karol Będkowski: catch exception in onControlChanged
 '''
 import locale, wx, sys, cStringIO
 import	wx.lib.mixins.listctrl	as	listmix
@@ -243,8 +247,11 @@ class TextCtrlAutoComplete(wx.TextCtrl, listmix.ColumnSorterMixin):
 		event.Skip()
 
 	def onControlChanged(self, event):
-		if self.IsShown():
-			self._showDropDown(False)
+		try:
+			if self.IsShown():
+				self._showDropDown(False)
+		except:
+			pass
 		event.Skip()
 
 	# -- Interfaces methods
