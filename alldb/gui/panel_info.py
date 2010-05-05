@@ -6,7 +6,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (C) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-03"
+__version__ = "2010-05-05"
 
 
 import os.path
@@ -30,10 +30,14 @@ from alldb.libs.textctrlautocomplete import TextCtrlAutoComplete
 
 class MyTextCtrlAutoComplete(TextCtrlAutoComplete):
 	def __init__(self, parent, colNames=None, choices=None, *args, **kwargs):
-		TextCtrlAutoComplete.__init__(self, parent, colNames, choices, *args,
-				**kwargs)
+		TextCtrlAutoComplete.__init__(self, parent, colNames, choices or [''],
+				*args, **kwargs)
 		self._all_choices = choices
 		self._entryCallback = self._entry_callback
+
+	def set_choices(self, choices):
+		self._all_choices = choices
+		self.SetChoices(choices)
 
 	def _entry_callback(self):
 		text = self.GetValue().lower()
@@ -83,6 +87,11 @@ class PanelInfo(scrolled.ScrolledPanel):
 			self._fill_fields_from_obj()
 		else:
 			self._fill_fields_clear()
+		for name, (field, ftype, _default, options) in self._fields.iteritems():
+			if isinstance(field, MyTextCtrlAutoComplete):
+				choices = [val or '' for val
+						in self._result.get_filter_for_field(name).keys()]
+				field.set_choices(choices)
 		self.SetupScrolling()
 
 	def update_base_info(self, obj):
@@ -167,9 +176,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 				ctrl = wx.CheckBox(self, -1)
 				ctrl.Bind(wx.EVT_CHECKBOX, self._on_field_update)
 			elif ftype == 'multi':
-				choices = [val or '' for val
-						in self._result.get_filter_for_field(name).keys()]
-				ctrl = MyTextCtrlAutoComplete(self, -1, choices=choices,
+				ctrl = MyTextCtrlAutoComplete(self, -1, choices=[''],
 						size=(-1, 100), style=wx.TE_MULTILINE)
 				ctrl.Bind(wx.EVT_TEXT, self._on_field_update)
 				grid.AddGrowableRow(idx)
@@ -187,9 +194,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 			elif ftype == 'numeric':
 				ctrl = masked.NumCtrl(self, -1, groupDigits=False, allowNone=True)
 			else:
-				choices = [val or '' for val
-						in self._result.get_filter_for_field(name).keys()]
-				ctrl = MyTextCtrlAutoComplete(self, -1, choices=choices)
+				ctrl = MyTextCtrlAutoComplete(self, -1, choices=[''])
 				ctrl.Bind(wx.EVT_TEXT, self._on_field_update)
 			self._fields[name] = (ctrl, ftype, _default, options)
 
