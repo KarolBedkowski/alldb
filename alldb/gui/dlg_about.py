@@ -2,15 +2,11 @@
 # -*- coding: utf-8 -*-
 # pylint: disable-msg=R0901, R0904
 """
-Photo Catalog v 1.0  (photocat)
-Copyright (c) Karol Będkowski, 2004-2010
-
-This file is part of Photo Catalog
 """
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-03"
+__version__ = "2010-05-05"
 
 __all__ = ['show_about_box']
 
