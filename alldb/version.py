@@ -17,8 +17,8 @@ except NameError:
 
 SHORTNAME = 'alldb'
 NAME = _("AllDB")
-VERSION = '1.0b16'
-VERSION_INFO = (1, 0, 0, 'beta', 16)
+VERSION = '1.0rc1'
+VERSION_INFO = (1, 0, 0, 'rc', 1)
 RELEASE = '2010-05-06'
 DESCRIPTION = _('''All-kind of data database''')
 DEVELOPERS = u'''Karol Będkowski'''
