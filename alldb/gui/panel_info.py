@@ -6,7 +6,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (C) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-05"
+__version__ = "2010-05-06"
 
 
 import os.path
@@ -29,19 +29,17 @@ from alldb.libs.textctrlautocomplete import TextCtrlAutoComplete
 
 
 class MyTextCtrlAutoComplete(TextCtrlAutoComplete):
-	def __init__(self, parent, colNames=None, choices=None, *args, **kwargs):
-		TextCtrlAutoComplete.__init__(self, parent, colNames, choices or [''],
-				*args, **kwargs)
-		self._all_choices = choices
+	def __init__(self, parent, result, field_name, *args, **kwargs):
+		TextCtrlAutoComplete.__init__(self, parent, choices=[''], *args,
+				**kwargs)
 		self._entryCallback = self._entry_callback
-
-	def set_choices(self, choices):
-		self._all_choices = choices
-		self.SetChoices(choices)
+		self._result = result
+		self._field_name = field_name
 
 	def _entry_callback(self):
 		text = self.GetValue().lower()
-		choices = [choice for choice in self._all_choices
+		all_choices = self._result.get_values_for_field(self._field_name)
+		choices = [choice or '' for choice in all_choices
 				if self._match(text, choice)]
 		if choices != self._choices:
 			self.SetChoices(choices)
@@ -87,11 +85,6 @@ class PanelInfo(scrolled.ScrolledPanel):
 			self._fill_fields_from_obj()
 		else:
 			self._fill_fields_clear()
-		for name, (field, ftype, _default, options) in self._fields.iteritems():
-			if isinstance(field, MyTextCtrlAutoComplete):
-				choices = [val or '' for val
-						in self._result.get_filter_for_field(name).keys()]
-				field.set_choices(choices)
 		self.SetupScrolling()
 
 	def update_base_info(self, obj):
@@ -167,7 +160,8 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self._first_field = None
 		grid = wx.FlexGridSizer(len(self._obj_cls.fields), 2, 3, 6)
 		grid.AddGrowableCol(1)
-		for idx, (name, ftype, _default, options) in enumerate(self._obj_cls.fields):
+		for idx, (name, ftype, default, options) in enumerate(
+				self._obj_cls.fields):
 			grid.Add(wx.StaticText(self, -1, "%s:" % format_label(name)), 0,
 					wx.ALIGN_CENTER_VERTICAL)
 			ctrl = None
@@ -176,13 +170,13 @@ class PanelInfo(scrolled.ScrolledPanel):
 				ctrl = wx.CheckBox(self, -1)
 				ctrl.Bind(wx.EVT_CHECKBOX, self._on_field_update)
 			elif ftype == 'multi':
-				ctrl = MyTextCtrlAutoComplete(self, -1, choices=[''],
+				ctrl = MyTextCtrlAutoComplete(self, self._result, name,
 						size=(-1, 100), style=wx.TE_MULTILINE)
 				ctrl.Bind(wx.EVT_TEXT, self._on_field_update)
 				grid.AddGrowableRow(idx)
 			elif ftype == 'date':
-				ctrl = wx.DatePickerCtrl(self, -1,
-						style=wx.DP_DROPDOWN | wx.DP_SHOWCENTURY | wx.DP_ALLOWNONE)
+				ctrl = wx.DatePickerCtrl(self, -1, style=wx.DP_DROPDOWN | \
+						wx.DP_SHOWCENTURY | wx.DP_ALLOWNONE)
 			elif ftype == 'list':
 				ctrl = gizmos.EditableListBox(self, -1)
 			elif ftype == 'choice':
@@ -192,11 +186,12 @@ class PanelInfo(scrolled.ScrolledPanel):
 			elif ftype == 'image':
 				ctrl, box = self._create_field_image(name, options)
 			elif ftype == 'numeric':
-				ctrl = masked.NumCtrl(self, -1, groupDigits=False, allowNone=True)
+				ctrl = masked.NumCtrl(self, -1, groupDigits=False,
+						allowNone=True)
 			else:
-				ctrl = MyTextCtrlAutoComplete(self, -1, choices=[''])
+				ctrl = MyTextCtrlAutoComplete(self, self._result, name)
 				ctrl.Bind(wx.EVT_TEXT, self._on_field_update)
-			self._fields[name] = (ctrl, ftype, _default, options)
+			self._fields[name] = (ctrl, ftype, default, options)
 
 			if ctrl:
 				if box is None:

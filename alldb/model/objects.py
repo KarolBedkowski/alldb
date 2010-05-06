@@ -6,7 +6,7 @@ Obiekty alldb
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-05"
+__version__ = "2010-05-06"
 
 
 import time
@@ -251,6 +251,7 @@ class SearchResult(object):
 		self.filtered_items = []
 		self.current_sorting_col = 0
 		self._last_filter = None
+		self._values_cache = {}
 
 	@property
 	def items(self):
@@ -267,11 +268,17 @@ class SearchResult(object):
 		fields.insert(0, _('Tags'))
 		return fields
 
+	def get_values_for_field(self, field):
+		if field not in self._values_cache:
+			self.get_filter_for_field(field)
+		return self._values_cache[field]
+
 	def get_filter_for_field(self, field):
 		filters = {}
 		for item in self._items.itervalues():
 			val = item.data.get(field)
 			filters[val] = filters.get(val, 0) + 1
+		self._values_cache[field] = filters.keys()
 		return filters
 
 	def set_class(self, cls):
@@ -320,6 +327,8 @@ class SearchResult(object):
 
 	def update_item(self, item):
 		self._items[item.oid] = item
+		for field in self._values_cache.keys():
+			self.get_filter_for_field(field)
 
 	def _do_sort_items(self):
 		current_sorting_col = abs(self.current_sorting_col) - 1
