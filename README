@@ -12,6 +12,11 @@ Main features:
 - import and export to the CSV files
 - quick search by filter items list
 - tagging items
+- portable - written in Python and wxWidgets
+
+This application is similar to the StuffKeeper (http://www.stuffkeeper.com) but simpler.
+If you looking for more advanced application - please take a look on it.
+
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

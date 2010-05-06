@@ -17,7 +17,7 @@ AllDB
 SYNOPSIS
 ========
 
-  alldb
+alldb
 
 DESCRIPTION
 ===========
@@ -31,7 +31,10 @@ Main features:
 * store all information in one, sqlite database
 * import and export to the CSV files
 * quick search by filter items list
-* tagging items
+* tagging item
+
+This application is similar to the StuffKeeper (http://www.stuffkeeper.org/), but simpler and
+portable (writen in Python and wxWidgets).
 
 
 OPTIONS
@@ -41,4 +44,11 @@ OPTIONS
 -h, --help   Show help message and exit
 --version    Show information about application version
 
+FILES
+=======
 
+~/.local/share/alldb/alldb.db
+    Application database, contain all stored information.
+
+~/.config/alldb/alldb.cfg
+    Application configuration file.

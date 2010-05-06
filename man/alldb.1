@@ -31,12 +31,8 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .in \\n[rst2man-indent\\n[rst2man-indent-level]]u
 ..
 .SH SYNOPSIS
-.INDENT 0.0
-.INDENT 3.5
 .sp
 alldb
-.UNINDENT
-.UNINDENT
 .SH DESCRIPTION
 .sp
 AllDB is a very simple application for storing various information organised in
@@ -58,8 +54,11 @@ import and export to the CSV files
 quick search by filter items list
 .IP \(bu 2
 .
-tagging items
+tagging item
 .UNINDENT
+.sp
+This application is similar to the StuffKeeper (\fI\%http://www.stuffkeeper.org/\fP), but simpler and
+portable (writen in Python and wxWidgets).
 .SH OPTIONS
 .INDENT 0.0
 .TP
@@ -74,6 +73,17 @@ Show help message and exit
 .B \-\-version
 .
 Show information about application version
+.UNINDENT
+.SH FILES
+.INDENT 0.0
+.TP
+.B ~/.local/share/alldb/alldb.db
+.
+Application database, contain all stored information.
+.TP
+.B ~/.config/alldb/alldb.cfg
+.
+Application configuration file.
 .UNINDENT
 .SH AUTHOR
 Karol Będkowski
