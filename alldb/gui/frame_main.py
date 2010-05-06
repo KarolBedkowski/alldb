@@ -8,7 +8,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-05"
+__version__ = "2010-05-06"
 
 
 import os.path
@@ -220,6 +220,8 @@ class FrameMain(object):
 				num = self.choice_klasa.Append(cls.name, cls.oid)
 				if cls.oid == select:
 					cls2select = num
+		if cls2select is None and classes:
+			cls2select = 0
 		if cls2select is not None:
 			self.choice_klasa.Select(cls2select)
 			return classes[cls2select].oid
