@@ -6,7 +6,7 @@ Obiekty alldb
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-06"
+__version__ = "2010-05-07"
 
 
 import time
@@ -94,6 +94,14 @@ class ADObjectClass(BaseObject):
 			if field[3] and field[3].get('in_list'):
 				fields.append(field[0])
 		return fields
+
+	@property
+	def field_names(self):
+		return (field[0] for field in self.fields)
+
+	@property
+	def nonblobs_fields(self):
+		return (field[0] for field in self.fields if field[1] != 'image')
 
 	@property
 	def blob_fields(self):
@@ -251,7 +259,7 @@ class SearchResult(object):
 		self.filtered_items = []
 		self.current_sorting_col = 0
 		self._last_filter = None
-		self._values_cache = {}
+		self._values_cache = {} # field->(value->[items])
 
 	@property
 	def items(self):
@@ -269,17 +277,11 @@ class SearchResult(object):
 		return fields
 
 	def get_values_for_field(self, field):
-		if field not in self._values_cache:
-			self.get_filter_for_field(field)
 		return self._values_cache[field]
 
 	def get_filter_for_field(self, field):
-		filters = {}
-		for item in self._items.itervalues():
-			val = item.data.get(field)
-			filters[val] = filters.get(val, 0) + 1
-		self._values_cache[field] = filters.keys()
-		return filters
+		return dict((value, len(items)) for value, items
+				in self._values_cache[field].iteritems())
 
 	def set_class(self, cls):
 		self.cls = cls
@@ -327,8 +329,39 @@ class SearchResult(object):
 
 	def update_item(self, item):
 		self._items[item.oid] = item
-		for field in self._values_cache.keys():
-			self.get_filter_for_field(field)
+		for field, valuesdict in self._values_cache.iteritems():
+			new_value = item.data.get(field)
+			if new_value in valuesdict and item in valuesdict[new_value]:
+				# without changes
+				continue
+			for itemlist in valuesdict.itervalues():
+				idx = [idx for idx, itm in enumerate(itemlist)
+						if itm.oid == item.oid]
+				if idx:
+					del itemlist[idx[0]]
+					break
+			values_to_del = [val for val, itemlist in valuesdict.iteritems()
+					if len(itemlist) == 0]
+			for val in values_to_del:
+				del valuesdict[val]
+			itemlist = valuesdict.get(new_value, [])
+			itemlist.append(item)
+			valuesdict[new_value] = itemlist
+		for tag in item.tags:
+			self.tags[tag] = self.tags.get(tag, 0) + 1
+
+	def del_item(self, item):
+		for valuesdict in self._values_cache.itervalues():
+			for itemlist in valuesdict.itervalues():
+				idx = [idx for idx, itm in enumerate(itemlist)
+						if itm.oid == item.oid]
+				if idx:
+					del itemlist[idx[0]]
+					break
+			values_to_del = [val for val, itemlist in valuesdict.iteritems()
+					if len(itemlist) == 0]
+			for val in values_to_del:
+				del valuesdict[val]
 
 	def _do_sort_items(self):
 		current_sorting_col = abs(self.current_sorting_col) - 1
@@ -340,10 +373,19 @@ class SearchResult(object):
 
 	def _update_tags(self):
 		tags = {}
+		fields = list(self.cls.nonblobs_fields)
+		values = dict((fname, dict()) for fname in fields)
 		for item in self._items.itervalues():
 			for tag in item.tags:
 				tags[tag] = tags.get(tag, 0) + 1
+			for fname in fields:
+				value = item.data.get(fname)
+				nlist = values[fname].get(value, [])
+				nlist.append(item)
+				values[fname][value] = nlist
 		self.tags = tags
+		self._values_cache = values
+
 
 
 def tags2str(tagstr):
