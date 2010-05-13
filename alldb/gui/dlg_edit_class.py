@@ -60,8 +60,7 @@ class DlgEditClass(object):
 		lc_fields.InsertColumn(0, _('No'))
 		lc_fields.InsertColumn(1, _('Name'))
 		lc_fields.InsertColumn(2, _('Type'))
-		lc_fields.InsertColumn(3, _('Default value'))
-		lc_fields.InsertColumn(4, _('Options'))
+		lc_fields.InsertColumn(3, _('Options'))
 
 		self._show_class(cls)
 		self._set_buttons_status()
@@ -109,15 +108,13 @@ class DlgEditClass(object):
 			lc_fields.InsertStringItem(no, str(no + 1))
 			lc_fields.SetStringItem(no, 1, str(name))
 			lc_fields.SetStringItem(no, 2, str(self._type_names.get(ftype, ftype)))
-			lc_fields.SetStringItem(no, 3, str(default or ''))
 			if options:
 				opt_str = _options2string(options)
-				lc_fields.SetStringItem(no, 4, opt_str)
+				lc_fields.SetStringItem(no, 3, opt_str)
 		lc_fields.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		lc_fields.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 		lc_fields.SetColumnWidth(2, wx.LIST_AUTOSIZE)
 		lc_fields.SetColumnWidth(3, wx.LIST_AUTOSIZE)
-		lc_fields.SetColumnWidth(4, wx.LIST_AUTOSIZE)
 
 	def _on_item_have_title_checkbox(self, event):
 		have_title = self.cb_show_title.IsChecked()
