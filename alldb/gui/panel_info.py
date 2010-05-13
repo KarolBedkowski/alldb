@@ -69,9 +69,6 @@ class PanelInfo(scrolled.ScrolledPanel):
 		else:
 			self._fill_fields_clear()
 		self.SetupScrolling()
-		if wx.Platform == '__WXMSW__':
-			for field in self._fields.itervalues():
-				field[0].widget.SetFocus()
 		self.set_focus()
 		self.Thaw()
 

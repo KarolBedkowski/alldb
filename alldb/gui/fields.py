@@ -32,6 +32,9 @@ class MyTextCtrlAutoComplete(TextCtrlAutoComplete):
 		self._result = result
 		self._field_name = field_name
 
+	def SetValue(self, value):
+		self.ChangeValue(value)
+
 	def _entry_callback(self):
 		text = self.GetValue().lower()
 		all_choices = self._result.get_values_for_field(self._field_name)
