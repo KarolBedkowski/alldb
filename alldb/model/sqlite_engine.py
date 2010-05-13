@@ -72,7 +72,7 @@ class SqliteEngine(object):
 	def open(self):
 		_LOG.info('SqliteEngine.open(); filename=%s', self.filename)
 		bdir = os.path.dirname(self.filename)
-		if not os.path.exists(bdir):
+		if bdir and not os.path.exists(bdir):
 			os.makedirs(bdir)
 		self.database = sqlite3.connect(self.filename)
 		self._after_open()

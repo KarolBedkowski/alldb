@@ -95,7 +95,22 @@ def run():
 	config = appconfig.AppConfig()
 	config.load()
 	config.debug = options.debug
-	db_filename = os.path.join(config.user_share_dir, 'alldb.db')
+
+	def try_path(path):
+		file_path = os.path.join(path, 'alldb.db')
+		if os.path.isfile(file_path):
+			return file_path
+		return None
+
+	db_filename = try_path(config.main_dir)
+	if not db_filename:
+		db_filename = try_path(os.path.join(config.main_dir, 'db'))
+	if not db_filename:
+		db_dir = os.path.join(config.main_dir, 'db')
+		if os.path.isdir(db_dir):
+			db_filename = os.path.join(db_dir, 'alldb.db')
+	if not db_filename:
+		db_filename = os.path.join(config.user_share_dir, 'alldb.db')
 
 	app = wx.PySimpleApp(0)
 	wx.InitAllImageHandlers()
