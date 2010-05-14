@@ -10,8 +10,8 @@ This file is part of kPyLibs
 """
 
 __author__ = "Karol Będkowski"
-__copyright__ = "Copyright (C) Karol Będkowski, 2006-2010"
-__version__ = "2010-05-03"
+__copyright__ = "Copyright (c) Karol Będkowski, 2006-2010"
+__version__ = "2010-05-14"
 __all__ = ['IconProvider']
 
 

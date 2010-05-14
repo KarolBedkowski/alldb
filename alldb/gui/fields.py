@@ -5,22 +5,18 @@
 from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
-__copyright__ = "Copyright (C) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-06"
+__copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
+__version__ = "2010-05-14"
 
 
-import os.path
-import time
 import cStringIO
 
 import wx
-import wx.lib.scrolledpanel as scrolled
 import wx.lib.newevent
 import wx.lib.imagebrowser as imgbr
 import wx.gizmos as gizmos
 from wx.lib import masked
 
-from alldb.gui.dlg_select_tags import DlgSelectTags
 from alldb.libs.textctrlautocomplete import TextCtrlAutoComplete
 
 
@@ -92,7 +88,7 @@ class Field:
 	def _del_value(self):
 		self._widget_del_value()
 
-	value = property(_get_value, _set_value, _del_value, 
+	value = property(_get_value, _set_value, _del_value,
 			"Access to widget value")
 
 	def bind(self, event, method):
@@ -213,7 +209,7 @@ FieldsFactory.register_field_type(ChoiceField)
 class ImageField(Field):
 	field_type = 'image'
 	result_type = 'blob'
-	
+
 	def __init__(self, parent, name, options, default, result_obj):
 		Field.__init__(self, parent, name, options, default, result_obj)
 		self._blob = None
@@ -267,7 +263,6 @@ class ImageField(Field):
 		dlg = imgbr.ImageDialog(self._widget)
 		if dlg.ShowModal() == wx.ID_OK:
 			filename = dlg.GetFile()
-			data = None
 			img = wx.Image(filename)
 			if img:
 				opt = self.options

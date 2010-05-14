@@ -5,24 +5,19 @@
 from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
-__copyright__ = "Copyright (C) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-06"
+__copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
+__version__ = "2010-05-14"
 
 
 import os.path
 import time
-import cStringIO
 
 import wx
 import wx.lib.scrolledpanel as scrolled
 import wx.lib.newevent
-import wx.lib.imagebrowser as imgbr
-import wx.gizmos as gizmos
-from wx.lib import masked
 
 from alldb.gui.dlg_select_tags import DlgSelectTags
 from alldb.gui.fields import FieldsFactory
-from alldb.libs.textctrlautocomplete import TextCtrlAutoComplete
 
 
 (RecordUpdatedEvent, EVT_RECORD_UPDATED) = wx.lib.newevent.NewEvent()

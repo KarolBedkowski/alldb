@@ -10,8 +10,8 @@ This file is part of KPyLibs
 """
 
 __author__ = "Karol Będkowski"
-__copyright__ = "Copyright (C) Karol Będkowski, 2004-2010"
-__version__ = "2010-05-03"
+__copyright__ = "Copyright (c) Karol Będkowski, 2004-2010"
+__version__ = "2010-05-14"
 __all__ = ['message_box_error', 'message_box_info',
 		'message_box_question_yesno', 'message_box_warning_yesno',
 		'message_box_warning_yesnocancel', 'message_box_not_save_confirm',

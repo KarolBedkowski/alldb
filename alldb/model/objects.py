@@ -6,7 +6,7 @@ Obiekty alldb
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-07"
+__version__ = "2010-05-14"
 
 
 import time
@@ -259,7 +259,7 @@ class SearchResult(object):
 		self.filtered_items = []
 		self.current_sorting_col = 0
 		self._last_filter = None
-		self._values_cache = {} # field->(value->[items])
+		self._values_cache = {}		# field->(value->[items])
 
 	@property
 	def items(self):
@@ -385,7 +385,6 @@ class SearchResult(object):
 				values[fname][value] = nlist
 		self.tags = tags
 		self._values_cache = values
-
 
 
 def tags2str(tagstr):

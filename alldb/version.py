@@ -5,7 +5,7 @@ Licence and version informations.
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-06"
+__version__ = "2010-05-14"
 
 
 try:
@@ -23,7 +23,7 @@ RELEASE = '2010-05-06'
 DESCRIPTION = _('''All-kind of data database''')
 DEVELOPERS = u'''Karol Będkowski'''
 TRANSLATORS = u'''Karol Będkowski'''
-COPYRIGHT = u'Copyright (C) Karol Będkowski, 2009-2010'
+COPYRIGHT = u"Copyright (c) Karol Będkowski, 2009-2010"
 LICENSE = _('''\
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
