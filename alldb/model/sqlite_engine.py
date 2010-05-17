@@ -25,6 +25,8 @@ except ImportError:
 	_DECODER = json.loads
 	_ENCODER = json.dumps
 
+from .sqls import INIT_SQLS
+
 
 _LOG = logging.getLogger(__name__)
 
@@ -162,6 +164,13 @@ class SqliteEngineTx(object):
 					data=base64.b64encode(data))
 			bfile.write('BLO:' + _ENCODER(sdata) + '\n')
 		bfile.close()
+
+	def initialize_database(self):
+		_LOG.debug('SqliteEngineTx.initialize_database')
+		for sql in INIT_SQLS:
+			self._cursor.executescript(sql)
+		_LOG.debug('SqliteEngineTx.initialize_database finished')
+
 
 
 # vim: encoding=utf8: ff=unix:

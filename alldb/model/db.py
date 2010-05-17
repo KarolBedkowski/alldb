@@ -17,7 +17,6 @@ import sqlite3
 from alldb.libs import debug
 
 from .sqlite_engine import SqliteEngineTx
-from .sqls import INIT_SQLS
 from .objects import ADObjectClass, ADObject, SearchResult
 
 
@@ -166,11 +165,9 @@ class Db(object):
 		return obj
 
 	def _after_open(self):
-		cur = self._database.cursor()
-		for sql in INIT_SQLS:
-			cur.executescript(sql)
-		cur.close()
-		self._database.commit()
+		with SqliteEngineTx(self) as trans:
+			trans.initialize_database()
+		self.sync()
 
 
 
