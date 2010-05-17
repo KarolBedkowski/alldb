@@ -139,16 +139,10 @@ class Db(object):
 			trans.put_blob(object_id, field, data)
 		self.sync()
 
-	def optimize(self):
+	def optimize(self, pulse_cb=None):
 		"""optimize sql database"""
-		_LOG.info('Db.optimize')
-		cur = self._database.cursor()
-		_LOG.debug('Db.optimize: vacum')
-		cur.executescript('vacuum;')
-		_LOG.debug('Db.optimize: analyze')
-		cur.executescript('analyze;')
-		_LOG.debug('Db.optimize: done')
-		cur.close()
+		with SqliteEngineTx(self) as trans:
+			trans.optimize(pulse_cb)
 
 	def create_backup(self, filename):
 		with SqliteEngineTx(self) as trans:

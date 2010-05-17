@@ -25,7 +25,7 @@ except ImportError:
 	_DECODER = json.loads
 	_ENCODER = json.dumps
 
-from .sqls import INIT_SQLS
+from . import sqls
 
 
 _LOG = logging.getLogger(__name__)
@@ -156,11 +156,21 @@ class SqliteEngineTx(object):
 			bfile.write('BLO:' + _ENCODER(sdata) + '\n')
 		bfile.close()
 
-	def initialize_database(self):
+	def initialize_database(self, pulse_cb=None):
 		_LOG.debug('SqliteEngineTx.initialize_database')
-		for sql in INIT_SQLS:
+		for sql in sqls.INIT_SQLS:
+			if pulse_cb:
+				pulse_cb(sql)
 			self._cursor.executescript(sql)
 		_LOG.debug('SqliteEngineTx.initialize_database finished')
+
+	def optimize(self):
+		"""optimize sql database"""
+		_LOG.info('SqliteEngineTx.optimize')
+		for sql in sqls.OPTIMISE_SQLS:
+			_LOG.debug('SqliteEngineTx.optimize: %s', sql)
+			self._cursor.executescript(sql)
+		_LOG.debug('SqliteEngineTx.optimize: done')
 
 
 

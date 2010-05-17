@@ -33,4 +33,10 @@ INIT_SQLS = (
 		primary key (object_id, field));''')
 
 
+OPTIMISE_SQLS = (
+		'vacuum;',
+		'analyze;',
+)
+
+
 # vim: encoding=utf8: ff=unix:
