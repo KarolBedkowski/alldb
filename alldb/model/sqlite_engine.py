@@ -53,9 +53,8 @@ INIT_SQLS = (
 
 class SqliteEngineTx(object):
 
-	def __init__(self, engine, context):
+	def __init__(self, context):
 		self._cursor = None
-		self._engine = engine
 		self._context = context
 
 	@property
@@ -71,7 +70,7 @@ class SqliteEngineTx(object):
 
 	def open(self):
 		if self._cursor is None:
-			self._cursor = self._engine.database.cursor()
+			self._cursor = self._context.create_cursor()
 
 	def close(self):
 		if self._cursor:

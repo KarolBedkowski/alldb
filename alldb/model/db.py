@@ -28,7 +28,7 @@ class Db(object):
 
 	def __init__(self, filename):
 		self.filename = filename
-		self.database = None
+		self._database = None
 
 	@property
 	def classes(self):
@@ -39,22 +39,27 @@ class Db(object):
 		bdir = os.path.dirname(self.filename)
 		if bdir and not os.path.exists(bdir):
 			os.makedirs(bdir)
-		self.database = sqlite3.connect(self.filename)
+		self._database = sqlite3.connect(self.filename)
 		self._after_open()
 
 	def close(self):
 		_LOG.info('SchemaLessDatabase.close()')
-		if self.database:
-			self.database.close()
+		if self._database:
+			self._database.close()
 
 	def sync(self):
-		if self.database:
-			self.database.commit()
+		if self._database:
+			self._database.commit()
+
+	def create_cursor(self):
+		if self._database:
+			return self._database.cursor()
+		return None
 
 	def create_transaction(self):
-		if not self.database:
+		if not self._database:
 			raise ValueError('No database')
-		return SqliteEngineTx(self, self)
+		return SqliteEngineTx(self)
 
 	def put_class(self, cls):
 		with self.create_transaction() as trans:
@@ -165,11 +170,11 @@ class Db(object):
 		return obj
 
 	def _after_open(self):
-		cur = self.database.cursor()
+		cur = self._database.cursor()
 		for sql in INIT_SQLS:
 			cur.executescript(sql)
 		cur.close()
-		self.database.commit()
+		self._database.commit()
 
 
 
