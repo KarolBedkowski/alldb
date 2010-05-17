@@ -37,10 +37,6 @@ class SqliteEngineTx(object):
 		self._cursor = None
 		self._context = context
 
-	@property
-	def context(self):
-		return self._context
-
 	def __enter__(self):
 		self._cursor = self._context.create_cursor()
 		return self
