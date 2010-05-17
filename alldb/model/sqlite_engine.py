@@ -8,13 +8,11 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-14"
+__version__ = "2010-05-17"
 
 
 import logging
 import sqlite3
-import os
-import os.path
 import base64
 import gzip
 import time
@@ -30,7 +28,7 @@ except ImportError:
 
 _LOG = logging.getLogger(__name__)
 
-_INIT_SQLS = (
+INIT_SQLS = (
 	'''PRAGMA encoding = "UTF-8";''',
 	'''PRAGMA foreign_keys = 1;''',
 	'''PRAGMA locking_mode=EXCLUSIVE; ''',
@@ -51,61 +49,6 @@ _INIT_SQLS = (
 		field varchar,
 		data blob,
 		primary key (object_id, field));''')
-
-
-class SqliteEngine(object):
-	"""docstring for SqliteEngine"""
-
-	def __init__(self, filename):
-		self.filename = filename
-		self.database = None
-
-	def __contains__(self, oid):
-		if not self.database:
-			return False
-		cur = self.database.cursor()
-		cur.execute('select 1 from objects where id=?', (oid, ))
-		obj = cur.fetchone()
-		cur.close()
-		return bool(obj)
-
-	def open(self):
-		_LOG.info('SqliteEngine.open(); filename=%s', self.filename)
-		bdir = os.path.dirname(self.filename)
-		if bdir and not os.path.exists(bdir):
-			os.makedirs(bdir)
-		self.database = sqlite3.connect(self.filename)
-		self._after_open()
-
-	def close(self):
-		if self.database:
-			self.database.close()
-
-	def sync(self):
-		if self.database:
-			self.database.commit()
-
-	def create_transaction(self, context):
-		if not self.database:
-			raise ValueError('No database')
-		return SqliteEngineTx(self, context)
-
-	def optimize(self):
-		_LOG.info('SqliteEngine.optimize')
-		cur = self.database.cursor()
-		_LOG.debug('SqliteEngine.optimize: vacum')
-		cur.executescript('vacuum;')
-		_LOG.debug('SqliteEngine.optimize: analyze')
-		cur.executescript('analyze;')
-		_LOG.debug('SqliteEngine.optimize: done')
-		cur.close()
-
-	def _after_open(self):
-		cur = self.database.cursor()
-		for sql in _INIT_SQLS:
-			cur.executescript(sql)
-		cur.close()
-		self.database.commit()
 
 
 class SqliteEngineTx(object):

@@ -10,11 +10,13 @@ __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
 __version__ = "2010-05-17"
 
 
+import os.path
 import logging
+import sqlite3
 
 from alldb.libs import debug
 
-from .sqlite_engine import SqliteEngine
+from .sqlite_engine import SqliteEngineTx, INIT_SQLS
 from .objects import ADObjectClass, ADObject, SearchResult
 
 
@@ -25,10 +27,8 @@ class Db(object):
 	"""docstring for Db"""
 
 	def __init__(self, filename):
-		self._engine = SqliteEngine(filename)
-
-	def __contains__(self, oid):
-		return oid in self._engine
+		self.filename = filename
+		self.database = None
 
 	@property
 	def classes(self):
@@ -36,17 +36,25 @@ class Db(object):
 
 	def open(self):
 		_LOG.info('SchemaLessDatabase.open()')
-		self._engine.open()
+		bdir = os.path.dirname(self.filename)
+		if bdir and not os.path.exists(bdir):
+			os.makedirs(bdir)
+		self.database = sqlite3.connect(self.filename)
+		self._after_open()
 
 	def close(self):
 		_LOG.info('SchemaLessDatabase.close()')
-		self._engine.close()
+		if self.database:
+			self.database.close()
 
 	def sync(self):
-		self._engine.sync()
+		if self.database:
+			self.database.commit()
 
 	def create_transaction(self):
-		return self._engine.create_transaction(self)
+		if not self.database:
+			raise ValueError('No database')
+		return SqliteEngineTx(self, self)
 
 	def put_class(self, cls):
 		with self.create_transaction() as trans:
@@ -133,7 +141,14 @@ class Db(object):
 
 	def optimize(self):
 		"""optimize sql database"""
-		self._engine.optimize()
+		_LOG.info('Db.optimize')
+		cur = self._database.cursor()
+		_LOG.debug('Db.optimize: vacum')
+		cur.executescript('vacuum;')
+		_LOG.debug('Db.optimize: analyze')
+		cur.executescript('analyze;')
+		_LOG.debug('Db.optimize: done')
+		cur.close()
 
 	def create_backup(self, filename):
 		with self.create_transaction() as trans:
@@ -148,6 +163,14 @@ class Db(object):
 		obj = ADObject(oid, class_id, self)
 		obj.restore(data)
 		return obj
+
+	def _after_open(self):
+		cur = self.database.cursor()
+		for sql in INIT_SQLS:
+			cur.executescript(sql)
+		cur.close()
+		self.database.commit()
+
 
 
 # vim: encoding=utf8: ff=unix:
