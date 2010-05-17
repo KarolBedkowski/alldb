@@ -16,7 +16,8 @@ import sqlite3
 
 from alldb.libs import debug
 
-from .sqlite_engine import SqliteEngineTx, INIT_SQLS
+from .sqlite_engine import SqliteEngineTx
+from .sqls import INIT_SQLS
 from .objects import ADObjectClass, ADObject, SearchResult
 
 
