@@ -42,20 +42,11 @@ class SqliteEngineTx(object):
 		return self._context
 
 	def __enter__(self):
-		self.open()
+		self._cursor = self._context.create_cursor()
 		return self
 
 	def __exit__(self, type_=None, value=None, traceback=None):
-		self.close()
-
-	def open(self):
-		if self._cursor is None:
-			self._cursor = self._context.create_cursor()
-
-	def close(self):
-		if self._cursor:
-			self._cursor.close()
-			self._cursor = None
+		self._cursor.close()
 
 	def get_object(self, oid):
 		_LOG.debug('SqliteEngineTx.get(%r)', oid)
