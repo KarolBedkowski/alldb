@@ -57,13 +57,8 @@ class Db(object):
 			return self._database.cursor()
 		return None
 
-	def create_transaction(self):
-		if not self._database:
-			raise ValueError('No database')
-		return SqliteEngineTx(self)
-
 	def put_class(self, cls):
-		with self.create_transaction() as trans:
+		with SqliteEngineTx(self) as trans:
 			cls = cls if hasattr(cls, '__iter__') else (cls, )
 			for icls in cls:
 				if hasattr(icls, 'before_save'):
@@ -79,18 +74,18 @@ class Db(object):
 		self.sync()
 
 	def get_class(self, class_id):
-		with self.create_transaction() as trans:
+		with SqliteEngineTx(self) as trans:
 			res = trans.get_class(class_id)
 			for oid, name, data in res:
 				return self._create_class_object(oid, name, data)
 
 	def get_classes(self):
-		with self.create_transaction() as trans:
+		with SqliteEngineTx(self) as trans:
 			return [self._create_class_object(cid, name, data)
 					for cid, name, data in trans.get_classes()]
 
 	def del_class(self, oids):
-		with self.create_transaction() as trans:
+		with SqliteEngineTx(self) as trans:
 			trans.del_class(oids)
 		self.sync()
 
@@ -105,7 +100,7 @@ class Db(object):
 		return result
 
 	def put_object(self, obj):
-		with self.create_transaction() as trans:
+		with SqliteEngineTx(self) as trans:
 			self.put_object_in_trans(trans, obj)
 		self.sync()
 
@@ -119,29 +114,29 @@ class Db(object):
 				trans.put_blob(iobj.oid, field, blob)
 
 	def get_object(self, oid):
-		with self.create_transaction() as trans:
+		with SqliteEngineTx(self) as trans:
 			res = trans.get_object(oid)
 			for oid, class_id, data in res:
 				return self._create_single_object(oid, class_id, data)
 
 	def del_objects(self, oids):
-		with self.create_transaction() as trans:
+		with SqliteEngineTx(self) as trans:
 			trans.del_object(oids)
 		self.sync()
 
 	def get_objects_by_class(self, class_id):
-		with self.create_transaction() as trans:
+		with SqliteEngineTx(self) as trans:
 			res = trans.get_objects_by_class(class_id)
 			return [self._create_single_object(oid, class_id, data)
 					for oid, class_id, data in res]
 
 	@debug.time_method
 	def get_blob(self, object_id, field):
-		with self.create_transaction() as trans:
+		with SqliteEngineTx(self) as trans:
 			return trans.get_blob(object_id, field)
 
 	def put_blob(self, object_id, field, data):
-		with self.create_transaction() as trans:
+		with SqliteEngineTx(self) as trans:
 			trans.put_blob(object_id, field, data)
 		self.sync()
 
@@ -157,7 +152,7 @@ class Db(object):
 		cur.close()
 
 	def create_backup(self, filename):
-		with self.create_transaction() as trans:
+		with SqliteEngineTx(self) as trans:
 			trans.create_backup(filename)
 
 	def _create_class_object(self, cid, name, data):
