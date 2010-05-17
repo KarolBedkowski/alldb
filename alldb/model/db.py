@@ -7,7 +7,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-14"
+__version__ = "2010-05-17"
 
 
 import logging
@@ -49,7 +49,7 @@ class Db(object):
 		return self._engine.create_transaction(self)
 
 	def put_class(self, cls):
-		with self._engine.create_transaction(self) as trans:
+		with self.create_transaction() as trans:
 			cls = cls if hasattr(cls, '__iter__') else (cls, )
 			for icls in cls:
 				if hasattr(icls, 'before_save'):
@@ -62,23 +62,23 @@ class Db(object):
 						trans.put_object((obj, ))
 					trans.rename_fields_in_blobs(icls.oid, icls.changed_fields_names)
 			trans.put_class(cls)
-		self._engine.sync()
+		self.sync()
 
 	def get_class(self, class_id):
-		with self._engine.create_transaction(self) as trans:
+		with self.create_transaction() as trans:
 			res = trans.get_class(class_id)
 			for oid, name, data in res:
 				return self._create_class_object(oid, name, data)
 
 	def get_classes(self):
-		with self._engine.create_transaction(self) as trans:
+		with self.create_transaction() as trans:
 			return [self._create_class_object(cid, name, data)
 					for cid, name, data in trans.get_classes()]
 
 	def del_class(self, oids):
-		with self._engine.create_transaction(self) as trans:
+		with self.create_transaction() as trans:
 			trans.del_class(oids)
-		self._engine.sync()
+		self.sync()
 
 	def load_class(self, class_id):
 		_LOG.info('Db.load_class(%r)', class_id)
@@ -91,9 +91,9 @@ class Db(object):
 		return result
 
 	def put_object(self, obj):
-		with self._engine.create_transaction(self) as trans:
+		with self.create_transaction() as trans:
 			self.put_object_in_trans(trans, obj)
-		self._engine.sync()
+		self.sync()
 
 	def put_object_in_trans(self, trans, obj):
 		obj = obj if hasattr(obj, '__iter__') else (obj, )
@@ -105,38 +105,38 @@ class Db(object):
 				trans.put_blob(iobj.oid, field, blob)
 
 	def get_object(self, oid):
-		with self._engine.create_transaction(self) as trans:
+		with self.create_transaction() as trans:
 			res = trans.get_object(oid)
 			for oid, class_id, data in res:
 				return self._create_single_object(oid, class_id, data)
 
 	def del_objects(self, oids):
-		with self._engine.create_transaction(self) as trans:
+		with self.create_transaction() as trans:
 			trans.del_object(oids)
-		self._engine.sync()
+		self.sync()
 
 	def get_objects_by_class(self, class_id):
-		with self._engine.create_transaction(self) as trans:
+		with self.create_transaction() as trans:
 			res = trans.get_objects_by_class(class_id)
 			return [self._create_single_object(oid, class_id, data)
 					for oid, class_id, data in res]
 
 	@debug.time_method
 	def get_blob(self, object_id, field):
-		with self._engine.create_transaction(self) as trans:
+		with self.create_transaction() as trans:
 			return trans.get_blob(object_id, field)
 
 	def put_blob(self, object_id, field, data):
-		with self._engine.create_transaction(self) as trans:
+		with self.create_transaction() as trans:
 			trans.put_blob(object_id, field, data)
-		self._engine.sync()
+		self.sync()
 
 	def optimize(self):
 		"""optimize sql database"""
 		self._engine.optimize()
 
 	def create_backup(self, filename):
-		with self._engine.create_transaction(self) as trans:
+		with self.create_transaction() as trans:
 			trans.create_backup(filename)
 
 	def _create_class_object(self, cid, name, data):
