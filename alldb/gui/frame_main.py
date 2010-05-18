@@ -109,8 +109,8 @@ class FrameMain(object):
 
 		menu = self.wnd.GetMenuBar()
 		self._menu_item_new = menu.FindItemById(xrc.XRCID('menu_item_new'))
-		self.menu_item_delete = menu.FindItemById(xrc.XRCID('menu_item_delete'))
-		self.menu_item_duplicate = menu.FindItemById(xrc.XRCID(
+		self._menu_item_delete = menu.FindItemById(xrc.XRCID('menu_item_delete'))
+		self._menu_item_duplicate = menu.FindItemById(xrc.XRCID(
 				'menu_item_duplicate'))
 		self._menu_save_on_scroll = menu.FindItemById(xrc.XRCID(
 				'menu_save_on_scroll'))
@@ -357,8 +357,8 @@ class FrameMain(object):
 		if self._curr_info_panel:
 			self._curr_info_panel.Show(record_showed)
 			self.panel_info.GetSizer().Layout()
-		self.menu_item_delete.Enable(record_showed and not new_record)
-		self.menu_item_duplicate.Enable(record_showed and not new_record)
+		self._menu_item_delete.Enable(record_showed and not new_record)
+		self._menu_item_duplicate.Enable(record_showed and not new_record)
 		self._menu_save_items.Enable(items_on_list)
 		self._menu_export_csv.Enable(items_on_list)
 		self._menu_export_html.Enable(items_on_list)
