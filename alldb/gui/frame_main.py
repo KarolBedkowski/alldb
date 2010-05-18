@@ -8,7 +8,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-06"
+__version__ = "2010-05-18"
 
 
 import os.path
@@ -31,6 +31,7 @@ from .dlg_classes import DlgClasses
 from .dlg_about import show_about_box
 from .dlg_import_csv import DlgImportCsv
 from .frame_main_optimize import optimize_db
+
 
 @contextmanager
 def with_wait_cursor():
@@ -95,6 +96,7 @@ class FrameMain(object):
 
 		autosave = appconfig.get('frame_main', 'autosave', 1) > 0
 		self._menu_save_on_scroll.Check(autosave)
+		self._on_menu_save_on_scroll(None)
 
 		self._set_size_pos()
 
@@ -117,6 +119,7 @@ class FrameMain(object):
 		self._menu_save_items = menu.FindItemById(xrc.XRCID('menu_save_items'))
 		self._menu_export_csv = menu.FindItemById(xrc.XRCID('menu_export_csv'))
 		self._menu_export_html = menu.FindItemById(xrc.XRCID('menu_export_html'))
+		self._menu_save_changes = menu.FindItemById(xrc.XRCID('menu_save_changes'))
 		# temporary disabled backup
 		#menu.FindItemById(xrc.XRCID('menu_backup')).Enable(False)
 
@@ -156,6 +159,8 @@ class FrameMain(object):
 				id=xrc.XRCID('menu_save_items'))
 		wnd.Bind(wx.EVT_MENU, self._on_menu_load_items,
 				id=xrc.XRCID('menu_load_items'))
+		wnd.Bind(wx.EVT_MENU, self._on_menu_save_on_scroll,
+				id=xrc.XRCID("menu_save_on_scroll"))
 		wnd.Bind(wx.EVT_CHOICE, self._on_filter_select, self.choice_filter)
 		wnd.Bind(wx.EVT_LIST_ITEM_DESELECTED, self._on_item_deselect,
 				self.list_items)
@@ -189,11 +194,13 @@ class FrameMain(object):
 		tbi = toolbar.AddLabelTool(-1, _('Delete Item'), wx.ArtProvider.GetBitmap(
 				wx.ART_DELETE, wx.ART_TOOLBAR), shortHelp=_('Delete item'),
 				longHelp=_('Delete selected items'))
+		self._toolbar_delete_item_id = tbi.GetId()
 		self.wnd.Bind(wx.EVT_TOOL, self._on_menu_item_delete, id=tbi.GetId())
 		toolbar.AddSeparator()
 		tbi = toolbar.AddLabelTool(-1, _('Save Item'), wx.ArtProvider.GetBitmap(
 				wx.ART_TICK_MARK, wx.ART_TOOLBAR), shortHelp=_('Save item'),
 				longHelp=_('Save changes'))
+		self._toolbar_save_changes_id = tbi.GetId()
 		self.wnd.Bind(wx.EVT_TOOL, self._on_btn_apply, id=tbi.GetId())
 		toolbar.AddSeparator()
 		tbi = toolbar.AddLabelTool(-1, _('Quit'), wx.ArtProvider.GetBitmap(
@@ -347,14 +354,17 @@ class FrameMain(object):
 
 	def _set_buttons_status(self, new_record=False):
 		record_showed = (self.list_items.GetSelectedItemCount() > 0) or new_record
+		items_on_list = self.list_items.GetSelectedItemCount() > 0
 		if self._curr_info_panel:
 			self._curr_info_panel.Show(record_showed)
 			self.panel_info.GetSizer().Layout()
 		self.menu_item_delete.Enable(record_showed and not new_record)
 		self.menu_item_duplicate.Enable(record_showed and not new_record)
-		self._menu_save_items.Enable(self.list_items.GetItemCount() > 0)
-		self._menu_export_csv.Enable(self.list_items.GetItemCount() > 0)
-		self._menu_export_html.Enable(self.list_items.GetItemCount() > 0)
+		self._menu_save_items.Enable(items_on_list)
+		self._menu_export_csv.Enable(items_on_list)
+		self._menu_export_html.Enable(items_on_list)
+		self.wnd.GetToolBar().EnableTool(self._toolbar_delete_item_id,
+				record_showed and not new_record)
 
 	def _save_object(self, ask_for_save=False, update_lists=True, select=None):
 		if not self._curr_obj:
@@ -586,6 +596,12 @@ class FrameMain(object):
 					_("Loaded %(items)d items and %(blobs)d blobs.") % \
 							{'items': items, 'blobs': blobs})
 			self._on_refresh_all(None)
+
+	def _on_menu_save_on_scroll(self, event):
+		autosave = self._menu_save_on_scroll.IsChecked()
+		self._menu_save_changes.Enable(not autosave)
+		self.wnd.GetToolBar().EnableTool(self._toolbar_save_changes_id,
+				not autosave)
 
 	def _on_record_updated(self, evt):
 		if self._menu_save_on_scroll.IsChecked():
