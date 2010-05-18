@@ -70,6 +70,7 @@ class BooleanField(Field):
 
 class DateField(Field):
 	field_type = 'date'
+	_on_change_event = wx.EVT_DATE_CHANGED
 
 	def _create_widget(self, parent, options, result_obj):
 		return wx.DatePickerCtrl(parent, -1, style=wx.DP_DROPDOWN | \
@@ -77,16 +78,16 @@ class DateField(Field):
 
 	def _widget_set_value(self, value):
 		date = wx.DateTime()
-		if date:
+		if value is not None:
 			try:
 				date.ParseDate(value)
-			except Exception, err:
-				print err
+			except Exception:
+				pass
 		self._widget.SetValue(date)
 
 	def _widget_get_value(self):
-		wxdate = self.self._widget.GetValue()
-		return wxdate.Format() if wxdate else None
+		wxdate = self._widget.GetValue()
+		return wxdate.Format() if wxdate and wxdate.IsValid() else None
 
 
 class ListField(Field):
@@ -96,7 +97,10 @@ class ListField(Field):
 		return gizmos.EditableListBox(parent, -1)
 
 	def _widget_set_value(self, value):
-		self._widget.SetStrings(value or '')
+		self._widget.SetStrings((value or '').split('\n'))
+
+	def _widget_get_value(self):
+		return '\n'.join(self._widget.GetStrings())
 
 
 class ChoiceField(Field):
