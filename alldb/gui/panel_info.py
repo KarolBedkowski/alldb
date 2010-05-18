@@ -64,7 +64,6 @@ class PanelInfo(scrolled.ScrolledPanel):
 		else:
 			self._fill_fields_clear()
 		self.SetupScrolling()
-		self.set_focus()
 		self.Thaw()
 
 	def update_base_info(self, obj):
