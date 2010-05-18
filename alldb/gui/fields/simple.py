@@ -6,10 +6,8 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-14"
+__version__ = "2010-05-18"
 
-
-import cStringIO
 
 import wx
 import wx.lib.newevent
@@ -74,7 +72,7 @@ class DateField(Field):
 	field_type = 'date'
 
 	def _create_widget(self, parent, options, result_obj):
-		return wx.DatePickerCtrl(self, -1, style=wx.DP_DROPDOWN | \
+		return wx.DatePickerCtrl(parent, -1, style=wx.DP_DROPDOWN | \
 				wx.DP_SHOWCENTURY | wx.DP_ALLOWNONE)
 
 	def _widget_set_value(self, value):
@@ -95,7 +93,7 @@ class ListField(Field):
 	field_type = 'list'
 
 	def _create_widget(self, parent, options, result_obj):
-		return gizmos.EditableListBox(self, -1)
+		return gizmos.EditableListBox(parent, -1)
 
 	def _widget_set_value(self, value):
 		self._widget.SetStrings(value or '')
@@ -107,7 +105,7 @@ class ChoiceField(Field):
 
 	def _create_widget(self, parent, options, result_obj):
 		values = options.get('values') or []
-		return wx.Choice(self, -1, choices=values)
+		return wx.Choice(parent, -1, choices=values)
 
 	def _widget_set_value(self, value):
 		if value:
@@ -115,12 +113,15 @@ class ChoiceField(Field):
 		else:
 			self._widget.SetSelection(-1)
 
+	def _widget_get_value(self):
+		return self._widget.GetStringSelection()
+
 
 class NumericField(Field):
 	field_type = 'numeric'
 
 	def _create_widget(self, parent, options, result_obj):
-		return masked.NumCtrl(self, -1, groupDigits=False, allowNone=True)
+		return masked.NumCtrl(parent, -1, groupDigits=False, allowNone=True)
 
 
 # vim: encoding=utf8: ff=unix:
