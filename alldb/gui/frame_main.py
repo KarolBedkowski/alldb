@@ -30,7 +30,7 @@ from .panel_info import PanelInfo, EVT_RECORD_UPDATED, EVT_SELECT_RECORD
 from .dlg_classes import DlgClasses
 from .dlg_about import show_about_box
 from .dlg_import_csv import DlgImportCsv
-
+from .frame_main_optimize import optimize_db
 
 @contextmanager
 def with_wait_cursor():
@@ -550,8 +550,7 @@ class FrameMain(object):
 		show_about_box(self.wnd)
 
 	def _on_menu_optimize_database(self, event):
-		with with_wait_cursor():
-			self._db.optimize()
+		optimize_db(self.wnd, self._db)
 		msgbox.message_box_info_ex(self.wnd, _('Optimalization finished.'), None)
 
 	def _on_menu_backup_create(self, event):

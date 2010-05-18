@@ -152,19 +152,19 @@ class SqliteEngineTx(object):
 			bfile.write('BLO:' + _ENCODER(sdata) + '\n')
 		bfile.close()
 
-	def initialize_database(self, pulse_cb=None):
+	def initialize_database(self):
 		_LOG.debug('SqliteEngineTx.initialize_database')
 		for sql in sqls.INIT_SQLS:
-			if pulse_cb:
-				pulse_cb(sql)
 			self._cursor.executescript(sql)
 		_LOG.debug('SqliteEngineTx.initialize_database finished')
 
-	def optimize(self):
+	def optimize(self, pulse_cb=None):
 		"""optimize sql database"""
 		_LOG.info('SqliteEngineTx.optimize')
 		for sql in sqls.OPTIMISE_SQLS:
 			_LOG.debug('SqliteEngineTx.optimize: %s', sql)
+			if pulse_cb:
+				pulse_cb(sql)
 			self._cursor.executescript(sql)
 		_LOG.debug('SqliteEngineTx.optimize: done')
 
