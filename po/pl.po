@@ -2,13 +2,13 @@
 # Copyright (C) 2010, Karol Będkowski
 # This file is distributed under the same license as the AllDB package.
 # Karol Będkowski <karol.bedkowski@gmail.com>, 2010.
-#, fuzzy
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: alldb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-05 16:07+0200\n"
-"PO-Revision-Date: 2010-05-05 16:06+0200\n"
+"POT-Creation-Date: 2010-05-18 13:13+0200\n"
+"PO-Revision-Date: 2010-05-18 13:13+0200\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -271,9 +271,6 @@ msgstr "Nazwa"
 msgid "Type"
 msgstr "Typ"
 
-msgid "Default value"
-msgstr "Wartość domyślna"
-
 msgid "Options"
 msgstr "Opcje"
 
@@ -326,12 +323,6 @@ msgstr ""
 msgid "Values"
 msgstr "Wartość"
 
-msgid "Can not add this tag"
-msgstr "Nie można dodać tej etykiety"
-
-msgid "Entered tag already exists on the list."
-msgstr "Wprowadzona etykieta znajduje się już na liście."
-
 msgid "<Skip>"
 msgstr "<Pomiń>"
 
@@ -360,6 +351,18 @@ msgid ""
 msgstr ""
 "Proszę określić w jaki sposób kolumny w pliku CSV powinny być mapowane do "
 "pól kategorii"
+
+msgid "Can not add this tag"
+msgstr "Nie można dodać tej etykiety"
+
+msgid "Entered tag already exists on the list."
+msgstr "Wprowadzona etykieta znajduje się już na liście."
+
+msgid "Select"
+msgstr "Wybierz"
+
+msgid "Clear"
+msgstr "Wyczyść"
 
 msgid "Search"
 msgstr "Szukaj"
@@ -459,6 +462,12 @@ msgstr "Wczytano %(items)d elementów oraz  %(blobs)d blobów."
 msgid "Title"
 msgstr "Tytuł"
 
+msgid "Optimize database"
+msgstr "Optymalizuj bazę danych"
+
+msgid "Optimization started"
+msgstr "Rozpoczęto optymalizację"
+
 msgid "not saved"
 msgstr "nie zapisany"
 
@@ -479,12 +488,6 @@ msgstr "ID:"
 
 msgid "Tags:"
 msgstr "Etykiety:"
-
-msgid "Select"
-msgstr "Wybierz"
-
-msgid "Clear"
-msgstr "Wyczyść"
 
 msgid "True"
 msgstr "Prawda"
@@ -547,6 +550,9 @@ msgstr ""
 "wyboru) którejś z późniejszych wersji.\n"
 "\n"
 "Szczegóły opisano w pliku COPYING.\n"
+
+#~ msgid "Default value"
+#~ msgstr "Wartość domyślna"
 
 #~ msgid "Items: 0"
 #~ msgstr "Elementy: 0"
