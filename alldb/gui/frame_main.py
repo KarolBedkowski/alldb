@@ -108,6 +108,7 @@ class FrameMain(object):
 		self.choice_filter = xrc.XRCCTRL(self.wnd, 'choice_filter')
 
 		menu = self.wnd.GetMenuBar()
+		self._menu_item_new = menu.FindItemById(xrc.XRCID('menu_item_new'))
 		self.menu_item_delete = menu.FindItemById(xrc.XRCID('menu_item_delete'))
 		self.menu_item_duplicate = menu.FindItemById(xrc.XRCID(
 				'menu_item_duplicate'))
@@ -187,6 +188,7 @@ class FrameMain(object):
 		tbi = toolbar.AddLabelTool(-1, _('Add Item'), wx.ArtProvider.GetBitmap(
 				wx.ART_NEW, wx.ART_TOOLBAR), shortHelp=_('Add item'),
 				longHelp=_('Create new item'))
+		self._toolbar_new_item_id = tbi.GetId()
 		self.wnd.Bind(wx.EVT_TOOL, self._on_btn_new, id=tbi.GetId())
 		tbi = toolbar.AddLabelTool(-1, _('Delete Item'), wx.ArtProvider.GetBitmap(
 				wx.ART_DELETE, wx.ART_TOOLBAR), shortHelp=_('Delete item'),
@@ -362,6 +364,9 @@ class FrameMain(object):
 		self._menu_export_html.Enable(items_on_list)
 		self.wnd.GetToolBar().EnableTool(self._toolbar_delete_item_id,
 				record_showed and not new_record)
+		class_showed = bool(self._result and self._result.cls)
+		self.wnd.GetToolBar().EnableTool(self._toolbar_new_item_id, class_showed)
+		self._menu_item_new.Enable(class_showed)
 
 	def _save_object(self, ask_for_save=False, update_lists=True, select=None):
 		if not self._curr_obj:
