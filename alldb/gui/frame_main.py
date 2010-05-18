@@ -19,7 +19,7 @@ from wx import xrc
 
 from alldb.libs import wxresources
 from alldb.libs.appconfig import AppConfig
-from alldb.libs.iconprovider import IconProvider
+from alldb.libs import iconprovider
 from alldb.filetypes.csv_support import export2csv
 from alldb.filetypes.html_support import export_html
 from alldb.filetypes import exporting
@@ -46,9 +46,6 @@ class FrameMain(object):
 	''' Klasa głównego okna programu'''
 	def __init__(self, db):
 		self.res = wxresources.load_xrc_resource('alldb.xrc')
-		self._icon_provider = IconProvider()
-		self._icon_provider.load_icons(['alldb'])
-
 		self._load_controls()
 		self._create_toolbar()
 		self._create_bindings()
@@ -77,7 +74,7 @@ class FrameMain(object):
 		self._tagslist = []
 		self._status_update_timer = None
 
-		self.wnd.SetIcon(self._icon_provider.get_icon('alldb'))
+		self.wnd.SetIcon(iconprovider.get_icon('alldb'))
 
 		if wx.Platform == '__WXMSW__':
 			self.wnd.SetBackgroundColour(wx.SystemSettings.GetColour(
@@ -182,8 +179,8 @@ class FrameMain(object):
 
 	def _create_toolbar(self):
 		toolbar = self.wnd.CreateToolBar()
-		iconpr = self._icon_provider
-		tbi = toolbar.AddLabelTool(-1, _('Refresh'), iconpr.get_image('refresh'),
+		tbi = toolbar.AddLabelTool(-1, _('Refresh'),
+				iconprovider.get_image('refresh'),
 				shortHelp=_("Refresh"), longHelp=_("Refresh items list"))
 		self.wnd.Bind(wx.EVT_TOOL, self._on_refresh_all, id=tbi.GetId())
 		toolbar.AddSeparator()

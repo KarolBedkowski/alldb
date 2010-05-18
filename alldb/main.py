@@ -5,7 +5,7 @@
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-14"
+__version__ = "2010-05-18"
 
 
 import os
@@ -88,7 +88,7 @@ import wx
 from alldb.gui.frame_main import FrameMain
 from alldb.gui.splash import AllDbSplash
 from alldb.model.db import Db
-from alldb.libs.iconprovider import IconProvider
+from alldb.libs import iconprovider
 
 
 def run():
@@ -123,7 +123,7 @@ def run():
 		wxloc = wx.Locale(wx.LANGUAGE_DEFAULT)
 		wxloc.AddCatalog('wxstd')
 
-	IconProvider(None, config.data_dir)
+	iconprovider.init_icon_cache(None, config.data_dir)
 
 	config['_DB'] = db = Db(db_filename)
 	db.open()
