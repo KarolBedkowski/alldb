@@ -10,6 +10,10 @@
 ./alldb/gui/dialogs/__init__.py
 ./alldb/gui/dialogs/dialogs.py
 ./alldb/gui/dialogs/message_boxes.py
+./alldb/gui/fields/__init__.py
+./alldb/gui/fields/_field.py
+./alldb/gui/fields/image.py
+./alldb/gui/fields/simple.py
 ./alldb/gui/dlg_about.py
 ./alldb/gui/dlg_classes.py
 ./alldb/gui/dlg_edit_class.py
