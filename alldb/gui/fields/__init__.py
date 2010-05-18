@@ -14,6 +14,9 @@ import pkgutil
 
 from _field import Field
 
+from . import simple
+from . import image
+
 
 class FieldsFactory(object):
 	_fields_types = {}
@@ -31,11 +34,11 @@ class FieldsFactory(object):
 
 
 def import_fields():
-	for _imp, name, _ispkg in pkgutil.iter_modules(__path__):
-		if name.startswith('_'):
-			continue
-		fp, pathname, description = imp.find_module(name, __path__)
-		plug = imp.load_module(name, fp, pathname, description)
+#	for _imp, name, _ispkg in pkgutil.iter_modules(__path__):
+#		if name.startswith('_'):
+#			continue
+#		fp, pathname, description = imp.find_module(name, __path__)
+#		plug = imp.load_module(name, fp, pathname, description)
 	for plugclass in Field.__subclasses__():
 		FieldsFactory.register_field_type(plugclass)
 
