@@ -86,6 +86,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 				value = field.value
 				if field.result_type == 'blob':
 					blobs[name] = value
+					data[name] = len(value) if value else 0
 				else:
 					data[name] = value
 		tags = self.tc_tags.GetValue()
