@@ -6,7 +6,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-14"
+__version__ = "2010-05-19"
 
 
 import os.path
@@ -43,6 +43,14 @@ class PanelInfo(scrolled.ScrolledPanel):
 				wx.SYS_COLOUR_HIGHLIGHT)
 		self._COLOR_HIGHLIGHT_FG = wx.SystemSettings.GetColour(
 				wx.SYS_COLOUR_HIGHLIGHTTEXT)
+
+		textfield = wx.TextCtrl(self, -1)
+		textfield_size = textfield.GetSize()
+		textfield.Destroy()
+		label = wx.StaticText(self, -1, ' ')
+		label_size = label.GetSize()
+		label.Destroy()
+		self._label_padding = max(textfield_size[1] - label_size[1], 0) / 2
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_fields_head(), 0, wx.EXPAND)
@@ -138,7 +146,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		for idx, (name, ftype, default, options) in enumerate(
 				self._obj_cls.fields):
 			grid.Add(wx.StaticText(self, -1, "%s:" % format_label(name)), 0,
-					wx.ALIGN_CENTER_VERTICAL)
+					wx.TOP, self._label_padding)
 			field = FieldsFactory.get_class(ftype)(self, name, options, default,
 					self._result)
 			field.bind_on_change(self._on_field_update)
