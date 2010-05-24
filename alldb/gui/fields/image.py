@@ -6,7 +6,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-14"
+__version__ = "2010-05-24"
 
 
 import cStringIO
@@ -33,7 +33,7 @@ class ImageField(Field):
 		Field.__init__(self, parent, name, options, default, result_obj)
 		self._blob = None
 
-	def _create_widget(self, parent, options, result_obj):
+	def _create_widget(self, parent, options, _result_obj):
 		width_height = (int(options.get('width', 100)),
 				int(options.get('height', 100)))
 		self._panel = panel = wx.Panel(parent, -1)
@@ -72,7 +72,7 @@ class ImageField(Field):
 	def _widget_del_value(self):
 		self._widget_set_value(None)
 
-	def _on_btn_image_select(self, evt):
+	def _on_btn_image_select(self, _evt):
 		dlg = imgbr.ImageDialog(self._widget)
 		if dlg.ShowModal() == wx.ID_OK:
 			filename = dlg.GetFile()
@@ -94,14 +94,14 @@ class ImageField(Field):
 				wx.PostEvent(self._widget, UpdatedEvent())
 		dlg.Destroy()
 
-	def _on_btn_image_clear(self, evt):
+	def _on_btn_image_clear(self, _evt):
 		if msgbox.message_box_delete_confirm(self._widget, _("image")):
 			self._blob = None
 			self._widget_set_value(None)
 			self._btn_select.Show(True)
 			wx.PostEvent(self._widget, UpdatedEvent())
 
-	def _on_image_context_menu(self, evt):
+	def _on_image_context_menu(self, _evt):
 		menu = wx.Menu()
 		item = wx.MenuItem(menu, 10001, _("Clear"))
 		menu.AppendItem(item)

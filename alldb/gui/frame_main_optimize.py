@@ -5,11 +5,10 @@
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-06"
+__version__ = "2010-05-24"
 
 
 import wx
-from wx import xrc
 
 
 def optimize_db(parent, database):

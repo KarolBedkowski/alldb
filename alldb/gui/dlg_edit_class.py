@@ -5,7 +5,7 @@
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-03"
+__version__ = "2010-05-24"
 
 
 import wx
@@ -57,7 +57,7 @@ class DlgEditClass(object):
 				'image': _('image')}
 
 		lc_fields = self.lc_fields
-		lc_fields.InsertColumn(0, _('No'))
+		lc_fields.InsertColumn(0, _('idx'))
 		lc_fields.InsertColumn(1, _('Name'))
 		lc_fields.InsertColumn(2, _('Type'))
 		lc_fields.InsertColumn(3, _('Options'))
@@ -104,19 +104,19 @@ class DlgEditClass(object):
 	def _refresh_list(self, cls):
 		lc_fields = self.lc_fields
 		lc_fields.DeleteAllItems()
-		for no, (name, ftype, default, options) in enumerate(cls.fields):
-			lc_fields.InsertStringItem(no, str(no + 1))
-			lc_fields.SetStringItem(no, 1, str(name))
-			lc_fields.SetStringItem(no, 2, str(self._type_names.get(ftype, ftype)))
+		for idx, (name, ftype, _default, options) in enumerate(cls.fields):
+			lc_fields.InsertStringItem(idx, str(idx + 1))
+			lc_fields.SetStringItem(idx, 1, str(name))
+			lc_fields.SetStringItem(idx, 2, str(self._type_names.get(ftype, ftype)))
 			if options:
 				opt_str = _options2string(options)
-				lc_fields.SetStringItem(no, 3, opt_str)
+				lc_fields.SetStringItem(idx, 3, opt_str)
 		lc_fields.SetColumnWidth(0, wx.LIST_AUTOSIZE)
 		lc_fields.SetColumnWidth(1, wx.LIST_AUTOSIZE)
 		lc_fields.SetColumnWidth(2, wx.LIST_AUTOSIZE)
 		lc_fields.SetColumnWidth(3, wx.LIST_AUTOSIZE)
 
-	def _on_item_have_title_checkbox(self, event):
+	def _on_item_have_title_checkbox(self, _event):
 		have_title = self.cb_show_title.IsChecked()
 		self.cb_title_auto.Enable(have_title)
 		self.cb_title_in_list.Enable(have_title)
@@ -126,24 +126,24 @@ class DlgEditClass(object):
 		else:
 			self.tc_title.Enable(False)
 
-	def _on_btn_title_refresh(self, event):
+	def _on_btn_title_refresh(self, _event):
 		if self._cls.fields:
 			self.tc_title.SetValue('%%%s' % self._cls.fields[0][0])
 
-	def _on_title_auto(self, event):
+	def _on_title_auto(self, _event):
 		title_auto = self.cb_title_auto.IsChecked()
 		self._cls.title_auto = title_auto
 		if title_auto:
 			self.tc_title.SetValue(self._cls.gen_auto_title())
 		self.tc_title.Enable(not title_auto)
 
-	def _on_fields_deselected(self, event):
+	def _on_fields_deselected(self, _event):
 		self._set_buttons_status()
 
-	def _on_fields_selected(self, event):
+	def _on_fields_selected(self, _event):
 		self._set_buttons_status()
 
-	def _on_fields_activated(self, event):
+	def _on_fields_activated(self, _event):
 		item_idx = self._get_selected_field_idx()
 		if item_idx < 0:
 			return
@@ -169,7 +169,7 @@ class DlgEditClass(object):
 			self._refresh_list(self._cls)
 			self._on_title_auto(None)
 
-	def _on_btn_add_field(self, event):
+	def _on_btn_add_field(self, _event):
 		data = {}
 		data['_fields_names'] = [field[0] for field in self._cls.fields]
 		dlg = DlgEditField(self.wnd, data)
@@ -179,7 +179,7 @@ class DlgEditClass(object):
 			self._refresh_list(self._cls)
 			self._on_title_auto(None)
 
-	def _on_btn_del_field(self, event):
+	def _on_btn_del_field(self, _event):
 		item_idx = self._get_selected_field_idx()
 		if item_idx < 1:
 			return
@@ -188,7 +188,7 @@ class DlgEditClass(object):
 			self._refresh_list(self._cls)
 			self._on_title_auto(None)
 
-	def _on_button_up(self, event):
+	def _on_button_up(self, _event):
 		item_idx = self._get_selected_field_idx()
 		if item_idx < 1:
 			return
@@ -200,7 +200,7 @@ class DlgEditClass(object):
 				wx.LIST_STATE_SELECTED)
 		self._on_title_auto(None)
 
-	def _on_button_down(self, event):
+	def _on_button_down(self, _event):
 		item_idx = self._get_selected_field_idx()
 		if item_idx < 0 or item_idx == self.lc_fields.GetItemCount() - 1:
 			return
@@ -212,7 +212,7 @@ class DlgEditClass(object):
 				wx.LIST_STATE_SELECTED)
 		self._on_title_auto(None)
 
-	def _on_ok(self, evt):
+	def _on_ok(self, _event):
 		name = self.tc_name.GetValue()
 		title_expr = self.tc_title.GetValue()
 		if not (name and title_expr):
@@ -227,7 +227,7 @@ class DlgEditClass(object):
 		self._cls.title_show = self.cb_show_title.IsChecked()
 		self.wnd.EndModal(wx.ID_OK)
 
-	def _on_close(self, event):
+	def _on_close(self, _event):
 		self.wnd.EndModal(wx.ID_CLOSE)
 
 	def _get_selected_field_idx(self):

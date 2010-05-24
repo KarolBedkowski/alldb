@@ -9,7 +9,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-14"
+__version__ = "2010-05-24"
 
 
 import sys
@@ -18,8 +18,8 @@ import imp
 import logging
 import ConfigParser
 
-from .. import configuration
-from .singleton import Singleton
+from alldb import configuration
+from alldb.libs.singleton import Singleton
 
 _LOG = logging.getLogger(__name__)
 

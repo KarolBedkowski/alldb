@@ -3,7 +3,7 @@
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-03"
+__version__ = "2010-05-24"
 
 
 import wx
@@ -29,7 +29,7 @@ class DlgEditValues(wx.Dialog):
 		self.Bind(wx.EVT_BUTTON, self._on_ok, id=wx.ID_OK)
 		self._elb.SetStrings(data.get('values') or [])
 
-	def _on_ok(self, evt):
+	def _on_ok(self, _event):
 		self._data['values'] = self._elb.GetStrings()
 		self.EndModal(wx.ID_OK)
 

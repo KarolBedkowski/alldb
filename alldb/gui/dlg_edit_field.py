@@ -5,7 +5,7 @@
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-03"
+__version__ = "2010-05-24"
 
 
 import wx
@@ -47,9 +47,9 @@ class DlgEditField(object):
 		self.cb_show_in_list = xrc.XRCCTRL(self.wnd, 'cb_show_in_list')
 		self.btn_values = xrc.XRCCTRL(self.wnd, 'btn_values')
 		panel = xrc.XRCCTRL(self.wnd, 'panel_tc_width')
-		self._tc_width = self._create_tc_number(panel)
+		self._tc_width = _create_tc_number(panel)
 		panel = xrc.XRCCTRL(self.wnd, 'panel_tc_height')
-		self._tc_height = self._create_tc_number(panel)
+		self._tc_height = _create_tc_number(panel)
 
 		self._radios = {
 			'str': self.rb_type_text,
@@ -86,15 +86,7 @@ class DlgEditField(object):
 			radio.SetValue(True)
 		self._on_rb_type_choice(None)
 
-	def _create_tc_number(self, panel):
-		tc = masked.NumCtrl(panel, -1, integerWidth=3, allowNegative=False, min=50,
-				max=500, allowNone=True)
-		box = wx.BoxSizer(wx.VERTICAL)
-		box.Add(tc)
-		panel.SetSizerAndFit(box)
-		return tc
-
-	def _on_ok(self, evt):
+	def _on_ok(self, _event):
 		name = self.tc_name.GetValue().strip()
 		if not name:
 			msgbox.message_box_error_ex(self.wnd, _('Cannot add this field'),
@@ -122,7 +114,7 @@ class DlgEditField(object):
 		self._data['options'] = options
 		self.wnd.EndModal(wx.ID_OK)
 
-	def _on_rb_type_choice(self, event):
+	def _on_rb_type_choice(self, _event):
 		type_choice = self.rb_type_choice.GetValue()
 		self.btn_values.Enable(type_choice)
 		type_image = self.rb_type_image.GetValue()
@@ -132,13 +124,22 @@ class DlgEditField(object):
 		self._tc_width.Enable(type_image)
 		self._tc_height.Enable(type_image)
 
-	def _on_btn_values(self, event):
+	def _on_btn_values(self, _event):
 		values = self._data['options'].get('values')
 		data = dict(values=values)
 		dlg = DlgEditValues(self.wnd, data)
 		if dlg.ShowModal() == wx.ID_OK:
 			self._data['options']['values'] = data['values']
 		dlg.Destroy()
+
+
+def _create_tc_number(panel):
+	txtctrl = masked.NumCtrl(panel, -1, integerWidth=3, allowNegative=False,
+			min=50, max=500, allowNone=True)
+	box = wx.BoxSizer(wx.VERTICAL)
+	box.Add(txtctrl)
+	panel.SetSizerAndFit(box)
+	return txtctrl
 
 
 # vim: encoding=utf8: ff=unix:

@@ -5,7 +5,7 @@
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-18"
+__version__ = "2010-05-24"
 
 
 import os
@@ -18,29 +18,32 @@ import sys
 reload(sys)
 try:
 	sys.setappdefaultencoding("utf-8")
-except Exception, _:
+except AttributeError:
 	sys.setdefaultencoding("utf-8")
 
 
 _LOG = logging.getLogger(__name__)
 
 
-def show_version(ption, opt_str, value, parser, *args, **kwargs):
+def show_version(*_args, **_kwargs):
 	from alldb import version
 	print version.INFO
 	exit(0)
 
 
-p = optparse.OptionParser()
-p.add_option('--debug', '-d', action="store_true", default=False,
-		help='enable debug messages')
-p.add_option('--version', action="callback", callback=show_version,
+def _parse_opt():
+	optp = optparse.OptionParser()
+	optp.add_option('--debug', '-d', action="store_true", default=False,
+			help='enable debug messages')
+	optp.add_option('--version', action="callback", callback=show_version,
 		help='show information about application version')
-options, arguments = p.parse_args()
+	return optp.parse_args()[0]
+
+_OPTIONS = _parse_opt()
 
 # logowanie
 from alldb.libs.logging_setup import logging_setup
-logging_setup('alldb.log', options.debug)
+logging_setup('alldb.log', _OPTIONS.debug)
 
 
 from alldb.libs import appconfig
@@ -55,7 +58,7 @@ def _setup_locale():
 	try:
 		locale.bindtextdomain(package_name, locales_dir)
 		locale.bind_textdomain_codeset(package_name, "UTF-8")
-	except:
+	finally:
 		pass
 	default_locale = locale.getdefaultlocale()
 	locale.setlocale(locale.LC_ALL, '')
@@ -94,7 +97,7 @@ from alldb.libs import iconprovider
 def run():
 	config = appconfig.AppConfig()
 	config.load()
-	config.debug = options.debug
+	config.debug = _OPTIONS.debug
 
 	def try_path(path):
 		file_path = os.path.join(path, 'alldb.db')
@@ -125,15 +128,15 @@ def run():
 
 	iconprovider.init_icon_cache(None, config.data_dir)
 
-	config['_DB'] = db = Db(db_filename)
-	db.open()
+	config['_DB'] = database = Db(db_filename)
+	database.open()
 
-	main_frame = FrameMain(db)
+	main_frame = FrameMain(database)
 	app.SetTopWindow(main_frame.wnd)
 	main_frame.wnd.Show()
 	app.MainLoop()
 
-	db.close()
+	database.close()
 	config.save()
 
 

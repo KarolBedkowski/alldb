@@ -9,7 +9,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-03"
+__version__ = "2010-05-24"
 
 
 import gzip
@@ -103,7 +103,7 @@ def export_items(parent_wnd, cls, items):
 			efile.close()
 
 
-def import_items(parent_wnd, cls, db):
+def import_items(parent_wnd, cls, database):
 	filename = dialogs.dialog_file_load(parent_wnd, _('Select source file'),
 			_('AllDB Files (*.alldb)|*.alldb|All files|*'))
 	if filename is None:
@@ -116,10 +116,10 @@ def import_items(parent_wnd, cls, db):
 		header = efile.readline()
 		if not header.startswith('AllDb|Export|Items|1.0|#|'):
 			raise RuntimeError(_('Invalid file'))
-		head, cls_info, comments = header.split('|#|', 2)
-		cls_id, cls_name = cls_info.split('|', 1)
+		#_head, _cls_info, _comments = header.split('|#|', 2)
+		#cls_id, cls_name = cls_info.split('|', 1)
 		ids_converts = {}
-		with db.create_transaction() as trans:
+		with database.create_transaction() as trans:
 			while True:
 				line = efile.readline()
 				if line == '':
@@ -131,7 +131,7 @@ def import_items(parent_wnd, cls, db):
 					obj = cls.create_object()
 					obj.import_obj(data)
 					obj.oid = None
-					db.put_object_in_trans(trans, obj)
+					database.put_object_in_trans(trans, obj)
 					ids_converts[data['oid']] = obj.oid
 					loaded_obj += 1
 				elif item_type == 'BLO':
@@ -140,7 +140,7 @@ def import_items(parent_wnd, cls, db):
 					blob = base64.b64decode(data['data'])
 					trans.put_blob(obj_id, field, blob)
 					loaded_blob += 1
-		db.sync()
+		database.sync()
 	except IOError, err:
 		_LOG.error('import_items: IOError', err)
 		raise RuntimeError(err)

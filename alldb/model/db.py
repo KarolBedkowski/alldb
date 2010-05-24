@@ -7,7 +7,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-17"
+__version__ = "2010-05-24"
 
 
 import os.path
@@ -103,7 +103,8 @@ class Db(object):
 			self.put_object_in_trans(trans, obj)
 		self.sync()
 
-	def put_object_in_trans(self, trans, obj):
+	@staticmethod
+	def put_object_in_trans(trans, obj):
 		obj = obj if hasattr(obj, '__iter__') else (obj, )
 		for iobj in obj:
 			if hasattr(iobj, 'before_save'):

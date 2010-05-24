@@ -6,7 +6,7 @@
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-05"
+__version__ = "2010-05-24"
 
 __all__ = ['show_about_box']
 
@@ -16,7 +16,7 @@ import wx
 from alldb import version
 
 
-def show_about_box(parent):
+def show_about_box(_parent):
 	info = wx.AboutDialogInfo()
 	info.SetName(version.NAME)
 	info.SetVersion(version.VERSION)

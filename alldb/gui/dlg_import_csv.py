@@ -5,7 +5,7 @@
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-03"
+__version__ = "2010-05-24"
 
 
 import os.path
@@ -71,21 +71,21 @@ class MappingTable(wx.grid.PyGridTableBase):
 						return
 			self._fields[col] = value
 
-	def CanGetValueAs(self, row, col, typeName):
+	def CanGetValueAs(self, _row, _col, _typeName):
 		return True
 
-	def CanSetValueAs(self, row, col, typeName):
+	def CanSetValueAs(self, row, _col, _typeName):
 		return row == 0
 
-	def GetTypeName(self, row, col):
+	def GetTypeName(self, row, _col):
 		if row == 0:
 			return self._map_type
 		return wx.grid.GRID_VALUE_STRING
 
-	def IsReadOnly(self, row, col):
+	def IsReadOnly(self, row, _col):
 		return row > 0
 
-	def GetAttr(self, row, col, kind):
+	def GetAttr(self, row, _col, _kind):
 		attr = self._grid_styles[0 if row else 1]
 		attr.IncRef()
 		return attr

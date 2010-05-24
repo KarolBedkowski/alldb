@@ -5,7 +5,7 @@
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-03"
+__version__ = "2010-05-24"
 
 
 import wx
@@ -52,13 +52,13 @@ class DlgSelectTags(object):
 			if tag in selected_tags:
 				self._clb_tags.Check(idx)
 
-	def _on_ok(self, evt):
+	def _on_ok(self, _event):
 		self.wnd.EndModal(wx.ID_OK)
 
-	def _on_cancel(self, evt):
+	def _on_cancel(self, _event):
 		self.wnd.EndModal(wx.ID_CANCEL)
 
-	def _on_btn_add_tag(self, event):
+	def _on_btn_add_tag(self, _event):
 		tag = self._tc_new_tag.GetValue().strip()
 		if tag:
 			if tag in self._clb_tags.GetItems():

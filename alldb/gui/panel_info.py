@@ -6,7 +6,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-19"
+__version__ = "2010-05-24"
 
 
 import os.path
@@ -25,7 +25,7 @@ from alldb.gui.fields import FieldsFactory
 
 
 class PanelInfo(scrolled.ScrolledPanel):
-	def __init__(self, window, parent, obj_class, result, *argv, **kwarg):
+	def __init__(self, window, parent, obj_class, result, *_argv, **_kwarg):
 		scrolled.ScrolledPanel.__init__(self, parent, -1,
 				style=wx.FULL_REPAINT_ON_RESIZE)
 		self._window = window
@@ -39,9 +39,9 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self._obj_showed = False
 		self._result = result
 
-		self._COLOR_HIGHLIGHT_BG = wx.SystemSettings.GetColour(
+		self._color_highlight_bg = wx.SystemSettings.GetColour(
 				wx.SYS_COLOUR_HIGHLIGHT)
-		self._COLOR_HIGHLIGHT_FG = wx.SystemSettings.GetColour(
+		self._color_highlight_fg = wx.SystemSettings.GetColour(
 				wx.SYS_COLOUR_HIGHLIGHTTEXT)
 
 		textfield = wx.TextCtrl(self, -1)
@@ -88,7 +88,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 	def get_values(self):
 		data = {}
 		blobs = {}
-		for name, (field, ftype, _default, options) in self._fields.iteritems():
+		for name, (field, _ftype, _default, _opt) in self._fields.iteritems():
 			if field:
 				value = field.value
 				if field.result_type == 'blob':
@@ -105,14 +105,14 @@ class PanelInfo(scrolled.ScrolledPanel):
 
 	def _create_fields_head(self):
 		panel = wx.Panel(self, -1)
-		panel.SetBackgroundColour(self._COLOR_HIGHLIGHT_BG)
+		panel.SetBackgroundColour(self._color_highlight_bg)
 
 		grid = wx.BoxSizer(wx.HORIZONTAL)
-		label = _create_label(panel, _('Title:'), self._COLOR_HIGHLIGHT_FG)
+		label = _create_label(panel, _('Title:'), self._color_highlight_fg)
 		grid.Add(label, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 6)
 
 		self.tc_title = wx.StaticText(panel, -1, ' ')
-		self.tc_title.SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
+		self.tc_title.SetForegroundColour(self._color_highlight_fg)
 		grid.Add(self.tc_title, 1, wx.EXPAND | wx.ALL, 6)
 
 		panel.SetSizer(grid)
@@ -121,14 +121,14 @@ class PanelInfo(scrolled.ScrolledPanel):
 
 	def _create_fields_tail(self):
 		panel = wx.Panel(self, -1)
-		panel.SetBackgroundColour(self._COLOR_HIGHLIGHT_BG)
+		panel.SetBackgroundColour(self._color_highlight_bg)
 		grid = wx.BoxSizer(wx.HORIZONTAL)
 
 		def create(label):
-			label = _create_label(panel, label, self._COLOR_HIGHLIGHT_FG)
+			label = _create_label(panel, label, self._color_highlight_fg)
 			grid.Add(label, 0, wx.EXPAND | wx.ALL, 6)
 			field = wx.StaticText(panel, -1, '          ')
-			field .SetForegroundColour(self._COLOR_HIGHLIGHT_FG)
+			field .SetForegroundColour(self._color_highlight_fg)
 			grid.Add(field, 1, wx.EXPAND | wx.RIGHT | wx.TOP | wx.BOTTOM, 6)
 			return field
 
@@ -143,8 +143,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self._first_field = None
 		grid = wx.FlexGridSizer(len(self._obj_cls.fields), 2, 3, 6)
 		grid.AddGrowableCol(1)
-		for idx, (name, ftype, default, options) in enumerate(
-				self._obj_cls.fields):
+		for name, ftype, default, options in self._obj_cls.fields:
 			grid.Add(wx.StaticText(self, -1, "%s:" % format_label(name)), 0,
 					wx.TOP, self._label_padding)
 			field = FieldsFactory.get_class(ftype)(self, name, options, default,
@@ -180,7 +179,7 @@ class PanelInfo(scrolled.ScrolledPanel):
 
 	def _fill_fields_from_obj(self):
 		obj = self._obj
-		for name, (field, ftype, _default, options) in self._fields.iteritems():
+		for field, _ftype, _default, _opt in self._fields.itervalues():
 			field.set_object(obj)
 		self.tc_tags.SetValue(obj.tags_str)
 		self.update_base_info(obj)
@@ -189,15 +188,15 @@ class PanelInfo(scrolled.ScrolledPanel):
 	def _fill_fields_clear(self):
 		self._blobs = {}
 		self._obj_showed = False
-		for field, ftype, _default, options in self._fields.itervalues():
+		for field, _ftype, _default, _options in self._fields.itervalues():
 			field.clear()
-		self.tc_title.SetValue('')
+		self.tc_title.SetLabel('')
 		self.tc_tags.SetValue('')
 		self.lb_modified.SetLabel('')
 		self.lb_created.SetLabel('')
 		self.lb_id.SetLabel('')
 
-	def _on_btn_choice_tags(self, evt):
+	def _on_btn_choice_tags(self, _event):
 		cls_tags = self._window.current_tags.copy()
 		item_tags_str = self.tc_tags.GetValue()
 		item_tags = []
@@ -211,12 +210,12 @@ class PanelInfo(scrolled.ScrolledPanel):
 			if dlg.run():
 				self.tc_tags.SetValue(', '.join(sorted(dlg.selected)))
 
-	def _on_field_update(self, evt):
+	def _on_field_update(self, event):
 		if self._obj_showed:
 			if self._update_timer:
 				self._update_timer.Stop()
 			self._update_timer = wx.CallLater(500, self._on_timer_update)
-		evt.Skip()
+		event.Skip()
 
 	def _on_timer_update(self):
 		try:

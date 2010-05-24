@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+#pylint: disable-all
 '''
 wxPython Custom Widget Collection 20060207
 Written By: Edward Flick(eddy -=at=- cdf-imaging -=dot=- com)

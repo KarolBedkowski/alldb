@@ -7,7 +7,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-03"
+__version__ = "2010-05-24"
 
 
 import time
@@ -24,11 +24,11 @@ from .dlg_edit_class import DlgEditClass
 
 
 class DlgClasses(object):
-	def __init__(self, parent, db):
+	def __init__(self, parent, database):
 		self.res = wxresources.load_xrc_resource('alldb.xrc')
 		self._load_controls(parent)
 		self._create_bindings()
-		self._setup(db)
+		self._setup(database)
 
 	def run(self):
 		res = self.wnd.ShowModal()
@@ -67,17 +67,17 @@ class DlgClasses(object):
 		self.button_import.Bind(wx.EVT_BUTTON, self._on_btn_import)
 		self.button_export.Bind(wx.EVT_BUTTON, self._on_btn_export)
 
-	def _setup(self, db):
-		self._db = db
+	def _setup(self, database):
+		self._db = database
 		self._current_cls = None
 		self.fill_classes()
 		self._set_buttons_state()
 
 	def fill_classes(self):
 		self.lc_classes.DeleteAllItems()
-		for no, cls in enumerate(self._db.classes):
-			self.lc_classes.InsertStringItem(no, str(cls.name))
-			self.lc_classes.SetItemData(no, cls.oid)
+		for idx, cls in enumerate(self._db.classes):
+			self.lc_classes.InsertStringItem(idx, str(cls.name))
+			self.lc_classes.SetItemData(idx, cls.oid)
 
 	def _edit_class(self, cls_oid):
 		cls = self._db.get_class(cls_oid) if cls_oid else objects.ADObjectClass()
@@ -87,16 +87,10 @@ class DlgClasses(object):
 			self._db.put_class(cls)
 			self.fill_classes()
 
-	def _on_class_choice(self, event):
-		oid = event.GetClientData()
-		cls = self._db.get(oid)
-		self.show_class(cls)
-		event.Skip()
-
-	def _on_list_classes_deselect(self, event):
+	def _on_list_classes_deselect(self, _event):
 		self._set_buttons_state()
 
-	def _on_list_classes_selected(self, event):
+	def _on_list_classes_selected(self, _event):
 		self._set_buttons_state()
 
 	def _on_list_classes_activate(self, event):
@@ -104,15 +98,15 @@ class DlgClasses(object):
 		self._edit_class(oid)
 		event.Skip()
 
-	def _on_btn_new(self, event):
+	def _on_btn_new(self, _event):
 		self._edit_class(None)
 
-	def _on_btn_edit(self, event):
+	def _on_btn_edit(self, _event):
 		oid = self.selected_category
 		if oid:
 			self._edit_class(oid)
 
-	def _on_btn_delete(self, event):
+	def _on_btn_delete(self, _event):
 		if self.lc_classes.GetSelectedItemCount() == 0:
 			return
 		res = msgbox.message_box_delete_confirm(self.wnd,
@@ -124,10 +118,10 @@ class DlgClasses(object):
 			self._db.del_class(oid)
 			self.fill_classes()
 
-	def _on_btn_close(self, event):
+	def _on_btn_close(self, _event):
 		self.wnd.EndModal(wx.ID_CLOSE)
 
-	def _on_btn_import(self, event):
+	def _on_btn_import(self, _event):
 		try:
 			clss = exporting.import_category(self.wnd)
 		except RuntimeError, err:
@@ -144,7 +138,7 @@ class DlgClasses(object):
 				self._db.put_class(cls)
 			self.fill_classes()
 
-	def _on_btn_export(self, event):
+	def _on_btn_export(self, _event):
 		oid = self.selected_category
 		if oid is None:
 			return

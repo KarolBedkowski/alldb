@@ -11,7 +11,7 @@ This file is part of KPyLibs
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2004-2010"
-__version__ = "2010-05-14"
+__version__ = "2010-05-24"
 __all__ = ['message_box_error', 'message_box_info',
 		'message_box_question_yesno', 'message_box_warning_yesno',
 		'message_box_warning_yesnocancel', 'message_box_not_save_confirm',
@@ -65,13 +65,13 @@ class MyMessageDialog(wx.Dialog):
 		self.Bind(wx.EVT_BUTTON, self._on_btn_yes, id=wx.ID_YES)
 		self.Bind(wx.EVT_BUTTON, self._on_btn_save, id=wx.ID_SAVE)
 
-	def _on_btn_no(self, evt):
+	def _on_btn_no(self, _evt):
 		self.EndModal(wx.ID_NO)
 
-	def _on_btn_yes(self, evt):
+	def _on_btn_yes(self, _evt):
 		self.EndModal(wx.ID_YES)
 
-	def _on_btn_save(self, evt):
+	def _on_btn_save(self, _evt):
 		self.EndModal(wx.ID_SAVE)
 
 	def _create_buttons(self, buttons):

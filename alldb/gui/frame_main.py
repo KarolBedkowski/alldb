@@ -8,7 +8,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-18"
+__version__ = "2010-05-24"
 
 
 import os.path
@@ -44,12 +44,12 @@ def with_wait_cursor():
 
 class FrameMain(object):
 	''' Klasa głównego okna programu'''
-	def __init__(self, db):
+	def __init__(self, database):
 		self.res = wxresources.load_xrc_resource('alldb.xrc')
 		self._load_controls()
 		self._create_toolbar()
 		self._create_bindings()
-		self._setup(db)
+		self._setup(database)
 
 	@property
 	def current_class_id(self):
@@ -63,8 +63,8 @@ class FrameMain(object):
 	def current_tags(self):
 		return self._result.tags if self._result else []
 
-	def _setup(self, db):
-		self._db = db
+	def _setup(self, database):
+		self._db = database
 		self._curr_obj = None
 		self._curr_info_panel = None
 		self._result = None
@@ -308,8 +308,8 @@ class FrameMain(object):
 				item2select = num
 			self._items.append((oid, cols))
 
-		for x in xrange(len(self._cols) + 2):
-			list_items.SetColumnWidth(x, wx.LIST_AUTOSIZE)
+		for col in xrange(len(self._cols) + 2):
+			list_items.SetColumnWidth(col, wx.LIST_AUTOSIZE)
 
 		items_count = self.list_items.GetItemCount()
 		self.wnd.SetStatusText(_('Items: %d') % items_count, 2)
@@ -394,8 +394,8 @@ class FrameMain(object):
 				reload_items = True
 				if update_lists:
 					if self._items:
-						ind = [idx for idx, (ioid, item) in enumerate(self._items)
-								if ioid == oid]
+						ind = [idx for idx, (ioid, _item) in enumerate(
+								self._items) if ioid == oid]
 						if ind:
 							indx = ind[0]
 							info = get_object_info(self._result.cls, curr_obj,
@@ -411,7 +411,7 @@ class FrameMain(object):
 				if reload_items:
 					self._fill_items(select=(select or oid))
 
-	def _on_close(self, evt):
+	def _on_close(self, _event):
 		appconfig = AppConfig()
 		appconfig.set('frame_main', 'size', self.wnd.GetSizeTuple())
 		appconfig.set('frame_main', 'position', self.wnd.GetPositionTuple())
@@ -423,20 +423,20 @@ class FrameMain(object):
 			appconfig.set('frame_main', 'last_class_id', self._result.cls.oid)
 		self.wnd.Destroy()
 
-	def _on_class_select(self, evt):
-		oid = evt.GetClientData()
+	def _on_class_select(self, event):
+		oid = event.GetClientData()
 		if oid != self.current_class_id:
 			self._save_object(True, False)
 			self._show_class(oid)
 
-	def _on_filter_select(self, evt):
+	def _on_filter_select(self, _event):
 		self._fill_tags()
 
-	def _on_item_deselect(self, event):
+	def _on_item_deselect(self, _event):
 		pass
 
-	def _on_item_select(self, evt):
-		oid = evt.GetData()
+	def _on_item_select(self, event):
+		oid = event.GetData()
 		if oid == self.current_obj_id:
 			return
 		self._save_object(True, True, oid)
@@ -450,7 +450,7 @@ class FrameMain(object):
 		with with_wait_cursor():
 			self._fill_items(self.current_obj_id, do_filter=False)
 
-	def _on_btn_new(self, event):
+	def _on_btn_new(self, _event):
 		self._save_object(True, True)
 		self._curr_obj = self._result.cls.create_object()
 		self._create_info_panel()
@@ -458,20 +458,20 @@ class FrameMain(object):
 		self._set_buttons_status(True)
 		self._curr_info_panel.set_focus()
 
-	def _on_btn_apply(self, event):
+	def _on_btn_apply(self, _event):
 		self._save_object()
 		self._curr_info_panel.update(self._curr_obj)
 
-	def _on_clb_tags(self, evt):
+	def _on_clb_tags(self, event):
 		with with_wait_cursor():
 			self._fill_items()
-		evt.Skip()
+		event.Skip()
 
-	def _on_search(self, evt):
+	def _on_search(self, _event):
 		with with_wait_cursor():
 			self._fill_items(do_sort=False)
 
-	def _on_search_cancel(self, event):
+	def _on_search_cancel(self, _event):
 		if self.searchbox.GetValue():
 			self.searchbox.SetValue('')
 			with with_wait_cursor():
@@ -486,7 +486,7 @@ class FrameMain(object):
 		if self._result:
 			self._on_btn_new(event)
 
-	def _on_menu_item_delete(self, event):
+	def _on_menu_item_delete(self, _event):
 		litems = self.list_items
 		cnt = litems.GetSelectedItemCount()
 		if cnt == 0:
@@ -510,7 +510,7 @@ class FrameMain(object):
 				self._fill_tags()
 				self._fill_items()
 
-	def _on_menu_item_duplicate(self, event):
+	def _on_menu_item_duplicate(self, _event):
 		if self._curr_obj:
 			self._curr_obj = self._curr_obj.duplicate()
 			self._create_info_panel()
@@ -518,21 +518,21 @@ class FrameMain(object):
 			self._set_buttons_status()
 			self._curr_info_panel.set_focus()
 
-	def _on_menu_categories(self, event):
+	def _on_menu_categories(self, _event):
 		current_class_oid = self.current_class_id
 		DlgClasses(self.wnd, self._db).run()
 		self._hide_info_panel()
 		current_class_oid = self._fill_classes(current_class_oid)
 		self._show_class(current_class_oid)
 
-	def _on_menu_import_csv(self, event):
+	def _on_menu_import_csv(self, _event):
 		wzrg = DlgImportCsv(self.wnd, self._result.cls)
 		if wzrg.run():
 			self._db.put_object(wzrg.items)
 		current_class_oid = self._fill_classes(self._result.cls.oid)
 		self._show_class(current_class_oid)
 
-	def _on_menu_export_csv(self, event):
+	def _on_menu_export_csv(self, _event):
 		dlg = wx.FileDialog(self.wnd, _('Choice a file'),
 				wildcard=_('CSV files (*.csv)|*.csv|All files|*.*'),
 				style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
@@ -545,7 +545,7 @@ class FrameMain(object):
 			export2csv(filepath, cls, items)
 		dlg.Destroy()
 
-	def _on_menu_export_html(self, event):
+	def _on_menu_export_html(self, _event):
 		dlg = wx.FileDialog(self.wnd, _('Choice a file'),
 				wildcard=_('HTML files (*.html, *.htm)|*.html;*.htm|All files|*.*'),
 				style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
@@ -558,14 +558,14 @@ class FrameMain(object):
 			export_html(filepath, cls, items)
 		dlg.Destroy()
 
-	def _on_menu_about(self, event):
+	def _on_menu_about(self, _event):
 		show_about_box(self.wnd)
 
-	def _on_menu_optimize_database(self, event):
+	def _on_menu_optimize_database(self, _event):
 		optimize_db(self.wnd, self._db)
 		msgbox.message_box_info_ex(self.wnd, _('Optimalization finished.'), None)
 
-	def _on_menu_backup_create(self, event):
+	def _on_menu_backup_create(self, _event):
 		dlg = wx.FileDialog(self.wnd, _('Choice a Backup File'),
 				wildcard=_('Backup files (*.alldb_bak)|*.alldb_bak|All files|*.*'),
 				style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
@@ -576,16 +576,16 @@ class FrameMain(object):
 			self._db.create_backup(filepath)
 		dlg.Destroy()
 
-	def _on_menu_backup_restore(self, event):
+	def _on_menu_backup_restore(self, _event):
 		print '_on_menu_backup_restore'
 
-	def _on_menu_save_items(self, event):
+	def _on_menu_save_items(self, _event):
 		try:
 			exporting.export_items(self.wnd, self._result.cls, self._result.items)
 		except RuntimeError, err:
 			msgbox.message_box_error_ex(self.wnd, _('Cannot save items.'), err)
 
-	def _on_menu_load_items(self, event):
+	def _on_menu_load_items(self, _event):
 		try:
 			items, blobs = exporting.import_items(self.wnd, self._result.cls,
 					self._db)
@@ -599,13 +599,13 @@ class FrameMain(object):
 							{'items': items, 'blobs': blobs})
 			self._on_refresh_all(None)
 
-	def _on_menu_save_on_scroll(self, event):
+	def _on_menu_save_on_scroll(self, _event):
 		autosave = self._menu_save_on_scroll.IsChecked()
 		self._menu_save_changes.Enable(not autosave)
 		self.wnd.GetToolBar().EnableTool(self._toolbar_save_changes_id,
 				not autosave)
 
-	def _on_record_updated(self, evt):
+	def _on_record_updated(self, _event):
 		if self._menu_save_on_scroll.IsChecked():
 			self._save_object()
 
@@ -621,7 +621,7 @@ class FrameMain(object):
 		self.list_items.SetItemState(idx, wx.LIST_STATE_SELECTED,
 					wx.LIST_STATE_SELECTED)
 
-	def _on_refresh_all(self, event):
+	def _on_refresh_all(self, _event):
 		if self._result:
 			self._show_class(self._result.cls.oid)
 

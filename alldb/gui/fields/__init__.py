@@ -6,13 +6,13 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-14"
+__version__ = "2010-05-24"
 
 
 import imp
 import pkgutil
 
-from _field import Field
+from alldb.gui.fields._field import Field
 
 from . import simple
 from . import image
