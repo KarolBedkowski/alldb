@@ -58,7 +58,7 @@ def _setup_locale():
 	try:
 		locale.bindtextdomain(package_name, locales_dir)
 		locale.bind_textdomain_codeset(package_name, "UTF-8")
-	finally:
+	except AttributeError:
 		pass
 	default_locale = locale.getdefaultlocale()
 	locale.setlocale(locale.LC_ALL, '')
