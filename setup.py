@@ -145,8 +145,8 @@ cmdclass = {'cleanup': CleanupCmd,
 
 
 target = {
-	'script': "alldb.py",
-	'name': "alldb",
+	'script': "alldb_dbg.py",
+	'name': "alldb_dbg",
 	'version': version.VERSION,
 	'description': "%s - %s (%s, build: %s)" \
 			% (version.NAME, version.DESCRIPTION, version.RELEASE, build),
@@ -154,6 +154,10 @@ target = {
 	'copyright': version.COPYRIGHT,
 	'icon_resources': [(0, "data/alldb.ico")],
 	'other_resources': [("VERSIONTAG", 1, build)]}
+
+
+target_win = target.copy()
+target_win.update({'script': "alldb.pyw",'name': "alldb"})
 
 
 setup(
@@ -179,7 +183,7 @@ setup(
 	package_dir=packages,
 	data_files=list(get_data_files()),
 	include_package_data=True,
-	scripts=['alldb.py'],
+	scripts=['alldb.pyw'],
 	install_requires=['wxPython>=2.6.0', ],
 	options={"py2exe": {
 		"compressed": 1,
@@ -187,7 +191,8 @@ setup(
 		"ascii": 0,
 		"bundle_files": 2}},
 	zipfile=r"modules.dat",
-	windows=[target],
+	windows=[target_win],
+	console=[target],
 	cmdclass=cmdclass,
 )
 
