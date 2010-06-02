@@ -79,6 +79,20 @@ def get_data_files():
 				'LC_MESSAGES', 'wxstd.mo')])
 
 
+def _delete_dir(path):
+	if os.path.exists(path):
+		for root, dirs, files in os.walk(path, topdown=False):
+			for name in files:
+				filename = os.path.join(root, name)
+				print 'Delete ', filename
+				os.remove(filename)
+			for name in dirs:
+				filename = os.path.join(root, name)
+				print 'Delete dir ', filename
+				os.rmdir(filename)
+		os.removedirs(path)
+
+
 class CleanupCmd(Command):
 	"""docstring for cleanup"""
 
@@ -96,22 +110,14 @@ class CleanupCmd(Command):
 			for name in files:
 				nameext = os.path.splitext(name)[-1]
 				if (name.endswith('~') or name.startswith('profile_result_')
-						or name.startswith('.')
-						or nameext in ('.pyd', '.pyc', '.pyo', '.log', '.tmp', '.swp')):
+						or name.endswith('-stamp')
+						or nameext in ('.pyd', '.pyc', '.pyo', '.log', '.tmp',
+							'.swp', '.db', '.cfg', '.debhelper', '.substvars')):
 					filename = os.path.join(root, name)
 					print 'Delete ', filename
 					os.remove(filename)
-		if os.path.exists('build'):
-			for root, dirs, files in os.walk('build', topdown=False):
-				for name in files:
-					filename = os.path.join(root, name)
-					print 'Delete ', filename
-					os.remove(filename)
-				for name in dirs:
-					filename = os.path.join(root, name)
-					print 'Delete dir ', filename
-					os.rmdir(filename)
-			os.removedirs('build')
+		_delete_dir('build')
+		_delete_dir('debian/alldb')
 		if os.path.exists('hotshot_edi_stats'):
 			os.remove('hotshot_edi_stats')
 
