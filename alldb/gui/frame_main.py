@@ -8,7 +8,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-24"
+__version__ = "2010-06-01"
 
 
 import os.path
@@ -20,9 +20,10 @@ from wx import xrc
 from alldb.libs import wxresources
 from alldb.libs.appconfig import AppConfig
 from alldb.libs import iconprovider
+from alldb.filetypes import exporting
+from alldb.filetypes import pdf_support
 from alldb.filetypes.csv_support import export2csv
 from alldb.filetypes.html_support import export_html
-from alldb.filetypes import exporting
 from alldb.gui.dialogs import message_boxes as msgbox
 from alldb.model import objects
 
@@ -117,6 +118,7 @@ class FrameMain(object):
 		self._menu_save_items = menu.FindItemById(xrc.XRCID('menu_save_items'))
 		self._menu_export_csv = menu.FindItemById(xrc.XRCID('menu_export_csv'))
 		self._menu_export_html = menu.FindItemById(xrc.XRCID('menu_export_html'))
+		self._menu_export_pdf = menu.FindItemById(xrc.XRCID('menu_export_pdf'))
 		self._menu_save_changes = menu.FindItemById(xrc.XRCID('menu_save_changes'))
 		# temporary disabled backup
 		#menu.FindItemById(xrc.XRCID('menu_backup')).Enable(False)
@@ -135,6 +137,10 @@ class FrameMain(object):
 				id=xrc.XRCID('menu_export_csv'))
 		wnd.Bind(wx.EVT_MENU, self._on_menu_export_html,
 				id=xrc.XRCID('menu_export_html'))
+		wnd.Bind(wx.EVT_MENU, self._on_menu_export_pdf_list,
+				id=xrc.XRCID('menu_export_pdf_list'))
+		wnd.Bind(wx.EVT_MENU, self._on_menu_export_pdf_all,
+				id=xrc.XRCID('menu_export_pdf_all'))
 		wnd.Bind(wx.EVT_MENU, self._on_menu_import_csv,
 				id=xrc.XRCID('menu_import_csv'))
 		wnd.Bind(wx.EVT_MENU, self._on_menu_exit, id=xrc.XRCID('menu_exit'))
@@ -353,7 +359,7 @@ class FrameMain(object):
 
 	def _set_buttons_status(self, new_record=False):
 		record_showed = (self.list_items.GetSelectedItemCount() > 0) or new_record
-		items_on_list = self.list_items.GetSelectedItemCount() > 0
+		items_on_list = self.list_items.GetItemCount() > 0
 		if self._curr_info_panel:
 			self._curr_info_panel.Show(record_showed)
 			self.panel_info.GetSizer().Layout()
@@ -362,6 +368,7 @@ class FrameMain(object):
 		self._menu_save_items.Enable(items_on_list)
 		self._menu_export_csv.Enable(items_on_list)
 		self._menu_export_html.Enable(items_on_list)
+		self._menu_export_pdf.Enable(items_on_list and pdf_support.PDF_AVAILABLE)
 		self.wnd.GetToolBar().EnableTool(self._toolbar_delete_item_id,
 				record_showed and not new_record)
 		class_showed = bool(self._result and self._result.cls)
@@ -556,6 +563,32 @@ class FrameMain(object):
 			cls = self._result.cls
 			items = self._result.items
 			export_html(filepath, cls, items)
+		dlg.Destroy()
+
+	def _on_menu_export_pdf_list(self, _event):
+		dlg = wx.FileDialog(self.wnd, _('Please choice a PDF file'),
+				wildcard=_('PDF files (*.pdf)|*.pdf|All files|*.*'),
+				style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+		if dlg.ShowModal() == wx.ID_OK:
+			filepath = dlg.GetPath()
+			if not os.path.splitext(filepath)[1]:
+				filepath += '.html'
+			cls = self._result.cls
+			items = self._result.items
+			pdf_support.export_pdf_list(filepath, cls, items)
+		dlg.Destroy()
+
+	def _on_menu_export_pdf_all(self, _event):
+		dlg = wx.FileDialog(self.wnd, _('Please choice a PDF file'),
+				wildcard=_('PDF files (*.pdf)|*.pdf|All files|*.*'),
+				style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+		if dlg.ShowModal() == wx.ID_OK:
+			filepath = dlg.GetPath()
+			if not os.path.splitext(filepath)[1]:
+				filepath += '.html'
+			cls = self._result.cls
+			items = self._result.items
+			pdf_support.export_pdf_all(filepath, cls, items)
 		dlg.Destroy()
 
 	def _on_menu_about(self, _event):
