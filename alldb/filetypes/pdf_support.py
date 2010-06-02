@@ -122,14 +122,6 @@ def _create_document(filename, cls, items, method):
 		raise
 
 
-def get_field_human(field):
-	if field == '__title':
-		return _('Title')
-	elif field.startswith('__'):
-		field = field[2:]
-	return field.capitalize()
-
-
 def _create_pdf_list(cls, items):
 	styles = _prepare_styles()
 	style_header = styles['Heading']
@@ -137,7 +129,7 @@ def _create_pdf_list(cls, items):
 
 	fields = cls.fields_in_list
 	print fields
-	data = [[Paragraph(get_field_human(field), style_header)
+	data = [[Paragraph(objects.get_field_name_human(field), style_header)
 			for field in fields]]
 	for item in items:
 		row = [Paragraph(objects.get_field_value_human(item.get_value(
@@ -167,7 +159,8 @@ def _create_pdf_all(cls, items):
 
 		rows = []
 		for field_name, field_type, dummy, dummy in fields:
-			row = [Paragraph(get_field_human(field_name), style_header)]
+			row = [Paragraph(objects.get_field_value_human(field_name),
+					style_header)]
 			if field_type == 'image':
 				blob = item.get_blob(field_name)
 				if blob:
