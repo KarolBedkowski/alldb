@@ -44,7 +44,8 @@ install: build
 
 	# Add here commands to install the package into debian/alldb.
 	cp -r alldb $(CURDIR)/debian/alldb/usr/share/alldb/src/
-	cp -r alldb.py $(CURDIR)/debian/alldb/usr/share/alldb/src/
+	cp -r alldb.pyw $(CURDIR)/debian/alldb/usr/share/alldb/src/
+	cp -r alldb_dbg.py $(CURDIR)/debian/alldb/usr/share/alldb/src/
 	cp data/alldb.desktop $(CURDIR)/debian/alldb/usr/share/applications/
 	cp bin/alldb $(CURDIR)/debian/alldb/usr/bin/
 	cp -r locale/* $(CURDIR)/debian/alldb/usr/share/locale

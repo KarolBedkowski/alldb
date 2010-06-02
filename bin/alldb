@@ -1,2 +1,2 @@
 #!/bin/sh
-python -OO /usr/share/alldb/src/alldb.py $*
+python -OO /usr/share/alldb/src/alldb.pyw $*
