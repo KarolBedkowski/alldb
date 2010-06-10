@@ -10,7 +10,7 @@ import wx
 try:
 	from setuptools import setup
 	from setuptools import Command
-except:
+except ImportError:
 	from distutils.core import setup
 	from distutils.cmd import Command
 
@@ -163,7 +163,7 @@ target = {
 
 
 target_win = target.copy()
-target_win.update({'script': "alldb.pyw",'name': "alldb"})
+target_win.update({'script': "alldb.pyw", 'name': "alldb"})
 
 
 setup(
