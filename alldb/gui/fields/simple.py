@@ -6,7 +6,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-24"
+__version__ = "2010-06-10"
 
 
 import wx
@@ -107,10 +107,18 @@ class ChoiceField(Field):
 
 	def _create_widget(self, parent, options, _result_obj):
 		values = options.get('values') or []
+		self._values = values
 		return wx.Choice(parent, -1, choices=values)
 
 	def _widget_set_value(self, value):
+		self._widget.Clear()
+		if '' not in self._values:
+			self._widget.Append('')
+		for val in self._values:
+			self._widget.Append(val)
 		if value:
+			if value not in self._values:
+				self._widget.Append(value)
 			self._widget.SetStringSelection(value)
 		else:
 			self._widget.SetSelection(-1)
