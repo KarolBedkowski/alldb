@@ -21,6 +21,7 @@ configure-stamp:
 
 
 build: build-stamp
+	$(CURDIR)/setup.py make_mo
 
 build-stamp: configure-stamp  
 	dh_testdir
