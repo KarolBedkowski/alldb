@@ -19,6 +19,7 @@
 ./alldb/gui/dlg_select_tags.py
 ./alldb/gui/fields/__init__.py
 ./alldb/gui/fields/_field.py
+./alldb/gui/fields/choice.py
 ./alldb/gui/fields/image.py
 ./alldb/gui/fields/simple.py
 ./alldb/gui/frame_main.py

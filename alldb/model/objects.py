@@ -6,7 +6,7 @@ Obiekty alldb
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-06-02"
+__version__ = "2010-06-11"
 
 
 import time
@@ -140,6 +140,17 @@ class ADObjectClass(BaseObject):
 			if fld[0] == field:
 				return fld
 		return None
+
+	def get_field_options(self, field):
+		for fld in self.fields:
+			if fld[0] == field:
+				return fld[3]
+		return None
+
+	def update_field_options(self, field, options):
+		for fld in self.fields:
+			if fld[0] == field:
+				fld[3] = options
 
 	def export(self):
 		exp = BaseObject.export(self)
