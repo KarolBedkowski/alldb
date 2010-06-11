@@ -8,7 +8,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-06-02"
+__version__ = "2010-06-11"
 
 
 import os.path
@@ -259,7 +259,7 @@ class FrameMain(object):
 	def _create_columns_in_list(self, cls):
 		self.list_items.ClearAll()
 		self.list_items.InsertColumn(0, _('No'), wx.LIST_FORMAT_RIGHT, 40)
-		self._cols = cls.fields_in_list
+		self._cols = list(cls.fields_in_list)
 		for col, field in enumerate(self._cols):
 			field_name = objects.get_field_value_human(field)
 			self.list_items.InsertColumn(col + 1, field_name)

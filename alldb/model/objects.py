@@ -87,13 +87,11 @@ class ADObjectClass(BaseObject):
 
 	@property
 	def fields_in_list(self):
-		fields = []
 		if self.title_show:
-			fields.append('__title')
+			yield '__title'
 		for field in self.fields:
 			if field[3] and field[3].get('in_list'):
-				fields.append(field[0])
-		return fields
+				yield field[0]
 
 	@property
 	def field_names(self):
@@ -105,7 +103,7 @@ class ADObjectClass(BaseObject):
 
 	@property
 	def blob_fields(self):
-		return [field[0] for field in self.fields if field[1] == 'image']
+		return (field[0] for field in self.fields if field[1] == 'image')
 
 	def create_object(self):
 		obj = ADObject(class_id=self.oid)

@@ -9,7 +9,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-24"
+__version__ = "2010-06-11"
 
 
 import gzip
@@ -82,7 +82,7 @@ def export_items(parent_wnd, cls, items):
 		efile.write('AllDb|Export|Items|1.0|#|')
 		efile.write('|'.join((str(cls.oid), cls.name, '#', time.asctime())))
 		efile.write('\n')
-		blob_fields = cls.blob_fields
+		blob_fields = list(cls.blob_fields)
 		for item in items:
 			efile.write('OBJ:')
 			efile.write(_ENCODER(item.export()))

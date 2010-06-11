@@ -8,7 +8,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-06-02"
+__version__ = "2010-06-11"
 
 
 import logging
@@ -127,8 +127,7 @@ def _create_pdf_list(cls, items):
 	style_header = styles['Heading']
 	style_normal = styles['Normal']
 
-	fields = cls.fields_in_list
-	print fields
+	fields = list(cls.fields_in_list)
 	data = [[Paragraph(objects.get_field_name_human(field), style_header)
 			for field in fields]]
 	for item in items:
