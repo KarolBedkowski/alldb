@@ -7,10 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: alldb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-18 13:13+0200\n"
-"PO-Revision-Date: 2010-05-18 13:13+0200\n"
+"POT-Creation-Date: 2010-06-11 13:56+0200\n"
+"PO-Revision-Date: 2010-06-11 13:55+0200\n"
 "Last-Translator: Karol Będkowski <karol.bedkowski@gmail.com>\n"
 "Language-Team: Polish <>\n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -47,6 +48,12 @@ msgstr "_Powiel element\\tCtrl+D"
 msgid "E_xport"
 msgstr "E_ksportuj"
 
+msgid "Export All..."
+msgstr "Eksportuj wszystko..."
+
+msgid "Export Items List..."
+msgstr "Eksport listę elementów..."
+
 msgid "Export selected category"
 msgstr "Eksportuj zaznaczoną kategorię"
 
@@ -55,6 +62,9 @@ msgstr "Eksport do _CSV..."
 
 msgid "Export to _HTML..."
 msgstr "Eksport do _HTML..."
+
+msgid "Export to _PDF"
+msgstr "Eksport do _PDF..."
 
 msgid "Field"
 msgstr "Pole"
@@ -358,6 +368,9 @@ msgstr "Nie można dodać tej etykiety"
 msgid "Entered tag already exists on the list."
 msgstr "Wprowadzona etykieta znajduje się już na liście."
 
+msgid "Define"
+msgstr "Określ"
+
 msgid "Select"
 msgstr "Wybierz"
 
@@ -437,6 +450,12 @@ msgstr[2] "%(count)d obiektów"
 msgid "HTML files (*.html, *.htm)|*.html;*.htm|All files|*.*"
 msgstr "Pliki HTML (*.html, *.htm)|*.html;*.htm|Wszystkie pliki|*.*"
 
+msgid "Please choice a PDF file"
+msgstr "Proszę wybrać plik PDF"
+
+msgid "PDF files (*.pdf)|*.pdf|All files|*.*"
+msgstr "Pliki PDF (*.pdf)|*.pdf|Wszystkie pliki|*.*"
+
 msgid "Optimalization finished."
 msgstr "Zakończono optymalizację."
 
@@ -458,9 +477,6 @@ msgstr "Zakończono wczytywanie elementów."
 #, python-format
 msgid "Loaded %(items)d items and %(blobs)d blobs."
 msgstr "Wczytano %(items)d elementów oraz  %(blobs)d blobów."
-
-msgid "Title"
-msgstr "Tytuł"
 
 msgid "Optimize database"
 msgstr "Optymalizuj bazę danych"
@@ -494,6 +510,9 @@ msgstr "Prawda"
 
 msgid "False"
 msgstr "Fałsz"
+
+msgid "Title"
+msgstr "Tytuł"
 
 msgid "All-kind of data database"
 msgstr "Baza danych dla każdego rodzaju danych"
@@ -550,6 +569,9 @@ msgstr ""
 "wyboru) którejś z późniejszych wersji.\n"
 "\n"
 "Szczegóły opisano w pliku COPYING.\n"
+
+#~ msgid "idx"
+#~ msgstr "lp."
 
 #~ msgid "Default value"
 #~ msgstr "Wartość domyślna"

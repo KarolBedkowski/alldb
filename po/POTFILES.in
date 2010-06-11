@@ -41,4 +41,3 @@
 ./alldb/model/sqlite_engine.py
 ./alldb/model/sqls.py
 ./alldb/version.py
-./alldb.py

@@ -5,7 +5,7 @@
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-24"
+__version__ = "2010-06-11"
 
 
 import wx
@@ -57,7 +57,7 @@ class DlgEditClass(object):
 				'image': _('image')}
 
 		lc_fields = self.lc_fields
-		lc_fields.InsertColumn(0, _('idx'))
+		lc_fields.InsertColumn(0, _('No'))
 		lc_fields.InsertColumn(1, _('Name'))
 		lc_fields.InsertColumn(2, _('Type'))
 		lc_fields.InsertColumn(3, _('Options'))
