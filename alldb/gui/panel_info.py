@@ -6,7 +6,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-24"
+__version__ = "2010-06-11"
 
 
 import os.path
@@ -22,6 +22,13 @@ from alldb.gui.fields import FieldsFactory
 
 (RecordUpdatedEvent, EVT_RECORD_UPDATED) = wx.lib.newevent.NewEvent()
 (SelectRecordEvent, EVT_SELECT_RECORD) = wx.lib.newevent.NewEvent()
+
+
+def _get_ctrl_height(ctrl_cls, parent, *argv):
+	ctrl = ctrl_cls(parent, -1, *argv)
+	ctrl_size = ctrl.GetSize()[1]
+	ctrl.Destroy()
+	return ctrl_size
 
 
 class PanelInfo(scrolled.ScrolledPanel):
@@ -44,13 +51,11 @@ class PanelInfo(scrolled.ScrolledPanel):
 		self._color_highlight_fg = wx.SystemSettings.GetColour(
 				wx.SYS_COLOUR_HIGHLIGHTTEXT)
 
-		textfield = wx.TextCtrl(self, -1)
-		textfield_size = textfield.GetSize()
-		textfield.Destroy()
-		label = wx.StaticText(self, -1, ' ')
-		label_size = label.GetSize()
-		label.Destroy()
-		self._label_padding = max(textfield_size[1] - label_size[1], 0) / 2
+		textfield_size = _get_ctrl_height(wx.TextCtrl, self)
+		label_size = _get_ctrl_height(wx.StaticText, self, ' ')
+		btn_size = _get_ctrl_height(wx.Button, self, ' ')
+		self._label_padding = max(textfield_size - label_size, 0) / 2
+		self._label_padding_btn = max(btn_size - label_size, 0) / 2
 
 		main_grid = wx.BoxSizer(wx.VERTICAL)
 		main_grid.Add(self._create_fields_head(), 0, wx.EXPAND)
@@ -144,8 +149,10 @@ class PanelInfo(scrolled.ScrolledPanel):
 		grid = wx.FlexGridSizer(len(self._obj_cls.fields), 2, 3, 6)
 		grid.AddGrowableCol(1)
 		for name, ftype, default, options in self._obj_cls.fields:
+			label_padding = self._label_padding_btn if ftype in \
+					('choice', 'image') else self._label_padding
 			grid.Add(wx.StaticText(self, -1, "%s:" % format_label(name)), 0,
-					wx.TOP, self._label_padding)
+					wx.TOP, label_padding)
 			field = FieldsFactory.get_class(ftype)(self, name, options, default,
 					self._result)
 			field.bind_on_change(self._on_field_update)
