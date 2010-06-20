@@ -6,7 +6,7 @@ Obiekty alldb
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-06-11"
+__version__ = "2010-06-20"
 
 
 import time
@@ -418,7 +418,7 @@ def get_field_name_human(field):
 		return _('Title')
 	elif field.startswith('__'):
 		field = field[2:]
-	return field.capitalize()
+	return field.capitalize().replace('_', ' ')
 
 
 # vim: encoding=utf8: ff=unix:
