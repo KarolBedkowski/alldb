@@ -6,7 +6,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-06-11"
+__version__ = "2010-10-15"
 
 
 import os.path
@@ -34,7 +34,7 @@ def _get_ctrl_height(ctrl_cls, parent, *argv):
 class PanelInfo(scrolled.ScrolledPanel):
 	def __init__(self, window, parent, obj_class, result, *_argv, **_kwarg):
 		scrolled.ScrolledPanel.__init__(self, parent, -1,
-				style=wx.FULL_REPAINT_ON_RESIZE)
+				style=wx.FULL_REPAINT_ON_RESIZE|wx.TAB_TRAVERSAL)
 		self._window = window
 		self._obj = None
 		self._obj_cls = obj_class
