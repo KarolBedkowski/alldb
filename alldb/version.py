@@ -5,7 +5,7 @@ Licence and version informations.
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-06-11"
+__version__ = "2010-10-15"
 
 
 try:
@@ -17,9 +17,9 @@ except NameError:
 
 SHORTNAME = 'alldb'
 NAME = _("AllDB")
-VERSION = '1.0.0rc5'
-VERSION_INFO = (1, 0, 0, 'rc', 5)
-RELEASE = '2010-06-11'
+VERSION = '1.0.0rc6'
+VERSION_INFO = (1, 0, 0, 'rc', 6)
+RELEASE = '2010-10-15'
 DESCRIPTION = _('''All-kind of data database''')
 DEVELOPERS = u'''Karol Będkowski'''
 TRANSLATORS = u'''Karol Będkowski'''
