@@ -6,7 +6,7 @@ Obiekty alldb
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-06-20"
+__version__ = "2010-10-16"
 
 
 import time
@@ -260,15 +260,18 @@ class SearchResult(object):
 
 	def __init__(self):
 		self.cls = None
+		self.tags = {}
+		self._items = {}
+		self._values_cache = {}		# field->(value->[items])
 		self.reset()
 
 	def reset(self):
-		self.tags = {}
-		self._items = {}
+		self.tags.clear()
+		self._items.clear()
 		self.filtered_items = []
 		self.current_sorting_col = 0
 		self._last_filter = None
-		self._values_cache = {}		# field->(value->[items])
+		self._values_cache.clear()
 
 	@property
 	def items(self):
@@ -393,7 +396,8 @@ class SearchResult(object):
 				nlist.append(item)
 				values[fname][value] = nlist
 		self.tags = tags
-		self._values_cache = values
+		self._values_cache.clear()
+		self._values_cache.update(values)
 
 
 def tags2str(tagstr):
@@ -421,4 +425,4 @@ def get_field_name_human(field):
 	return field.capitalize().replace('_', ' ')
 
 
-# vim: encoding=utf8: ff=unix:
+# vim: fileencoding=utf-8: ff=unix:

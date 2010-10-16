@@ -8,7 +8,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-06-20"
+__version__ = "2010-10-16"
 
 
 import os.path
@@ -412,8 +412,7 @@ class FrameMain(object):
 								val = objects.get_field_value_human(val)
 								self.list_items.SetStringItem(indx, col + 1, val)
 							reload_items = False
-
-				self._result = self._db.load_class(self._result.cls.oid)
+				self._db.reload_class(self._result)
 				self._fill_tags()
 				if reload_items:
 					self._fill_items(select=(select or oid))
@@ -513,7 +512,7 @@ class FrameMain(object):
 
 				self._db.del_objects(items_to_delete)
 				self._curr_obj = None
-				self._result = self._db.load_class(self._result.cls.oid)
+				self._db.reload_class(self._result)
 				self._fill_tags()
 				self._fill_items()
 
@@ -690,4 +689,4 @@ def get_object_info(cls, item, cols=None):
 	return info
 
 
-# vim: encoding=utf8: ff=unix:
+# vim: fileencoding=utf-8: ff=unix:

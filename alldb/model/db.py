@@ -7,7 +7,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-24"
+__version__ = "2010-10-16"
 
 
 import os.path
@@ -98,6 +98,16 @@ class Db(object):
 			result.set_items(items)
 		return result
 
+	def reload_class(self, result):
+		_LOG.info('Db.reload_class(%r)', result)
+		result.reset()
+		cls = self.get_class(result.cls.oid)
+		if cls:
+			result.set_class(cls)
+			items = self.get_objects_by_class(cls.oid)
+			result.set_items(items)
+		return result
+
 	def put_object(self, obj):
 		with SqliteEngineTx(self) as trans:
 			self.put_object_in_trans(trans, obj)
@@ -166,4 +176,4 @@ class Db(object):
 
 
 
-# vim: encoding=utf8: ff=unix:
+# vim: fileencoding=utf-8: ff=unix:
