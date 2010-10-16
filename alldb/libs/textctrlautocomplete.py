@@ -11,6 +11,8 @@ Contributed to the wxPython project under the wxPython project's license.
 
 Changes:
 	2010-05-05 Karol Będkowski: catch exception in onControlChanged
+	2010-10-16 Karol Będkowski: fix provlem with left and right key when no
+			multicolumn mode
 '''
 import locale, wx, sys, cStringIO
 import	wx.lib.mixins.listctrl	as	listmix
@@ -215,12 +217,16 @@ class TextCtrlAutoComplete(wx.TextCtrl, listmix.ColumnSorterMixin):
 			self._showDropDown()
 			skip = False
 		elif KC == wx.WXK_LEFT :
-			if not self._multiChoices: return
+			if not self._multiChoices:
+				event.Skip()
+				return
 			if self._colSearch > 0:
 				self._colSearch -=1
 			self._showDropDown()
 		elif KC == wx.WXK_RIGHT:
-			if not self._multiChoices: return
+			if not self._multiChoices:
+				event.Skip()
+				return
 			if self._colSearch < self.dropdownlistbox.GetColumnCount() -1:
 				self._colSearch += 1
 			self._showDropDown()
