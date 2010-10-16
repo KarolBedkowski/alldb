@@ -6,7 +6,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-05-24"
+__version__ = "2010-10-16"
 
 
 import wx
@@ -57,6 +57,9 @@ class Field(object):
 	def clear(self):
 		self._widget_del_value()
 
+	def set_result(self, result):
+		self._result_obj = result
+
 	def _create_widget(self, _parent, _options, _result_obj):
 		return None
 
@@ -71,4 +74,4 @@ class Field(object):
 
 
 
-# vim: encoding=utf8: ff=unix:
+# vim: encoding=utf-8: ff=unix:

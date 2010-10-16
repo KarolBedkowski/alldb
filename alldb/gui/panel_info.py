@@ -6,7 +6,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-10-15"
+__version__ = "2010-10-16"
 
 
 import os.path
@@ -34,7 +34,7 @@ def _get_ctrl_height(ctrl_cls, parent, *argv):
 class PanelInfo(scrolled.ScrolledPanel):
 	def __init__(self, window, parent, obj_class, result, *_argv, **_kwarg):
 		scrolled.ScrolledPanel.__init__(self, parent, -1,
-				style=wx.FULL_REPAINT_ON_RESIZE|wx.TAB_TRAVERSAL)
+				style=wx.FULL_REPAINT_ON_RESIZE | wx.TAB_TRAVERSAL)
 		self._window = window
 		self._obj = None
 		self._obj_cls = obj_class
@@ -107,6 +107,11 @@ class PanelInfo(scrolled.ScrolledPanel):
 	def set_focus(self):
 		if self._first_field:
 			self._first_field.SetFocus()
+
+	def set_result(self, result):
+		self._result = result
+		for field, _ftype, _default, _options in self._fields.itervalues():
+			field.set_result(result)
 
 	def _create_fields_head(self):
 		panel = wx.Panel(self, -1)
@@ -284,4 +289,4 @@ def find_objs_commons(objs):
 
 
 
-# vim: encoding=utf8: ff=unix:
+# vim: fileencoding=utf-8: ff=unix:
