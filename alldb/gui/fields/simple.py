@@ -6,7 +6,7 @@ from __future__ import with_statement
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-06-11"
+__version__ = "2010-10-16"
 
 
 import wx
@@ -32,9 +32,8 @@ class MyTextCtrlAutoComplete(TextCtrlAutoComplete):
 
 	def _entry_callback(self):
 		text = self.GetValue().lower()
-		all_choices = self._result.get_values_for_field(self._field_name)
-		choices = [choice or '' for choice in all_choices
-				if _match(text, choice)]
+		all_choices = self._result.get_values_for_field(self._field_name).keys()
+		choices = [choice or '' for choice in all_choices if _match(text, choice)]
 		if choices != self._choices:
 			self.SetChoices(choices)
 
@@ -108,4 +107,4 @@ class NumericField(Field):
 		return masked.NumCtrl(parent, -1, groupDigits=False, allowNone=True)
 
 
-# vim: encoding=utf8: ff=unix:
+# vim: fileencoding=utf-8: ff=unix:
