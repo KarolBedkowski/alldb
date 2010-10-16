@@ -1,3 +1,9 @@
+alldb (1.0.0~rc7-1) unstable; urgency=low
+
+  * New unstable release
+
+ -- Karol Będkowski <karol.bedkowski@gmail.com>  Sat, 16 Oct 2010 20:43:15 +0200
+
 alldb (1.0.0~rc6-1) unstable; urgency=low
 
   * New unstable release

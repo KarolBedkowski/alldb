@@ -5,7 +5,7 @@ Licence and version informations.
 
 __author__ = "Karol Będkowski"
 __copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
-__version__ = "2010-10-15"
+__version__ = "2010-10-16"
 
 
 try:
@@ -17,9 +17,9 @@ except NameError:
 
 SHORTNAME = 'alldb'
 NAME = _("AllDB")
-VERSION = '1.0.0rc6'
-VERSION_INFO = (1, 0, 0, 'rc', 6)
-RELEASE = '2010-10-15'
+VERSION = '1.0.0rc7'
+VERSION_INFO = (1, 0, 0, 'rc', 7)
+RELEASE = '2010-10-16'
 DESCRIPTION = _('''All-kind of data database''')
 DEVELOPERS = u'''Karol Będkowski'''
 TRANSLATORS = u'''Karol Będkowski'''
@@ -53,4 +53,4 @@ For details please see COPYING file.
 """) % dict(name=NAME, version=VERSION, copyright=COPYRIGHT, release=RELEASE)
 
 
-# vim: encoding=utf8: ff=unix:
+# vim: fileencoding=utf-8: ff=unix:
