@@ -19,6 +19,7 @@ profile_result_*.txt
 *.7z
 *.log
 *.swp
+*.orig
 debian/alldb
 debian/*.debhelper
 debian/*.substvars
