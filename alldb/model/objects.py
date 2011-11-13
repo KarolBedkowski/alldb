@@ -5,7 +5,7 @@ Obiekty alldb
 """
 
 __author__ = "Karol Będkowski"
-__copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
+__copyright__ = "Copyright (c) Karol Będkowski, 2009-2011"
 __version__ = "2010-10-16"
 
 
@@ -380,7 +380,9 @@ class SearchResult(object):
 		if current_sorting_col >= 0:
 			reverse = self.current_sorting_col < 0
 			func = lambda x: x[1][current_sorting_col]
-			self.filtered_items.sort(cmp=locale.strcoll, key=func, reverse=reverse)
+			self.filtered_items.sort(
+					cmp=lambda x, y: locale.strcoll(x or "", y or ""),
+					key=func, reverse=reverse)
 		return self.filtered_items
 
 	def _update_tags(self):
