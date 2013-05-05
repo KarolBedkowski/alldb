@@ -7,7 +7,7 @@ from __future__ import with_statement
 
 
 __author__ = "Karol Będkowski"
-__copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
+__copyright__ = "Copyright (c) Karol Będkowski, 2009-2013"
 __version__ = "2010-05-17"
 
 
@@ -75,9 +75,11 @@ class SqliteEngineTx(object):
 				cur.execute('update objects set class_id=?, data=? where id=?',
 						(obj.class_id, data, obj.oid))
 			else:
-				cur.execute('insert into objects (id, class_id, data) values (?, ?, ?)',
-						(obj.oid, obj.class_id, data))
-				obj.oid = cur.lastrowid
+				cur.execute('insert into objects (class_id, data) values (?, ?)',
+						(obj.class_id, data))
+				cur.execute('select id from objects where rowid=?',
+						(cur.lastrowid, ))
+				obj.oid = cur.fetchone()[0]
 			obj.sldb_context = self._context
 			_LOG.debug('saved %r', obj)
 
@@ -94,7 +96,9 @@ class SqliteEngineTx(object):
 			if cls.oid is None or cls.oid <= 0:
 				cur.execute('insert into classes (name, data) values (?, ?)',
 						(cls.name, data))
-				cls.oid = cur.lastrowid
+				cur.execute('select id from classes where rowid=?',
+						(cur.lastrowid, ))
+				cls.oid = cur.fetchone()[0]
 			else:
 				cur.execute('update classes set name=?, data=? where id=?',
 						(cls.name, data, cls.oid))
@@ -167,7 +171,3 @@ class SqliteEngineTx(object):
 				pulse_cb(sql)
 			self._cursor.executescript(sql)
 		_LOG.debug('SqliteEngineTx.optimize: done')
-
-
-
-# vim: encoding=utf8: ff=unix:
