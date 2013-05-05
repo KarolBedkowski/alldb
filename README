@@ -1,6 +1,11 @@
-AllDB ver. 1.0
+++++++++++++++++
+ AllDB ver. 1.0
+++++++++++++++++
 
-Copyright (C) Karol Będkowski 2009-2010
+:Credits: Copyright (C) Karol Będkowski 2009-2010,2013
+:Licence: GPLv2+
+:Status: beta (working, bugs)
+:Tags: database, stuffkeeper
 
 Very simple application for storing various information organised in 
 some categories. Each category has own set of fields.
@@ -14,9 +19,26 @@ Main features:
 - tagging items
 - portable - written in Python and wxWidgets
 
-This application is similar to the StuffKeeper (http://www.stuffkeeper.com) but simpler.
+This application is similar to the StuffKeeper_  but simpler.
 If you looking for more advanced application - please take a look on it.
 
+.. _StuffKeeper: http://www.stuffkeeper.com)
+
+
+Installation
+============
+
+This application don't require special steps to install.
+Just unpack and run via alldb.pyw
+
+Runtime Requirements
+--------------------
+* Python 2.6+
+* wxWidgets 2.8+
+
+
+Licence
+=======
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,4 +48,10 @@ the Free Software Foundation, either version 2 of the License, or
 For details please see COPYING file.
 
 
-# vim: encoding=utf8: ff=unix: fileencoding=utf8: spelllang=en: spell:
+Credits
+=======
+* Some icons come from Tango project -  Public Domain.
+  http://tango.freedesktop.org
+
+
+.. vim: ft=rst tw=72
