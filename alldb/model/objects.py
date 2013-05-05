@@ -5,7 +5,7 @@ Obiekty alldb
 """
 
 __author__ = "Karol Będkowski"
-__copyright__ = "Copyright (c) Karol Będkowski, 2009-2011"
+__copyright__ = "Copyright (c) Karol Będkowski, 2009-2013"
 __version__ = "2010-10-16"
 
 
@@ -394,6 +394,8 @@ class SearchResult(object):
 				tags[tag] = tags.get(tag, 0) + 1
 			for fname in fields:
 				value = item.data.get(fname)
+				if not value:
+					continue
 				nlist = values[fname].get(value, [])
 				nlist.append(item)
 				values[fname][value] = nlist
