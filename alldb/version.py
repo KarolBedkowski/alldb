@@ -4,7 +4,7 @@ Licence and version informations.
 """
 
 __author__ = "Karol Będkowski"
-__copyright__ = "Copyright (c) Karol Będkowski, 2009-2013"
+__copyright__ = "Copyright (c) Karol Będkowski, 2009-2014"
 __version__ = "2013-05-05"
 
 
@@ -17,13 +17,13 @@ except NameError:
 
 SHORTNAME = 'alldb'
 NAME = _("AllDB")
-VERSION = '1.0.1'
-VERSION_INFO = (1, 0, 1, 'r', 0)
-RELEASE = '2013-05-05'
+VERSION = '1.0.2'
+VERSION_INFO = (1, 0, 2, 'r', 0)
+RELEASE = '2014-09-09'
 DESCRIPTION = _('''All-kind of data database''')
 DEVELOPERS = u'''Karol Będkowski'''
 TRANSLATORS = u'''Karol Będkowski'''
-COPYRIGHT = u"Copyright (c) Karol Będkowski, 2009-2013"
+COPYRIGHT = u"Copyright (c) Karol Będkowski, 2009-2014"
 LICENSE = _('''\
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
