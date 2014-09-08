@@ -4,7 +4,7 @@
 """
 
 __author__ = "Karol Będkowski"
-__copyright__ = "Copyright (c) Karol Będkowski, 2009-2010"
+__copyright__ = "Copyright (c) Karol Będkowski, 2009-2014"
 __version__ = "2010-05-24"
 
 
@@ -48,6 +48,14 @@ logging_setup('alldb.log', _OPTIONS.debug)
 
 from alldb.libs import appconfig
 
+try:
+	import wxversion
+	try:
+		wxversion.select('2.8')
+	except wxversion.AlreadyImportedError:
+		pass
+except ImportError, err:
+	print 'No wxversion.... (%s)' % str(err)
 
 def _setup_locale():
 	''' setup locales and gettext '''
@@ -73,18 +81,6 @@ def _setup_locale():
 
 
 _setup_locale()
-
-
-if not appconfig.is_frozen():
-	try:
-		import wxversion
-		try:
-			wxversion.select('2.8')
-		except wxversion.AlreadyImportedError:
-			pass
-	except ImportError, err:
-		print 'No wxversion.... (%s)' % str(err)
-
 
 import wx
 

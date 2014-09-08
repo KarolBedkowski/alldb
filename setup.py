@@ -190,7 +190,7 @@ setup(
 	data_files=list(get_data_files()),
 	include_package_data=True,
 	scripts=['alldb.pyw'],
-	install_requires=['wxPython>=2.6.0', ],
+	install_requires=['wxPython>=2.6.0', 'wxPython<=2.8'],
 	options={"py2exe": {
 		"compressed": 1,
 		"optimize": 2,
